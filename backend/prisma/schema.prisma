@@ -1,0 +1,234 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String      @id @default(cuid()) @db.NVarChar(30)
+  email        String      @unique @db.NVarChar(254)
+  fullName     String?     @db.NVarChar(120)
+  passwordHash String      @db.VarChar(60)
+  isLocked     Boolean     @default(false)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  roles        UserRole[]
+  sessions     Session[]
+  bookings     Booking[]
+}
+
+model Session {
+  id               String    @id @default(cuid()) @db.NVarChar(30)
+  userId           String    @db.NVarChar(30)
+  refreshTokenHash String    @unique @db.Char(64)
+  expiresAt        DateTime
+  revokedAt        DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, revokedAt, expiresAt])
+}
+
+model Role {
+  id          String           @id @default(cuid()) @db.NVarChar(30)
+  name        String           @unique @db.NVarChar(50)
+  description String?          @db.NVarChar(300)
+  createdAt   DateTime         @default(now())
+  users       UserRole[]
+  permissions RolePermission[]
+}
+
+model Permission {
+  id          String           @id @default(cuid()) @db.NVarChar(30)
+  key         String           @unique @db.NVarChar(150)
+  description String?          @db.NVarChar(300)
+  roles       RolePermission[]
+}
+
+model UserRole {
+  userId     String   @db.NVarChar(30)
+  roleId     String   @db.NVarChar(30)
+  assignedAt DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role       Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roleId])
+  @@index([roleId])
+}
+
+model RolePermission {
+  roleId       String   @db.NVarChar(30)
+  permissionId String   @db.NVarChar(30)
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@index([permissionId])
+}
+
+model BusCompany {
+  id          String   @id @default(cuid()) @db.NVarChar(30)
+  name        String   @unique @db.NVarChar(100)
+  logo        String?  @db.NVarChar(500)
+  description String?  @db.NVarChar(500)
+  rating      Float    @default(0)
+  totalReviews Int     @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  buses       Bus[]
+  trips       Trip[]
+}
+
+model Bus {
+  id          String     @id @default(cuid()) @db.NVarChar(30)
+  name        String     @db.NVarChar(100)
+  type        String     @db.NVarChar(50) // Giường nằm 40 chỗ, Limousine 22 phòng, etc.
+  totalSeats  Int
+  companyId   String     @db.NVarChar(30)
+  company     BusCompany @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  trips       Trip[]
+}
+
+model Route {
+  id          String   @id @default(cuid()) @db.NVarChar(30)
+  origin      String   @db.NVarChar(100) // e.g. TP.HCM, Hà Nội
+  destination String   @db.NVarChar(100) // e.g. Đà Lạt, Đà Nẵng
+  distance    Int?     // km
+  createdAt   DateTime @default(now())
+  trips       Trip[]
+  stops       RouteStop[]
+
+  @@unique([origin, destination])
+}
+
+model RouteStop {
+  id        String   @id @default(cuid()) @db.NVarChar(30)
+  routeId   String   @db.NVarChar(30)
+  type      String   @db.NVarChar(10) // pickup, dropoff
+  name      String   @db.NVarChar(150)
+  address   String   @db.NVarChar(300)
+  city      String   @db.NVarChar(100)
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  route     Route    @relation(fields: [routeId], references: [id], onDelete: Cascade)
+
+  @@index([routeId, type, sortOrder])
+}
+
+model Trip {
+  id            String     @id @default(cuid()) @db.NVarChar(30)
+  routeId       String     @db.NVarChar(30)
+  busId         String     @db.NVarChar(30)
+  companyId     String     @db.NVarChar(30)
+  departureTime String     @db.NVarChar(5) // "14:00"
+  arrivalTime   String     @db.NVarChar(5) // "19:30"
+  duration      String     @db.NVarChar(10) // "5h 30p"
+  price         Int        // in VND, e.g. 280000
+  availableDate DateTime?  // specific date, null = recurring
+  isActive      Boolean    @default(true)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  route         Route      @relation(fields: [routeId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  bus           Bus        @relation(fields: [busId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  company       BusCompany @relation(fields: [companyId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  bookings      Booking[]
+  seatStatuses  SeatStatus[]
+
+  @@index([routeId, isActive])
+}
+
+model SeatStatus {
+  id        String   @id @default(cuid()) @db.NVarChar(30)
+  tripId    String   @db.NVarChar(30)
+  tripDate  DateTime @db.Date
+  seatCode  String   @db.NVarChar(10) // A1, B2, C3, etc.
+  status    String   @default("available") @db.NVarChar(20) // available, booked, held
+  bookingId String?  @db.NVarChar(30)
+  ticketId  String?  @db.NVarChar(30)
+  trip      Trip     @relation(fields: [tripId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  booking   Booking? @relation(fields: [bookingId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  ticket    Ticket?  @relation(fields: [ticketId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+
+  @@unique([tripId, tripDate, seatCode])
+  @@index([ticketId])
+}
+
+model Booking {
+  id              String       @id @default(cuid()) @db.NVarChar(30)
+  bookingCode     String       @unique @db.NVarChar(20)
+  tripId          String       @db.NVarChar(30)
+  userId          String?      @db.NVarChar(30)
+  tripDate        DateTime     @db.Date
+  passengerName   String       @db.NVarChar(120)
+  passengerPhone  String       @db.NVarChar(20)
+  passengerEmail  String       @db.NVarChar(254)
+  seatCode        String       @db.NVarChar(200) // Comma-separated summary retained for existing clients
+  totalPrice      Int
+  status          String       @default("pending") @db.NVarChar(20) // pending, confirmed, cancelled, completed
+  paymentMethod   String?      @db.NVarChar(50)
+  paymentStatus   String       @default("unpaid") @db.NVarChar(20) // unpaid, paid, refunded
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  trip            Trip         @relation(fields: [tripId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  user            User?        @relation(fields: [userId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  seatStatuses    SeatStatus[]
+  tickets         Ticket[]
+
+  @@index([tripId, tripDate])
+  @@index([userId])
+  @@index([bookingCode])
+}
+
+model Ticket {
+  id             String       @id @default(cuid()) @db.NVarChar(30)
+  ticketCode     String       @unique @db.NVarChar(40)
+  bookingId      String       @db.NVarChar(30)
+  seatCode       String       @db.NVarChar(10)
+  passengerName  String       @db.NVarChar(120)
+  passengerPhone String       @db.NVarChar(20)
+  passengerEmail String       @db.NVarChar(254)
+  price          Int          // Fare snapshot in VND
+  status         String       @default("pending") @db.NVarChar(20) // pending, confirmed, cancelled, completed
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  booking        Booking      @relation(fields: [bookingId], references: [id], onDelete: NoAction)
+  seatStatuses   SeatStatus[]
+
+  @@unique([bookingId, seatCode])
+  @@index([bookingId, status])
+}
+
+model Promotion {
+  id          String   @id @default(cuid()) @db.NVarChar(30)
+  title       String   @db.NVarChar(200)
+  description String?  @db.NVarChar(1000)
+  image       String?  @db.NVarChar(500)
+  discount    Int?     // percentage
+  code        String?  @db.NVarChar(50)
+  startDate   DateTime?
+  endDate     DateTime?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model News {
+  id          String   @id @default(cuid()) @db.NVarChar(30)
+  title       String   @db.NVarChar(300)
+  summary     String?  @db.NVarChar(500)
+  content     String?  @db.NVarChar(Max)
+  image       String?  @db.NVarChar(500)
+  category    String?  @db.NVarChar(50)
+  isPublished Boolean  @default(true)
+  publishedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

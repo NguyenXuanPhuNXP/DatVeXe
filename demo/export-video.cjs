@@ -1,0 +1,10 @@
+const fs=require('node:fs');
+const path=require('node:path');
+const {spawnSync}=require('node:child_process');
+const result=JSON.parse(fs.readFileSync(path.join(__dirname,'recording-result.json'),'utf8'));
+if(result.errors.length)throw new Error('Recording has errors: '+result.errors.join('\n'));
+const ffmpeg=path.join(__dirname,'tools/node_modules/ffmpeg-static/ffmpeg.exe');
+const output=path.join(__dirname,'Rightway-Demo.mp4');
+const encode=spawnSync(ffmpeg,['-y','-i',result.video,'-c:v','libx264','-preset','fast','-crf','21','-pix_fmt','yuv420p','-movflags','+faststart','-an',output],{stdio:'inherit'});
+if(encode.status!==0)process.exit(encode.status||1);
+console.log(output);

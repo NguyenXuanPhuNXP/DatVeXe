@@ -1,0 +1,10 @@
+tools/
+raw/
+*.log
+*.mp4
+*.webm
+*.jpg
+*.png
+*.xlsx
+check-results.json
+recording-result.json
