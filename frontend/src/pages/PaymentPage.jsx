@@ -3,18 +3,43 @@ import BookingSteps from '../components/booking/BookingSteps';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/auth-context';
 import { useNotification } from '../context/notification-context';
-import { bookingService } from '../services/api';
+import api, { bookingService } from '../services/api';
+import { TicketPaymentPanel } from './TicketPaymentPanel';
 import '../styles/booking.css';
 
 const PaymentPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const resumeId = new URLSearchParams(location.search).get('bookingId');
   const { user } = useAuth();
   const { addNotification, addSavedBooking } = useNotification();
 
   const [paymentMethod, setPaymentMethod] = useState('vnpay');
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [heldBooking, setHeldBooking] = useState(null);
+
+  useEffect(() => {
+    if (!resumeId) return;
+    let active = true;
+    bookingService.getById(resumeId).then(({ data }) => {
+      if (!active) return;
+      if (data.userId !== user?.id) {
+        setErrorMsg('Bạn không có quyền thanh toán đơn vé này.');
+        return;
+      }
+      setHeldBooking(data);
+    }).catch(() => { if (active) setErrorMsg('Không tải được đơn vé để thanh toán.'); });
+    return () => { active = false; };
+  }, [resumeId, user?.id]);
+
+  const refreshHeldBooking = async () => {
+    if (!heldBooking) return;
+    try {
+      const { data } = await bookingService.getById(heldBooking.id);
+      setHeldBooking(data);
+    } catch { setErrorMsg('Không tải được trạng thái thanh toán. Vui lòng thử lại.'); }
+  };
 
   const bookingData = useMemo(() => {
     if (location.state) return location.state;
@@ -23,11 +48,15 @@ const PaymentPage = () => {
     } catch { return null; }
   }, [location.state]);
   useEffect(() => {
-    if (!bookingData?.trip || !bookingData.selectedSeats?.length || !bookingData.passengerInfo) navigate('/search');
-  }, [bookingData,navigate]);
+    if (!resumeId && (!bookingData?.trip || !bookingData.selectedSeats?.length || !bookingData.passengerInfo)) navigate('/search');
+  }, [bookingData,navigate,resumeId]);
 
   const handleConfirmBooking = async () => {
     if (!bookingData || submitting) return;
+    if (!user) {
+      navigate('/login', { state: { from: location } });
+      return;
+    }
 
     try {
       setSubmitting(true);
@@ -50,6 +79,7 @@ const PaymentPage = () => {
 
       const res = await bookingService.create(payload);
       const newBooking = res.data;
+      setHeldBooking(newBooking);
 
       // Save to notification context & local storage
       addSavedBooking(newBooking);
@@ -58,7 +88,7 @@ const PaymentPage = () => {
         ? `${trip.route.origin} → ${trip.route.destination}`
         : `${trip.origin || ''} → ${trip.destination || ''}`;
       addNotification({
-        title: 'Đặt vé thành công! 🎉',
+        title: 'Đang giữ ghế — chờ thanh toán',
         message: `Đơn vé ${newBooking.bookingCode} (${routeName}) đang được giữ ghế trong 5 phút. Vui lòng thanh toán trước khi hết hạn.`,
         type: 'info',
         link: `/lookup?code=${newBooking.bookingCode}`,
@@ -69,8 +99,12 @@ const PaymentPage = () => {
       sessionStorage.removeItem('currentBooking');
       sessionStorage.removeItem('rightwayBooking');
 
-      // Navigate to lookup page with success indicator
-      navigate(`/lookup?code=${newBooking.bookingCode}&success=1`);
+      // Continue to the payment gateway; keep the unpaid hold visible for retry.
+      if (paymentMethod === 'vnpay') {
+        sessionStorage.setItem('vnpayBooking', JSON.stringify({ id: newBooking.id, code: newBooking.bookingCode, phone: newBooking.passengerPhone }));
+        const { data } = await api.post(`/ticketing/bookings/${newBooking.id}/vnpay`, { phone: newBooking.passengerPhone });
+        window.location.assign(data.payUrl);
+      }
     } catch (err) {
       console.error('Booking creation error:', err);
       setErrorMsg(
@@ -80,6 +114,14 @@ const PaymentPage = () => {
       setSubmitting(false);
     }
   };
+
+  if (heldBooking) return <div className="container" style={{ padding: '32px 16px' }}>
+    <h1>Thanh toán vé {heldBooking.bookingCode}</h1>
+    {errorMsg && <p role="alert">{errorMsg}</p>}
+    <TicketPaymentPanel booking={heldBooking} onRefresh={refreshHeldBooking} />
+  </div>;
+
+  if (resumeId) return <div className="container" style={{ padding: '32px 16px' }}><h1>Thanh toán vé</h1><p role="status">{errorMsg || 'Đang tải đơn vé...'}</p></div>;
 
   if (!bookingData?.trip || !Array.isArray(bookingData.selectedSeats) || !bookingData.selectedSeats.length || !bookingData.passengerInfo) {
     return null;
@@ -203,7 +245,7 @@ const PaymentPage = () => {
             ) : (
               <>
                 <i className="bi bi-check2-circle"></i>
-                <span>Xác nhận đặt vé</span>
+                <span>Giữ ghế và tiếp tục thanh toán</span>
               </>
             )}
           </button>

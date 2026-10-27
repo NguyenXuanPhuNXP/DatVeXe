@@ -119,7 +119,7 @@ async function statusCheck(req, res, next) {
       .split(",")
       .map((c) => c.trim())
       .filter(Boolean);
-    const results = await service.statusCheckService(codeList);
+    const results = await service.statusCheckService(codeList, req.auth?.userId);
     res.json(results);
   } catch (error) {
     next(error);

@@ -1,0 +1,69 @@
+9:47:50 PM [vite] (client) Re-optimizing dependencies because lockfile has changed
+
+  VITE v8.3.1  ready in 857 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: http://192.168.1.38:5173/  Wi-Fi
+  ➜  press h + enter to show help
+10:00:09 PM [vite] (client) hmr update /src/pages/admin/AdminTrips.jsx
+10:00:09 PM [vite] (client) hmr update /src/styles/admin.css
+10:09:11 PM [vite] (client) hmr update /src/components/layout/Header.jsx
+10:09:11 PM [vite] (client) hmr update /src/App.jsx
+10:09:11 PM [vite] (client) hmr update /src/pages/LoginPage.jsx
+10:09:11 PM [vite] (client) hmr update /src/pages/PaymentPage.jsx
+10:09:11 PM [vite] (client) hmr update /src/pages/BookingLookupPage.jsx
+10:09:25 PM [vite] (client) hmr update /src/pages/BookingSuccessPage.jsx
+10:09:25 PM [vite] (client) hmr update /src/pages/PaymentPage.jsx
+10:13:33 PM [vite] (client) hmr update /src/context/NotificationContext.jsx
+10:13:38 PM [vite] (client) hmr update /src/context/AuthContext.jsx
+10:18:10 PM [vite] (client) hmr update /src/styles/admin.css
+10:18:10 PM [vite] (client) hmr update /src/pages/admin/AdminRoutes.jsx
+10:18:10 PM [vite] (client) hmr update /src/pages/admin/AdminCompanies.jsx
+10:18:10 PM [vite] (client) hmr update /src/pages/admin/AdminPromotions.jsx
+10:18:10 PM [vite] (client) hmr update /src/pages/admin/AdminNews.jsx
+10:18:10 PM [vite] (client) hmr update /src/pages/admin/AdminUsers.jsx
+10:18:10 PM [vite] (client) hmr update /src/pages/admin/AdminTrips.jsx
+10:18:52 PM [vite] (client) hmr update /src/pages/admin/AdminRoutes.jsx
+10:18:52 PM [vite] (client) hmr update /src/pages/admin/AdminCompanies.jsx
+10:18:52 PM [vite] (client) hmr update /src/pages/admin/AdminPromotions.jsx
+10:18:52 PM [vite] (client) hmr update /src/pages/admin/AdminNews.jsx
+10:18:52 PM [vite] (client) hmr update /src/pages/admin/AdminUsers.jsx
+10:18:52 PM [vite] (client) hmr update /src/pages/admin/AdminTrips.jsx
+10:19:37 PM [vite] (client) hmr update /src/pages/admin/AdminRoutes.jsx
+10:19:37 PM [vite] (client) hmr update /src/pages/admin/AdminCompanies.jsx
+10:19:37 PM [vite] (client) hmr update /src/pages/admin/AdminPromotions.jsx
+10:19:37 PM [vite] (client) hmr update /src/pages/admin/AdminNews.jsx
+10:19:40 PM [vite] (client) hmr update /src/pages/admin/AdminUsers.jsx
+10:20:09 PM [vite] (client) hmr update /src/pages/admin/AdminUsers.jsx
+10:20:32 PM [vite] (client) hmr update /src/pages/admin/AdminUsers.jsx
+10:24:07 PM [vite] (client) hmr update /src/pages/admin/AdminUsers.jsx
+10:33:48 PM [vite] (client) hmr update /src/components/layout/Header.jsx
+10:33:48 PM [vite] (client) hmr update /src/pages/operator/OperatorPortal.jsx
+10:43:39 PM [vite] (client) hmr update /src/pages/operator/OperatorPortal.jsx
+10:46:15 PM [vite] (client) hmr update /src/pages/LoginPage.jsx
+10:46:15 PM [vite] (client) hmr update /src/pages/RegisterPage.jsx
+10:46:15 PM [vite] (client) hmr update /src/pages/operator/OperatorPortal.jsx
+10:46:19 PM [vite] (client) hmr update /src/components/auth/password-input.css
+10:50:16 PM [vite] (client) hmr update /src/pages/admin/AdminTrips.jsx
+10:50:31 PM [vite] (client) hmr update /src/pages/operator/OperatorPortal.jsx
+11:01:27 PM [vite] (client) hmr update /src/pages/admin/AdminTrips.jsx
+11:01:27 PM [vite] (client) hmr update /src/pages/operator/OperatorPortal.jsx
+11:04:10 PM [vite] (client) hmr update /src/components/search/SearchHeader.jsx
+11:04:10 PM [vite] (client) hmr update /src/components/home/SearchForm.jsx
+11:04:10 PM [vite] (client) hmr update /src/pages/SearchPage.jsx
+11:04:27 PM [vite] (client) hmr update /src/components/home/SearchForm.jsx
+11:04:27 PM [vite] (client) hmr update /src/components/search/SearchHeader.jsx
+11:06:32 PM [vite] (client) hmr update /src/pages/operator/OperatorPortal.jsx
+11:07:31 PM [vite] (client) hmr update /src/components/layout/Header.jsx
+11:07:31 PM [vite] (client) hmr update /src/styles/header.css
+11:09:30 PM [vite] (client) hmr update /src/styles/operator.css
+11:09:40 PM [vite] (client) hmr update /src/styles/operator.css
+11:15:47 PM [vite] (client) hmr update /src/components/layout/Header.jsx
+11:15:51 PM [vite] (client) hmr update /src/pages/PassengerInfoPage.jsx
+11:15:51 PM [vite] (client) hmr update /src/pages/PaymentPage.jsx
+11:19:50 PM [vite] (client) hmr update /src/pages/TicketPaymentPanel.jsx
+11:19:50 PM [vite] (client) hmr update /src/pages/BookingLookupPage.jsx
+11:19:50 PM [vite] (client) hmr update /src/pages/PaymentPage.jsx
+11:20:09 PM [vite] (client) hmr update /src/pages/PaymentPage.jsx
+11:21:03 PM [vite] (client) hmr update /src/App.jsx
+11:21:03 PM [vite] (client) hmr update /src/components/layout/Header.jsx

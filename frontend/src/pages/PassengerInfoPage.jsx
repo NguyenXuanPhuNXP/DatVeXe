@@ -84,7 +84,7 @@ const PassengerInfoPage = () => {
         <div className="booking-main">
           <h2 className="summary-title">Thông tin hành khách</h2>
 
-          <form onSubmit={handleContinue}>
+          <form id="passenger-info-form" onSubmit={handleContinue}>
             <div className="form-section-title">Người đi xe / Người đặt vé</div>
 
             <div className="form-grid">
@@ -213,9 +213,9 @@ const PassengerInfoPage = () => {
           </div>
 
           <button
-            type="button"
+            type="submit"
+            form="passenger-info-form"
             className="btn-primary btn-full"
-            onClick={handleContinue}
           >
             Tiếp tục thanh toán
           </button>

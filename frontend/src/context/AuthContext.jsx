@@ -57,6 +57,7 @@ export function AuthProvider({ children }) {
         return applySession(data);
       },
       logout: async () => {
+        ['currentBooking', 'rightwayBooking', 'lastCompletedBooking', 'vnpayBooking'].forEach(key => sessionStorage.removeItem(key));
         try {
           await authService.logout();
         } catch {

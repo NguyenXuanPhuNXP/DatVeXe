@@ -253,3 +253,12 @@ test("payment checks company ownership inside transaction and records collector 
     "paid",
   );
 });
+
+
+test('status polling requires authentication and restricts codes to their owner', async (t) => {
+  await assert.rejects(service.statusCheckService(['foreign']), { status: 401 });
+  let query;
+  t.mock.method(prisma.booking, 'findMany', async q => { query = q; return []; });
+  await service.statusCheckService(['own', 'foreign'], 'owner');
+  assert.deepEqual(query.where, { bookingCode: { in: ['own', 'foreign'] }, userId: 'owner' });
+});

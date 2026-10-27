@@ -11,7 +11,7 @@ const BookingLookupPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const urlCode = searchParams.get('code') || searchParams.get('bookingCode') || '';
   const urlPhone = searchParams.get('phone') || '';
-  const isSuccessRedirect = searchParams.get('success') === '1';
+  const showBookingNotice = searchParams.get('pending') === '1' || searchParams.get('success') === '1';
 
   const { user } = useAuth();
   const { savedBookings, addNotification, addSavedBooking } = useNotification();
@@ -288,7 +288,7 @@ const BookingLookupPage = () => {
     <div style={{ minHeight: '80vh', backgroundColor: '#F9FAFB', padding: '40px 16px' }}>
       <div style={{ maxWidth: '860px', margin: '0 auto' }}>
         {/* Success Banner if redirected from booking */}
-        {isSuccessRedirect && (
+        {showBookingNotice && booking && (
           <div
             style={{
               backgroundColor: '#ECFDF5',
@@ -304,10 +304,16 @@ const BookingLookupPage = () => {
             <i className="bi bi-check-circle-fill" style={{ fontSize: '28px', color: '#10B981' }} />
             <div>
               <h3 style={{ margin: 0, color: '#065F46', fontSize: '18px' }}>
-                Đặt vé thành công!
+                {booking.paymentStatus === 'paid' && booking.status !== 'cancelled'
+                  ? 'Thanh toán thành công!'
+                  : booking.status === 'cancelled' ? 'Đơn đặt vé đã hủy' : 'Đang giữ ghế — chờ thanh toán'}
               </h3>
               <p style={{ margin: '4px 0 0 0', color: '#047857', fontSize: '14px' }}>
-                Mã đặt vé của bạn là <strong>{bookingCode}</strong>. Vé đang ở trạng thái <strong>Chờ duyệt</strong> và sẽ được Admin xác nhận sớm.
+                Mã đặt vé: <strong>{booking.bookingCode}</strong>.{' '}
+                {booking.paymentStatus === 'paid' && booking.status !== 'cancelled'
+                  ? 'Thanh toán đã được xác nhận. Bạn có thể xem vé điện tử bên dưới.'
+                  : booking.status === 'cancelled' ? 'Đơn đã hủy hoặc hết thời gian giữ ghế. Vui lòng đặt lại.'
+                  : 'Ghế chỉ được giữ trong 5 phút. Vui lòng thanh toán bên dưới; vé chỉ được xác nhận sau khi hệ thống ghi nhận đã nhận tiền.'}
               </p>
             </div>
           </div>
@@ -474,7 +480,7 @@ const BookingLookupPage = () => {
             }}
           >
             {/* Status explanation Banner */}
-            <TicketPaymentPanel booking={booking} onRefresh={() => fetchBooking(booking.bookingCode, booking.passengerPhone, true)} />
+            <TicketPaymentPanel booking={booking} showContinuePayment onRefresh={() => fetchBooking(booking.bookingCode, booking.passengerPhone, true)} />
             {renderStatusBanner()}
 
             {/* Header: Code + Actions */}

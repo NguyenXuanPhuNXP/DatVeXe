@@ -400,12 +400,13 @@ async function cancelBookingService(id, identity = {}) {
   });
 }
 
-async function statusCheckService(codes) {
+async function statusCheckService(codes, userId) {
+  if (!userId) throw new HttpError(401, "UNAUTHORIZED", "Vui lòng đăng nhập để xem trạng thái vé");
   if (!Array.isArray(codes) || codes.length === 0) return [];
   const cleanCodes = codes.map((c) => String(c).trim()).filter(Boolean);
 
   return prisma.booking.findMany({
-    where: { bookingCode: { in: cleanCodes } },
+    where: { bookingCode: { in: cleanCodes }, userId },
     select: {
       id: true,
       bookingCode: true,

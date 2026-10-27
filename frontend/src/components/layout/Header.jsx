@@ -16,8 +16,8 @@ const Header = () => {
   const navItems = [
     { name: 'Trang chủ', path: '/' },
     { name: 'Tìm vé', path: '/search' },
-    { name: 'Vé đã đặt', path: '/lookup' },
-    { name: 'Chuyến đi', path: '/search' },
+    { name: 'Tra cứu vé', path: '/lookup' },
+    { name: 'Vé của tôi', path: '/my-bookings' },
   ];
 
   // Close dropdown on click outside
@@ -75,25 +75,27 @@ const Header = () => {
         </nav>
 
         <div className="header-actions">
-          {user?.companyMembership?.isActive && <Link to={userHome(user)} style={{color:"white"}}>Khu vực làm việc</Link>}
+          {user?.companyMembership?.isActive && <Link to={userHome(user)} className="btn btn-primary">Quay lại trang quản lý</Link>}
           {/* Notification Bell */}
-          <div className="notification-wrapper" ref={notifRef} style={{ position: 'relative' }}>
+          {user && <div className="notification-wrapper" ref={notifRef} style={{ position: 'relative' }}>
             <button
               type="button"
               className="notification-bell-btn"
               onClick={() => setShowNotifications(!showNotifications)}
               title="Thông báo của bạn"
+              aria-label="Thông báo của bạn"
+              aria-expanded={showNotifications}
               style={{
                 position: 'relative',
-                background: 'rgba(255, 255, 255, 0.1)',
-                border: 'none',
+                background: '#F3F4F6',
+                border: '1px solid #D1D5DB',
                 borderRadius: '50%',
                 width: '40px',
                 height: '40px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#ffffff',
+                color: '#1E3A5F',
                 cursor: 'pointer',
                 fontSize: '18px',
                 transition: 'all 0.2s',
@@ -246,7 +248,7 @@ const Header = () => {
                 </div>
               </div>
             )}
-          </div>
+          </div>}
 
           {user ? (
             <div className="header-user">
