@@ -31,7 +31,11 @@ export function TicketPaymentPanel({ booking, onRefresh }) {
       })
       .then((r) => {
         if (active) {
-          setAssets({...r.data,bookingId:booking.id,version:booking.qrVersion});
+          setAssets({
+            ...r.data,
+            bookingId: booking.id,
+            version: booking.qrVersion,
+          });
           setError("");
         }
       })
@@ -43,12 +47,12 @@ export function TicketPaymentPanel({ booking, onRefresh }) {
       active = false;
     };
   }, [paid, booking.id, booking.qrVersion, booking.passengerPhone]);
-  async function momo() {
+  async function vnpay() {
     setBusy(true);
     setError("");
     try {
       sessionStorage.setItem(
-        "momoBooking",
+        "vnpayBooking",
         JSON.stringify({
           id: booking.id,
           code: booking.bookingCode,
@@ -56,12 +60,12 @@ export function TicketPaymentPanel({ booking, onRefresh }) {
         }),
       );
       const { data } = await api.post(
-        `/ticketing/bookings/${booking.id}/momo`,
+        `/ticketing/bookings/${booking.id}/vnpay`,
         { phone: booking.passengerPhone },
       );
       window.location.assign(data.payUrl);
     } catch (e) {
-      setError(e.response?.data?.message || "Chưa mở được MoMo");
+      setError(e.response?.data?.message || "Chưa mở được VNPAY");
     } finally {
       setBusy(false);
     }
@@ -107,7 +111,11 @@ export function TicketPaymentPanel({ booking, onRefresh }) {
             Gửi lại vé qua email
           </button>
           <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
-            {(assets?.bookingId===booking.id && assets?.version===booking.qrVersion ? assets.tickets : []).map((t) => (
+            {(assets?.bookingId === booking.id &&
+            assets?.version === booking.qrVersion
+              ? assets.tickets
+              : []
+            ).map((t) => (
               <article
                 key={t.id}
                 style={{
@@ -139,12 +147,12 @@ export function TicketPaymentPanel({ booking, onRefresh }) {
         <>
           <h3>Đơn đã hủy</h3>
           <p>
-            Ghế đã được giải phóng. Nếu MoMo ghi nhận tiền sau thời hạn, nhà xe
+            Ghế đã được giải phóng. Nếu VNPAY ghi nhận tiền sau thời hạn, nhà xe
             sẽ đối soát khoản tiền cần hoàn.
           </p>
           {booking.paymentAttempts?.length > 0 && (
             <p role="alert">
-              MoMo đã ghi nhận khoản tiền cần đối soát và hoàn lại. Vui lòng
+              VNPAY đã ghi nhận khoản tiền cần đối soát và hoàn lại. Vui lòng
               liên hệ nhà xe, cung cấp mã đặt vé.
             </p>
           )}
@@ -159,8 +167,12 @@ export function TicketPaymentPanel({ booking, onRefresh }) {
             Thanh toán trong 5 phút từ lúc tạo đơn. Hết hạn, đơn tự hủy và ghế
             được mở lại cho khách khác.
           </p>
-          <button type="button" disabled={busy || seconds === 0} onClick={momo}>
-            {busy ? "Đang kết nối…" : "Thanh toán bằng MoMo"}
+          <button
+            type="button"
+            disabled={busy || seconds === 0}
+            onClick={vnpay}
+          >
+            {busy ? "Đang kết nối…" : "Thanh toán bằng VNPAY"}
           </button>
           <p>
             Nếu thanh toán tại quầy/chuyển khoản, nhân viên phải xác nhận khoản
@@ -171,12 +183,14 @@ export function TicketPaymentPanel({ booking, onRefresh }) {
     </section>
   );
 }
-export default function MomoReturnPage() {
+export default function VnpayReturnPage() {
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
   const refresh = useCallback(async () => {
     try {
-      const saved = JSON.parse(sessionStorage.getItem("momoBooking") || "null");
+      const saved = JSON.parse(
+        sessionStorage.getItem("vnpayBooking") || "null",
+      );
       if (!saved) {
         setError(
           "Vui lòng tra cứu vé bằng mã đặt vé và điện thoại để kiểm tra thanh toán.",
@@ -210,9 +224,9 @@ export default function MomoReturnPage() {
   }, [refresh]);
   return (
     <div className="container" style={{ padding: "40px 16px" }}>
-      <h1>Kết quả thanh toán MoMo</h1>
+      <h1>Kết quả thanh toán VNPAY</h1>
       <p>
-        Trạng thái được lấy từ hệ thống sau khi xác minh thông báo của MoMo.
+        Trạng thái được lấy từ hệ thống sau khi xác minh thông báo của VNPAY.
       </p>
       {error && <p role="alert">{error}</p>}
       {result && (

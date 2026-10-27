@@ -1,0 +1,3 @@
+Reference: C:\QLDA\DatVeXe\output\report_complete\reference.docx
+SHA256: 8ee1dfaee398063f9f2f1f3fc5b10846d74cb552e2601bcf256e7f6bc93f25e3
+A4 portrait; margins left 3 right 2 top 2 bottom 2.5 cm. Reference school logo and first cover cloned with project, supervisor and three students substituted. One cover retained rather than duplicate covers. Body Times New Roman 13 pt; headings 16/14/13 pt, black and bold. Caption label chapter.sequence: title, automatic SEQ; separate automatic lists by label. Main report content, all tables, 11 figures and 119-work appendix retained. Cover no page number; preliminary pages Roman; body restart Arabic. User-requested completion scenario affects narrative and final EV/PV, not missing actual costs or defect evidence.

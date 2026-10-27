@@ -1,3 +1,5 @@
+> **Cổng thanh toán hiện tại: VNPAY sandbox.** Đã thay MoMo trên giao diện và luồng tạo thanh toán mới. Làm theo [HUONG_DAN_VNPAY_EMAIL.md](HUONG_DAN_VNPAY_EMAIL.md). Các phần MoMo bên dưới là tài liệu lịch sử; chưa bật nhận tiền thật từ VNPAY khi chưa có tài khoản/khóa và IPN được khai báo.
+
 # Rightway - Hệ thống Đặt Vé Xe Trực Tuyến & Trang Quản Trị Admin
 
 Dự án fullstack đặt vé xe khách Rightway gồm **Backend Express (JavaScript + Prisma + SQL Server)** và **Frontend React (Vite + React Router)** mô phỏng sát 100% thiết kế giao diện Figma, kèm theo **Trang Quản trị Admin**.
@@ -226,3 +228,12 @@ Remove-Item Env:RUN_DB_TESTS
 Test dùng SQL Server thật và giả lập cổng MoMo/SMTP: hết hạn/giải phóng ghế, bán tại quầy, đổi chuyến và chênh lệch, vô hiệu QR cũ, chống quét sai chuyến/quét trùng, chữ ký IPN, replay và thanh toán muộn, email lỗi/thử lại. Cần xác minh merchant production, IPN công khai và SMTP thật trước khi mở cho khách thanh toán thực tế.
 
 Hướng dẫn dành cho người chưa có merchant/tên miền/SMTP: [HUONG_DAN_MOMO_EMAIL.md](HUONG_DAN_MOMO_EMAIL.md). Kiểm tra cấu hình không in khóa và không thu tiền bằng `npm run integrations:check` trong backend.
+
+
+### Tích hợp VNPAY (hiện hành)
+
+- `POST /api/ticketing/bookings/:id/vnpay`: tạo URL đã ký HMAC-SHA512, lấy số tiền từ database nhân 100, thời gian GMT+7, `vnp_ExpireDate` bằng hạn giữ ghế gốc.
+- `GET /api/ticketing/vnpay/ipn`: xác minh chữ ký, TmnCode, mã giao dịch, số tiền và cả ResponseCode/TransactionStatus. Trả JSON RspCode theo giao thức VNPAY: 00 đã ghi nhận, 02 đã xử lý, 01 không tìm thấy, 04 sai số tiền, 97 sai chữ ký, 99 lỗi. Chỉ IPN hợp lệ ghi khoản thu/cấp QR/xếp lịch email; `/payment/vnpay-return` chỉ đọc trạng thái.
+- PaymentAttempt có `provider` để cách ly VNPAY và giao dịch lịch sử MoMo. URL tạo thanh toán MoMo đã đóng; callback MoMo cũ được giữ cho đối soát lịch sử.
+- Trang đối soát dùng tên chung **Đối soát thanh toán**, admin tại `/admin/payment-issues`, nhà xe/quản lý tại khu vực riêng. Khoản trả muộn không lấy lại ghế đã giải phóng, được gắn cờ cần hoàn tiền thủ công.
+- Test SQL Server dùng fixture riêng; bộ kiểm thử chạy nối tiếp vì dùng chung database phát triển. `npm test` kiểm tra mock/unit, `$env:RUN_DB_TESTS='1'; npm test` bật cả tích hợp. Không tạo giao dịch ở cổng thật.

@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import { AuthProvider } from './context/AuthContext';
 import { NotificationProvider } from './context/NotificationContext';
 import { AdminRoute, GuestRoute } from './components/auth/RouteGuards';
-import MomoReturnPage from './pages/TicketPaymentPanel';
+import VnpayReturnPage from './pages/TicketPaymentPanel';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import HomePage from './pages/HomePage';
@@ -35,7 +35,7 @@ const OperatorPortal = lazy(() => import('./pages/operator/OperatorPortal'));
 const CompanyAccessPage = lazy(() => import('./pages/operator/OperatorPortal').then(m => ({ default: m.CompanyAccessPage })));
 const PaymentBookingsPage = lazy(() => import('./pages/operator/OperatorPortal').then(m => ({ default: m.BookingsPage })));
 
-const MomoIssuesPage = lazy(() => import('./pages/operator/CounterPages').then(m => ({default:m.PaymentIssuesPage})));
+const PaymentIssuesPage = lazy(() => import('./pages/operator/CounterPages').then(m => ({default:m.PaymentIssuesPage})));
 function MainLayout() {
   return (
     <>
@@ -49,7 +49,7 @@ function MainLayout() {
           <Route path="/booking/passenger" element={<PassengerInfoPage />} />
           <Route path="/booking/payment" element={<PaymentPage />} />
           <Route path="/booking/success" element={<BookingSuccessPage />} />
-          <Route path="/payment/momo-return" element={<MomoReturnPage />} />
+          <Route path="/payment/vnpay-return" element={<VnpayReturnPage />} />
           <Route path="/lookup" element={<BookingLookupPage />} />
           <Route path="/my-bookings" element={<BookingLookupPage />} />
           <Route
@@ -87,7 +87,7 @@ function AppContent() {
         <AdminLayout>
           <Routes>
             <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/admin/momo-issues" element={<MomoIssuesPage admin />} />
+            <Route path="/admin/payment-issues" element={<PaymentIssuesPage admin />} />
             <Route path="/admin/company-access" element={<CompanyAccessPage />} />
             <Route path="/admin/payments" element={<PaymentBookingsPage admin />} />
             <Route path="/admin/reports" element={<AdminReports />} />

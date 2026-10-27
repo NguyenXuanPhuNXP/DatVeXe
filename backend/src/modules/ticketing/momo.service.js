@@ -148,7 +148,7 @@ async function createMomoPayment(id, identity, { fetcher = fetch } = {}) {
       if (guard.count !== 1)
         throw new HttpError(409, "BOOKING_CHANGED", "Vé vừa thay đổi");
       const pending = await tx.paymentAttempt.findFirst({
-        where: { bookingId: id, status: "pending" },
+        where: { bookingId: id, status: "pending", provider:"momo" },
         orderBy: { createdAt: "desc" },
       });
       if (pending) return pending;
@@ -277,7 +277,7 @@ async function handleMomoIpn(input) {
           where: { orderId: data.orderId },
         });
         if (
-          !attempt ||
+          !attempt || attempt.provider!=="momo" ||
           attempt.requestId !== data.requestId ||
           attempt.amount !== data.amount
         )
@@ -315,6 +315,7 @@ async function handleMomoIpn(input) {
         const previous = await tx.paymentAttempt.findFirst({
           where: {
             transId: data.transId,
+            provider:"momo",
             status: { in: ["succeeded", "refund_required"] },
             id: { not: attempt.id },
           },

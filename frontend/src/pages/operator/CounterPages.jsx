@@ -1,4 +1,4 @@
-import {DecodeHintType} from '@zxing/library';
+import { DecodeHintType } from "@zxing/library";
 import { useCallback, useEffect, useRef, useState } from "react";
 import api from "../../services/api";
 import { TicketPaymentPanel } from "../TicketPaymentPanel";
@@ -532,17 +532,25 @@ function Scanner({ onRead }) {
           "Camera cần HTTPS hoặc localhost. Có thể chọn ảnh QR bên dưới.",
         );
       const { BrowserQRCodeReader } = await import("@zxing/browser");
-      const reader = new BrowserQRCodeReader(new Map([[DecodeHintType.TRY_HARDER,true]]));
-      const pureReader = new BrowserQRCodeReader(new Map([[DecodeHintType.PURE_BARCODE,true]]));
-      let lastFallback=0;
+      const reader = new BrowserQRCodeReader(
+        new Map([[DecodeHintType.TRY_HARDER, true]]),
+      );
+      const pureReader = new BrowserQRCodeReader(
+        new Map([[DecodeHintType.PURE_BARCODE, true]]),
+      );
+      let lastFallback = 0;
       setRunning(true);
       controls.current = await reader.decodeFromVideoDevice(
         undefined,
         video.current,
         (result, _error, ctrl) => {
-          if(!result && Date.now()-lastFallback>700){
-            lastFallback=Date.now();
-            try{result=pureReader.decode(video.current);}catch{/* Wait for a clearer frame. */}
+          if (!result && Date.now() - lastFallback > 700) {
+            lastFallback = Date.now();
+            try {
+              result = pureReader.decode(video.current);
+            } catch {
+              /* Wait for a clearer frame. */
+            }
           }
           if (result) {
             ctrl.stop();
@@ -570,10 +578,13 @@ function Scanner({ onRead }) {
     try {
       const { BrowserQRCodeReader } = await import("@zxing/browser");
       let result;
-      try{result=await new BrowserQRCodeReader().decodeFromImageUrl(url);}
-      catch{
+      try {
+        result = await new BrowserQRCodeReader().decodeFromImageUrl(url);
+      } catch {
         // Native QR downloads are axis-aligned; pure mode avoids false finder patterns.
-          result=await new BrowserQRCodeReader(new Map([[DecodeHintType.PURE_BARCODE,true]])).decodeFromImageUrl(url);
+        result = await new BrowserQRCodeReader(
+          new Map([[DecodeHintType.PURE_BARCODE, true]]),
+        ).decodeFromImageUrl(url);
       }
       onRead(result.getText());
     } catch {
@@ -763,7 +774,7 @@ export function PaymentIssuesPage({ admin = false }) {
   useEffect(() => {
     let active = true;
     api
-      .get(admin ? "/admin/momo-issues" : "/operator/payment-issues")
+      .get(admin ? "/admin/payment-issues" : "/operator/payment-issues")
       .then((r) => {
         if (active) setIssues(r.data);
       })
@@ -776,11 +787,12 @@ export function PaymentIssuesPage({ admin = false }) {
   }, [admin]);
   return (
     <>
-      <h1>Đối soát MoMo cần hoàn tiền</h1>
+      <h1>Đối soát thanh toán cần hoàn tiền</h1>
       <p>
-        Các khoản tiền được MoMo xác nhận sau khi đơn đã hết hạn, hủy hoặc đã
-        thu bằng phương thức khác. Kiểm tra giao dịch và hoàn tiền trên tài
-        khoản merchant MoMo, liên hệ khách qua thông tin dưới đây.
+        Các khoản tiền được cổng thanh toán xác nhận sau khi đơn đã hết hạn, hủy
+        hoặc đã thu bằng phương thức khác. Kiểm tra giao dịch và hoàn tiền trên
+        tài khoản merchant của cổng thanh toán, liên hệ khách qua thông tin dưới
+        đây.
       </p>
       {error && <p role="alert">{error}</p>}
       <div className="op-table">
@@ -788,7 +800,7 @@ export function PaymentIssuesPage({ admin = false }) {
           <thead>
             <tr>
               <th>Mã đơn / Khách</th>
-              <th>Giao dịch MoMo</th>
+              <th>Cổng / Giao dịch</th>
               <th>Số tiền</th>
               <th>Lý do</th>
             </tr>
@@ -803,7 +815,11 @@ export function PaymentIssuesPage({ admin = false }) {
                   <br />
                   {i.booking.passengerPhone}
                 </td>
-                <td>{i.transId}</td>
+                <td>
+                  {i.provider?.toUpperCase()}
+                  <br />
+                  {i.transId}
+                </td>
                 <td>{currency(i.amount)}</td>
                 <td>{i.message}</td>
               </tr>

@@ -833,7 +833,7 @@ export default function OperatorPortal() {
     ...(["owner", "manager"].includes(member.role)
       ? [
           ["employees", "Quản lý nhân viên"],
-          ["payment-issues", "Đối soát MoMo"],
+          ["payment-issues", "Đối soát thanh toán"],
         ]
       : []),
     ...(owner ? [["revenue", "Thống kê doanh thu"]] : []),

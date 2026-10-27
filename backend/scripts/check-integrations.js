@@ -2,38 +2,32 @@ require("dotenv/config");
 const nodemailer = require("nodemailer");
 (async () => {
   let ready = true;
+  const { env } = require("../src/config/env");
+  const vnpay = require("../src/modules/ticketing/vnpay.service");
   for (const key of [
-    "MOMO_PARTNER_CODE",
-    "MOMO_ACCESS_KEY",
-    "MOMO_SECRET_KEY",
-    "MOMO_IPN_URL",
-    "MOMO_REDIRECT_URL",
+    "VNPAY_TMN_CODE",
+    "VNPAY_HASH_SECRET",
+    "VNPAY_RETURN_URL",
+    "VNPAY_IPN_URL",
+    ...(env.VNPAY_ENV === "production" ? ["VNPAY_PAYMENT_URL"] : []),
   ]) {
-    const ok = Boolean(process.env[key]);
+    const ok = Boolean(env[key]);
     console.log(`${key}: ${ok ? "đã cấu hình" : "CHƯA CÓ"}`);
     if (!ok) ready = false;
   }
-  console.log(`MOMO_ENV: ${process.env.MOMO_ENV || "production"}`);
-  for (const key of ["MOMO_IPN_URL", "MOMO_REDIRECT_URL"]) {
-    if (!process.env[key]) continue;
+  console.log(`VNPAY_ENV: ${env.VNPAY_ENV}`);
+  if (ready) {
     try {
-      const url = new URL(process.env[key]);
-      if (
-        url.protocol !== "https:" ||
-        ["localhost", "127.0.0.1"].includes(url.hostname)
-      )
-        throw Error();
+      vnpay.assertConfig();
       console.log(
-        `${key}: URL HTTPS hợp lệ về định dạng; chưa kiểm chứng truy cập từ MoMo`,
+        "Định dạng cấu hình VNPAY hợp lệ; chưa xác minh IPN từ VNPAY.",
       );
     } catch {
-      console.log(`${key}: cần URL HTTPS công khai`);
+      console.log("Kiểm tra URL và thông tin VNPAY đúng môi trường.");
       ready = false;
     }
   }
-  console.log(
-    "Không tạo giao dịch MoMo, không thu tiền trong bước kiểm tra này.",
-  );
+  console.log("Không tạo giao dịch hoặc thu tiền trong bước kiểm tra này.");
   const smtpKeys = ["SMTP_HOST", "SMTP_USER", "SMTP_PASS", "MAIL_FROM"];
   let smtp = true;
   for (const key of smtpKeys) {
@@ -67,7 +61,7 @@ const nodemailer = require("nodemailer");
   console.log(
     ready
       ? "Cấu hình cơ bản đã sẵn sàng. Cần kiểm thử IPN và email nhận thực tế trước khi mở thanh toán cho khách."
-      : "Chưa đủ cấu hình dùng thật. Làm theo HUONG_DAN_MOMO_EMAIL.md.",
+      : "Chưa đủ cấu hình dùng thật. Làm theo HUONG_DAN_VNPAY_EMAIL.md.",
   );
   process.exitCode = ready ? 0 : 1;
 })().catch(() => {

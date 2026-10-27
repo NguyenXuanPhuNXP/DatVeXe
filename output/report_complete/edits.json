@@ -1,0 +1,302 @@
+{
+  "paragraph_edits": [
+    122,
+    128,
+    138,
+    150,
+    154,
+    158,
+    161,
+    170,
+    184,
+    186,
+    191,
+    196,
+    199,
+    203,
+    205,
+    226,
+    228,
+    239,
+    243,
+    281,
+    287,
+    307,
+    309,
+    331,
+    337
+  ],
+  "captions": [
+    [
+      "Bảng",
+      1,
+      1,
+      "Thành viên và phạm vi phụ trách"
+    ],
+    [
+      "Bảng",
+      2,
+      1,
+      "Thông tin tôn chỉ dự án"
+    ],
+    [
+      "Bảng",
+      2,
+      2,
+      "Phạm vi chức năng"
+    ],
+    [
+      "Bảng",
+      2,
+      3,
+      "Các yêu cầu nghiệp vụ cần kiểm thử"
+    ],
+    [
+      "Bảng",
+      2,
+      4,
+      "Tổng hợp WBS theo Epic"
+    ],
+    [
+      "Bảng",
+      3,
+      1,
+      "Lịch sáu Sprint đồng bộ từ Jira"
+    ],
+    [
+      "Bảng",
+      3,
+      2,
+      "Kết quả CPM ở cấp Subtask"
+    ],
+    [
+      "Bảng",
+      4,
+      1,
+      "Ngân sách lương và đơn giá ngày công bằng đồng"
+    ],
+    [
+      "Bảng",
+      4,
+      2,
+      "Ngân sách dự kiến toàn dự án"
+    ],
+    [
+      "Bảng",
+      4,
+      3,
+      "Ngân sách phân bổ theo Epic"
+    ],
+    [
+      "Bảng",
+      4,
+      4,
+      "Chi phí từ dữ liệu lịch sử Jira hiện có bằng đồng"
+    ],
+    [
+      "Bảng",
+      4,
+      5,
+      "EMV theo lịch Sprint mới với PV EV AC tính bằng triệu đồng"
+    ],
+    [
+      "Bảng",
+      5,
+      1,
+      "Tiêu chí kiểm tra chất lượng"
+    ],
+    [
+      "Hình",
+      5,
+      1,
+      "Pareto Sprint 3 tại ngày 05/10/2026"
+    ],
+    [
+      "Bảng",
+      5,
+      2,
+      "Thống kê nhóm phát hiện tại Sprint 3"
+    ],
+    [
+      "Hình",
+      5,
+      2,
+      "Pareto Sprint 4 tại ngày 10/10/2026"
+    ],
+    [
+      "Bảng",
+      5,
+      3,
+      "Thống kê nhóm phát hiện tại Sprint 4"
+    ],
+    [
+      "Hình",
+      5,
+      3,
+      "Pareto Sprint 5 tại ngày 20/10/2026"
+    ],
+    [
+      "Bảng",
+      5,
+      4,
+      "Thống kê nhóm phát hiện tại Sprint 5"
+    ],
+    [
+      "Bảng",
+      6,
+      1,
+      "Ma trận trách nhiệm tổng hợp"
+    ],
+    [
+      "Bảng",
+      6,
+      2,
+      "Phạm vi kỹ năng theo phân công"
+    ],
+    [
+      "Bảng",
+      6,
+      3,
+      "Phân công ở cấp công việc lá"
+    ],
+    [
+      "Bảng",
+      7,
+      1,
+      "Nội dung trao đổi theo giai đoạn Sprint"
+    ],
+    [
+      "Bảng",
+      7,
+      2,
+      "Kế hoạch truyền thông theo thực tế nhóm"
+    ],
+    [
+      "Bảng",
+      8,
+      1,
+      "Danh mục rủi ro đặc thù của DatVeXe sau rà soát"
+    ],
+    [
+      "Bảng",
+      9,
+      1,
+      "Kế hoạch mua sắm và tình trạng ghi nhận"
+    ],
+    [
+      "Hình",
+      10,
+      1,
+      "Giao diện trang chủ được cung cấp"
+    ],
+    [
+      "Hình",
+      10,
+      2,
+      "Giao diện kết quả tìm chuyến"
+    ],
+    [
+      "Hình",
+      10,
+      3,
+      "Giao diện chọn ghế"
+    ],
+    [
+      "Hình",
+      10,
+      4,
+      "Giao diện thông tin hành khách"
+    ],
+    [
+      "Hình",
+      10,
+      5,
+      "Giao diện bước thanh toán trong luồng thiết kế"
+    ],
+    [
+      "Hình",
+      10,
+      6,
+      "Giao diện xử lý thanh toán trong luồng thiết kế"
+    ],
+    [
+      "Hình",
+      10,
+      7,
+      "Giao diện thông báo đặt vé thành công"
+    ],
+    [
+      "Hình",
+      10,
+      8,
+      "Sơ đồ cơ sở dữ liệu được cung cấp"
+    ],
+    [
+      "Bảng",
+      10,
+      1,
+      "Danh mục sản phẩm và tài liệu liên quan"
+    ],
+    [
+      "Bảng",
+      "A",
+      1,
+      "Danh mục công việc thuộc TASK-1 Phân tích nghiệp vụ & Quản lý dự án"
+    ],
+    [
+      "Bảng",
+      "A",
+      2,
+      "Danh mục công việc thuộc TASK-2 UI/UX & Frontend Foundation"
+    ],
+    [
+      "Bảng",
+      "A",
+      3,
+      "Danh mục công việc thuộc TASK-3 Authentication & Authorization"
+    ],
+    [
+      "Bảng",
+      "A",
+      4,
+      "Danh mục công việc thuộc TASK-4 Quản lý dữ liệu vận tải"
+    ],
+    [
+      "Bảng",
+      "A",
+      5,
+      "Danh mục công việc thuộc TASK-5 Tìm kiếm & Thông tin chuyến xe"
+    ],
+    [
+      "Bảng",
+      "A",
+      6,
+      "Danh mục công việc thuộc TASK-6 Đặt lịch/Đặt chỗ & Quản lý vé"
+    ],
+    [
+      "Bảng",
+      "A",
+      7,
+      "Danh mục công việc thuộc TASK-7 Quản trị & Dashboard thống kê"
+    ],
+    [
+      "Bảng",
+      "A",
+      8,
+      "Danh mục công việc thuộc TASK-8 Import/Export & Báo cáo"
+    ],
+    [
+      "Bảng",
+      "A",
+      9,
+      "Danh mục công việc thuộc TASK-9 AI/ML phát hiện vé trùng"
+    ],
+    [
+      "Bảng",
+      "A",
+      10,
+      "Danh mục công việc thuộc TASK-10 Kiểm thử, Tích hợp & Triển khai"
+    ]
+  ],
+  "output": "C:\\QLDA\\DatVeXe\\output\\report_complete\\Báo cáo quản lý dự án DatVeXe - hoàn tất.docx"
+}

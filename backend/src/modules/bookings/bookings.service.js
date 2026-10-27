@@ -1,3 +1,4 @@
+const {retryTransaction}=require('../../utils/transaction-retry');
 const { randomBytes } = require("node:crypto");
 const { Prisma } = require("@prisma/client");
 const { prisma } = require("../../lib/prisma");
@@ -220,7 +221,7 @@ async function createBookingService(data, options = {}) {
   const bookingCode = `RW${randomBytes(8).toString("hex").toUpperCase()}`;
 
   await expireUnpaidBookings({ tripId });
-  return prisma.$transaction(
+  return retryTransaction(() => prisma.$transaction(
     async (tx) => {
       // ── 1. Kiểm tra trip ──────────────────────────────────────────────────
       const trip = await tx.trip.findUnique({
@@ -306,7 +307,7 @@ async function createBookingService(data, options = {}) {
       // ngăn hai transaction đồng thời cùng đọc-thấy-available rồi cùng tạo booking.
       isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
     },
-  );
+  ));
 }
 
 async function lookupBookingService(bookingCode, phone, userId) {

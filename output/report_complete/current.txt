@@ -1,0 +1,677 @@
+P0 [Normal] TRƯỜNG ĐẠI HỌC CÔNG NGHỆ TP HCM
+P1 [Normal] KHOA CÔNG NGHỆ THÔNG TIN
+P2 [Normal] 
+P3 [Normal] BÁO CÁO ĐỒ ÁN
+P4 [Normal] QUẢN LÝ DỰ ÁN CÔNG NGHỆ THÔNG TIN
+P5 [Normal] 
+P6 [Title] Hệ thống hỗ trợ đặt lịch đặt chỗ trong vé xe
+P7 [Normal] Nhóm 6 • Dự án DatVeXe
+P8 [Normal] Giảng viên hướng dẫn: Nguyễn Hữu Trung
+P9 [Normal] 
+P10 [Normal] Thành phố Hồ Chí Minh, tháng 10 năm 2026
+P11 [Front Heading] NHẬN XÉT CỦA GIẢNG VIÊN
+P12 [Normal] ........................................................................................................
+P13 [Normal] ........................................................................................................
+P14 [Normal] ........................................................................................................
+P15 [Normal] ........................................................................................................
+P16 [Normal] ........................................................................................................
+P17 [Normal] ........................................................................................................
+P18 [Normal] ........................................................................................................
+P19 [Normal] ........................................................................................................
+P20 [Normal] ........................................................................................................
+P21 [Normal] ........................................................................................................
+P22 [Normal] ........................................................................................................
+P23 [Normal] ........................................................................................................
+P24 [Normal] ........................................................................................................
+P25 [Normal] ........................................................................................................
+P26 [Normal] ........................................................................................................
+P27 [Normal] Điểm đánh giá: ................................................
+P28 [Front Heading] LỜI CẢM ƠN
+P29 [Normal] Nhóm em cảm ơn thầy Nguyễn Hữu Trung đã hướng dẫn môn Quản lý dự án Công nghệ thông tin và hỗ trợ nhóm trong quá trình thực hiện đề tài. Thông qua dự án DatVeXe, nhóm có cơ hội áp dụng việc xác định phạm vi, lập lịch, phân công công việc và theo dõi chi phí vào một sản phẩm phần mềm cụ thể.
+P30 [Normal] Báo cáo tổng hợp kế hoạch dự án, kết quả theo dõi trên Jira, các phân tích trong Excel và tài liệu nghiệp vụ của nhóm. Nhóm mong nhận được góp ý của thầy để hoàn thiện cách quản lý và chất lượng sản phẩm.
+P31 [Front Heading] MỤC LỤC
+P32 [toc 1] Chương 1 Tổng quan	8
+P33 [toc 2] 1.1 Giới thiệu đề tài	8
+P34 [toc 2] 1.2 Nhóm thực hiện	8
+P35 [toc 2] 1.3 Mục tiêu và cách thực hiện	8
+P36 [toc 1] Chương 2 Quản lý phạm vi dự án	9
+P37 [toc 2] 2.1 Phát biểu bài toán	9
+P38 [toc 2] 2.2 Tôn chỉ dự án	9
+P39 [toc 2] 2.3 Phát biểu phạm vi	10
+P40 [toc 2] 2.4 Cấu trúc phân rã công việc	11
+P41 [toc 2] 2.5 Sản phẩm bàn giao và chấp nhận	11
+P42 [toc 1] Chương 3 Quản lý thời gian dự án	12
+P43 [toc 2] 3.1 Ước lượng và lập lịch	12
+P44 [toc 2] 3.2 Kế hoạch sáu Sprint	12
+P45 [toc 2] 3.3 Phương pháp CPM	12
+P46 [toc 2] 3.4 Các đường đi cần theo dõi	13
+P47 [toc 1] Chương 4 Quản lý chi phí dự án	14
+P48 [toc 2] 4.1 Cơ sở lập ngân sách	14
+P49 [toc 2] 4.2 Phân bổ ngân sách cho công việc	15
+P50 [toc 2] 4.3 Chi phí thực tế và giới hạn số liệu	15
+P51 [toc 2] 4.4 Báo cáo giá trị thu được EMV	16
+P52 [toc 2] 4.5 Ước lượng COCOMO và biểu đồ Gantt	17
+P53 [toc 1] Chương 5 Quản lý chất lượng dự án	18
+P54 [toc 2] 5.1 Tiêu chí chất lượng sản phẩm	18
+P55 [toc 2] 5.2 Tiêu chí hoàn thành Sprint	18
+P56 [toc 2] 5.3 Phát hiện lỗi tại mốc kết thúc Sprint	18
+P57 [toc 2] 5.4 Nhận xét và hướng xử lý	21
+P58 [toc 1] Chương 6 Quản lý nhân sự dự án	22
+P59 [toc 2] 6.1 Tổ chức và nguồn lực	22
+P60 [toc 2] 6.2 Ma trận trách nhiệm	22
+P61 [toc 2] 6.3 Kỹ năng và phối hợp	22
+P62 [toc 2] 6.4 Tải công việc và chi phí nhân sự	23
+P63 [toc 1] Chương 7 Quản lý truyền thông dự án	24
+P64 [toc 2] 7.1 Thu thập thông tin	24
+P65 [toc 2] 7.2 Phân phối thông tin	24
+P66 [toc 2] 7.3 Giám sát và điều chỉnh	25
+P67 [toc 2] 7.4 Giải quyết khi có xung đột	25
+P68 [toc 1] Chương 8 Quản lý rủi ro dự án	26
+P69 [toc 2] 8.1 Phương pháp nhận biết rủi ro	26
+P70 [toc 2] 8.2 Danh sách rủi ro và biện pháp	26
+P71 [toc 2] 8.3 Đối phó rủi ro ngoài dự kiến	27
+P72 [toc 1] Chương 9 Quản lý mua sắm dự án	28
+P73 [toc 2] 9.1 Danh sách mua sắm và dự toán	28
+P74 [toc 2] 9.2 Nhà cung cấp và lựa chọn dịch vụ	28
+P75 [toc 2] 9.3 Thực hiện và kiểm soát mua sắm	28
+P76 [toc 1] Chương 10 Đính kèm sản phẩm	29
+P77 [toc 2] 10.1 Mã nguồn và tài liệu sản phẩm	29
+P78 [toc 2] 10.2 Giao diện và cơ sở dữ liệu	29
+P79 [toc 2] 10.3 Thành phần hồ sơ đính kèm	35
+P80 [toc 1] Phụ lục A Danh mục 119 công việc theo WBS	36
+P81 [toc 1] Tài liệu tham khảo và nguồn dữ liệu	41
+P82 [Normal] 
+P83 [Front Heading] DANH MỤC BẢNG
+P84 [toc 1] Bảng 1. Thành viên và phạm vi phụ trách	8
+P85 [toc 1] Bảng 2. Thông tin tôn chỉ dự án	9
+P86 [toc 1] Bảng 3. Phạm vi chức năng	10
+P87 [toc 1] Bảng 4. Các yêu cầu nghiệp vụ cần kiểm thử	10
+P88 [toc 1] Bảng 5. Tổng hợp WBS theo Epic	11
+P89 [toc 1] Bảng 6. Lịch sáu Sprint đồng bộ từ Jira	12
+P90 [toc 1] Bảng 7. Kết quả CPM ở cấp Subtask	13
+P91 [toc 1] Bảng 8. Ngân sách lương và đơn giá ngày công bằng đồng	14
+P92 [toc 1] Bảng 9. Ngân sách dự kiến toàn dự án	14
+P93 [toc 1] Bảng 10. Ngân sách phân bổ theo Epic	15
+P94 [toc 1] Bảng 11. Chi phí từ dữ liệu lịch sử Jira hiện có bằng đồng	16
+P95 [toc 1] Bảng 12. EMV theo lịch Sprint mới với PV EV AC tính bằng triệu đồng	16
+P96 [toc 1] Bảng 13. Tiêu chí kiểm tra chất lượng	18
+P97 [toc 1] Bảng 14. Ma trận trách nhiệm tổng hợp	22
+P98 [toc 1] Bảng 15. Phạm vi kỹ năng theo phân công	22
+P99 [toc 1] Bảng 16. Phân công ở cấp công việc lá	23
+P100 [toc 1] Bảng 17. Nội dung trao đổi theo giai đoạn Sprint	24
+P101 [toc 1] Bảng 18. Kế hoạch truyền thông theo thực tế nhóm	24
+P102 [toc 1] Bảng 19. Danh mục rủi ro đặc thù của DatVeXe sau rà soát	26
+P103 [toc 1] Bảng 20. Kế hoạch mua sắm và tình trạng ghi nhận	28
+P104 [toc 1] Bảng 21. Danh mục sản phẩm và tài liệu liên quan	35
+P105 [Normal] 
+P106 [Front Heading] DANH MỤC HÌNH
+P107 [toc 1] Hình 1. Pareto Sprint 3 tại ngày 05/10/2026	19
+P108 [toc 1] Hình 2. Pareto Sprint 4 tại ngày 10/10/2026	20
+P109 [toc 1] Hình 3. Pareto Sprint 5 tại ngày 20/10/2026	21
+P110 [toc 1] Hình 4. Giao diện trang chủ được cung cấp	30
+P111 [toc 1] Hình 5. Giao diện kết quả tìm chuyến	31
+P112 [toc 1] Hình 6. Giao diện chọn ghế	32
+P113 [toc 1] Hình 7. Giao diện thông tin hành khách	33
+P114 [toc 1] Hình 8. Giao diện bước thanh toán trong luồng thiết kế	33
+P115 [toc 1] Hình 9. Giao diện xử lý thanh toán trong luồng thiết kế	34
+P116 [toc 1] Hình 10. Giao diện thông báo đặt vé thành công	34
+P117 [toc 1] Hình 11. Sơ đồ cơ sở dữ liệu được cung cấp	35
+P118 [Normal] 
+P119 [Heading 1] Chương 1 Tổng quan
+P120 [Heading 2] 1.1 Giới thiệu đề tài
+P121 [Normal] DatVeXe là dự án website hỗ trợ hành khách tìm chuyến xe, xem thông tin chuyến, chọn ghế và đặt vé; đồng thời cung cấp các chức năng quản trị dữ liệu vận tải và đơn đặt. Nhóm tập trung vào luồng nghiệp vụ từ tìm kiếm đến quản lý vé, trong đó tính nhất quán của trạng thái ghế là yêu cầu quan trọng khi nhiều người cùng đặt chỗ.
+P122 [Normal] Báo cáo trình bày cách nhóm quản lý phạm vi, thời gian, chi phí, chất lượng, nhân sự, truyền thông, rủi ro và mua sắm. Dữ liệu theo dõi được chốt đến ngày 25/10/2026; thời hạn hoàn thành dự kiến là 01/11/2026. Những công việc sau mốc chốt được trình bày dưới dạng kế hoạch, không xem là kết quả đã nghiệm thu.
+P123 [Heading 2] 1.2 Nhóm thực hiện
+P124 [Normal] Nhóm 6 gồm ba thành viên. Nguyễn Xuân Phú đảm nhiệm Project Manager, Scrum Master, BA và Integration; Nguyễn Hữu Dũng phụ trách Frontend, UX/UI và DevOps; Lê Văn Phú phụ trách Backend/API, Database và Tester. Các thành viên phối hợp theo công việc trên Jira và trách nhiệm chuyên môn của mình.
+P125 [Table Caption] Bảng 1. Thành viên và phạm vi phụ trách
+P126 [Normal] 
+P127 [Heading 2] 1.3 Mục tiêu và cách thực hiện
+P128 [Normal] Nhóm sử dụng Jira để quản lý công việc, GitHub để lưu mã nguồn và Excel để lập WBS, CPM, EMV và Pareto. Lịch được đồng bộ từ Jira ngày 27/10/2026 gồm sáu Sprint từ 14/09 đến 27/10. Giai đoạn 07–13/09 dành cho chuẩn bị; 28/10–01/11 là thời gian dự trữ ngoài Sprint.
+P129 [Heading 1] Chương 2 Quản lý phạm vi dự án
+P130 [Heading 2] 2.1 Phát biểu bài toán
+P131 [Normal] Khi thông tin chuyến, ghế và vé được quản lý rời rạc, hành khách khó biết chỗ còn trống và người quản trị khó kiểm soát các yêu cầu đặt trùng. Dự án xây dựng một website tập trung để tra cứu chuyến, đặt chỗ và quản lý dữ liệu liên quan. Phạm vi nghiệm thu cần dựa trên chức năng hoạt động qua API và dữ liệu, thay vì chỉ dựa vào hình ảnh giao diện.
+P132 [Heading 3] 2.1.1 Thời gian và nguồn lực
+P133 [Normal] Dự án bắt đầu ngày 07/09/2026 với khảo sát, tìm hiểu vấn đề, xác định nhu cầu và thiết kế backlog. Giai đoạn 07–13/09 là chuẩn bị trước Sprint 1. Các Sprint trên Jira diễn ra từ 14/09 đến 27/10; thời gian dự trữ từ 28/10 đến 01/11. Hạn kết thúc dự án vẫn là 01/11/2026.
+P134 [Heading 3] 2.1.2 Ngân sách và nguyên tắc chi phí
+P135 [Normal] Ngân sách dự kiến điều chỉnh là 104.785.000 đồng, gồm 100.000.000 đồng nhân công, 3.000.000 đồng AI, 1.200.000 đồng họp và di chuyển, 150.000 đồng in và đóng báo cáo, cùng 435.000 đồng dự phòng cho các khoản ngoài nhân công. Không dự toán mua thiết bị mới hoặc thuê VPS vì nhóm dùng máy tính cá nhân. AI chỉ được cộng một lần.
+P136 [Heading 3] 2.1.3 Giả định và quản lý thay đổi
+P137 [Normal] Nhóm giả định các thành viên có máy tính và có thể phối hợp trực tiếp; môi trường SQL Server sẵn sàng cho phát triển và demo. Thanh toán trực tuyến thực tế, ứng dụng di động độc lập và theo dõi GPS không thuộc MVP. Những thay đổi về chức năng, lịch và phân công do Nguyễn Xuân Phú điều phối, thông báo trực tiếp kết hợp tin nhắn, sau đó cập nhật tài liệu và công việc liên quan trên Jira.
+P138 [Normal] Đối với hồ sơ thay đổi, nhóm cần ghi rõ nội dung, lý do, ảnh hưởng đến thời gian và chi phí, người quyết định và phiên bản tài liệu áp dụng. Đây là cách chuẩn hóa việc lưu dấu thay đổi; không thay thế cho biên bản hay xác nhận chưa được lập.
+P139 [Heading 2] 2.2 Tôn chỉ dự án
+P140 [Table Caption] Bảng 2. Thông tin tôn chỉ dự án
+P141 [Normal] 
+P142 [Heading 2] 2.3 Phát biểu phạm vi
+P143 [Table Caption] Bảng 3. Phạm vi chức năng
+P144 [Normal] 
+P145 [Normal] Luồng chính được mô tả trong tài liệu nghiệp vụ là Tìm kiếm → Xem chi tiết chuyến → Chọn ghế → Nhập thông tin hành khách → Xác nhận đặt vé → Quản lý vé. Các màn hình thanh toán trong thiết kế chỉ là mô tả luồng giao diện; không được xem là bằng chứng đã tích hợp thanh toán ngân hàng thực tế.
+P146 [Heading 3] 2.3.1 Quy tắc nghiệp vụ
+P147 [Table Caption] Bảng 4. Các yêu cầu nghiệp vụ cần kiểm thử
+P148 [Normal] 
+P149 [Heading 2] 2.4 Cấu trúc phân rã công việc
+P150 [Normal] WBS trong workbook của dự án được sử dụng thay cho WBS của mẫu. Danh mục gồm 10 Epic, 27 Story và 82 Subtask, tổng cộng 119 dòng. Epic và Story là cấp tổng hợp; khi cộng công sức hoặc chi phí chỉ tính một lần từ các công việc lá. Danh mục đủ 119 dòng được đưa vào Phụ lục A để giữ mã, tên và quan hệ phân cấp.
+P151 [Table Caption] Bảng 5. Tổng hợp WBS theo Epic
+P152 [Normal] 
+P153 [Heading 2] 2.5 Sản phẩm bàn giao và chấp nhận
+P154 [Normal] Sản phẩm bàn giao gồm mã nguồn Frontend/Backend, cấu trúc dữ liệu, tài liệu nghiệp vụ, giao diện, bảng quản lý công việc và báo cáo. Điều kiện chấp nhận dự kiến là luồng chính chạy được trên môi trường demo, quyền truy cập được kiểm soát, dữ liệu ghế và vé nhất quán, có kết quả kiểm thử và tài liệu để tái lập môi trường. Báo cáo này không thay thế xác nhận nghiệm thu cuối kỳ.
+P155 [Heading 1] Chương 3 Quản lý thời gian dự án
+P156 [Heading 2] 3.1 Ước lượng và lập lịch
+P157 [Normal] Thời lượng được lấy từ WBS đã lập. Các việc nhỏ có thể được bố trí nửa ngày; thời gian bắt đầu và kết thúc là cửa sổ lịch, còn ngày công là công sức dự kiến. Không cộng toàn bộ cửa sổ lịch của các việc song song để tính thời gian dự án. Previous được xây dựng theo quan hệ nghiệp vụ và kỹ thuật, vì vậy cần rà soát khi thay đổi thứ tự triển khai.
+P158 [Heading 2] 3.2 Kế hoạch sáu Sprint
+P159 [Table Caption] Bảng 6. Lịch sáu Sprint đồng bộ từ Jira
+P160 [Normal] 
+P161 [Normal] Bảng 6 sử dụng ngày bắt đầu và kết thúc kế hoạch trên Jira theo giờ Việt Nam, không dùng thời điểm bấm đóng lại Sprint ngày 27/10 làm thời gian thực hiện. Jira hiện giữ cách nhóm công việc sau khi gộp Sprint 5–6 và 7–8 cũ. Một Epic có thể kéo dài qua nhiều Sprint. Ngày công và quan hệ Previous giữ nguyên; việc đổi cửa sổ lịch không chứng minh đã cân bằng tải nhân sự.
+P162 [Heading 2] 3.3 Phương pháp CPM
+P163 [Normal] Phân tích CPM trong chương này trình bày ở cấp Subtask để theo dõi quan hệ phụ thuộc giữa các công việc trực tiếp. Không cộng thời lượng của cấp tổng hợp vào công việc lá. Mỗi nút có hàng trên là ES, Duration, EF; giữa là mã và tên công việc; hàng dưới là LS, Slack, LF. Với quan hệ kết thúc rồi bắt đầu và không có độ trễ: ES bằng EF lớn nhất của các việc trước, EF = ES + Duration; LF bằng LS nhỏ nhất của các việc sau, LS = LF − Duration; Slack = LS − ES.
+P164 [Normal] Đường găng là đường có tổng thời lượng dài nhất trong mạng, với các công việc có độ dự trữ bằng 0. Đường ngắn nhất chỉ mô tả nhánh ít thời lượng nhất, không đại diện thời gian hoàn thành toàn dự án. Kết quả mạng cũng chưa áp dụng cân bằng tài nguyên, nên không được đồng nhất trực tiếp với số ngày trên lịch.
+P165 [Table Caption] Bảng 7. Kết quả CPM ở cấp Subtask
+P166 [Normal] 
+P167 [Heading 2] 3.4 Các đường đi cần theo dõi
+P168 [Normal] Mạng Subtask: đường ngắn nhất dài 17 ngày; một đường ngắn nhất là TASK-38 → TASK-39 → TASK-40 → TASK-41 → TASK-42 → TASK-56 → TASK-73 → TASK-79 → TASK-108 → TASK-89 → TASK-93 → TASK-99 → TASK-101 → TASK-107 → TASK-111 → TASK-116 → TASK-117 → TASK-118 → TASK-119.
+P169 [Normal] Mạng Subtask: đường dài nhất dài 41 ngày; một đường găng đại diện là TASK-38 → TASK-39 → TASK-43 → TASK-44 → TASK-45 → TASK-46 → TASK-47 → TASK-48 → TASK-52 → TASK-59 → TASK-61 → TASK-70 → TASK-65 → TASK-80 → TASK-68 → TASK-72 → TASK-75 → TASK-78 → TASK-82 → TASK-83 → TASK-88 → TASK-100 → TASK-92 → TASK-93 → TASK-99 → TASK-102 → TASK-103 → TASK-104 → TASK-105 → TASK-106 → TASK-109 → TASK-110 → TASK-112 → TASK-113 → TASK-114 → TASK-115 → TASK-118 → TASK-119.
+P170 [Normal] Mạng Subtask có 210 đường găng cùng thời lượng 41 ngày công theo quan hệ phụ thuộc hiện có. Việc đổi cửa sổ Sprint không tự thay đổi thời lượng hay quan hệ Previous, vì vậy kết quả đường đi CPM vẫn giữ nguyên. Lịch chi tiết cần được kiểm tra thêm về nguồn lực và ràng buộc trước khi chuyển sang công cụ quản lý. Tăng tốc một nhánh chưa chắc rút ngắn dự án nếu nhánh găng khác vẫn giữ nguyên.
+P171 [Heading 1] Chương 4 Quản lý chi phí dự án
+P172 [Heading 2] 4.1 Cơ sở lập ngân sách
+P173 [Normal] Ngân sách nhân công được lập theo mức lương tháng của ba thành viên trong hai tháng. Lương ngày sử dụng để tính chi phí thực tế bằng lương tháng chia 26 ngày công. Vì vậy, ngân sách nhân công hai tháng và chi phí thực tế theo số ngày công là hai đại lượng có cơ sở tính khác nhau; không giảm ngân sách hai tháng xuống tổng công sức các task.
+P174 [Table Caption] Bảng 8. Ngân sách lương và đơn giá ngày công bằng đồng
+P175 [Normal] 
+P176 [Table Caption] Bảng 9. Ngân sách dự kiến toàn dự án
+P177 [Normal] 
+P178 [Normal] Tổng trước dự phòng là 104.350.000 đồng. Dự toán họp giả định 20 buổi trong toàn dự án, phù hợp nhịp họp khoảng 2–3 ngày/lần; mức 20.000 đồng/người/buổi là hạn mức chi hỗ trợ, không mặc định mọi buổi đều phát sinh chi. In ấn dự trù ba bộ, tối đa 60 trang/bộ, đơn giá 500 đồng/trang và 20.000 đồng/bìa. Đây là giả định lập dự toán, chưa phải báo giá hay khoản đã thanh toán. Khoản dự phòng bằng 10% chi phí ngoài nhân công, chỉ chuyển thành thực chi khi phát sinh được chấp thuận.
+P179 [Heading 2] 4.2 Phân bổ ngân sách cho công việc
+P180 [Normal] Để phân tích ngân sách nhân công 100 triệu trên danh mục WBS, báo cáo phân bổ quỹ lương hai tháng của từng người theo tỷ trọng ngày công dự kiến của các Subtask do người đó phụ trách. Đây là cách phân bổ ngân sách, không phải thay đổi ngày công WBS hay đơn giá lương ngày thực tế. Tiền AI lấy theo tỷ trọng phân bổ đã có trong workbook; các khoản mua sắm khác được theo dõi riêng để tránh gán chi phí chưa phát sinh vào một công việc cụ thể.
+P181 [Normal] Ngân sách nhân công một Subtask = quỹ lương hai tháng của người phụ trách × ngày công dự kiến Subtask / tổng ngày công dự kiến các Subtask của người đó. Story cộng từ Subtask, Epic cộng từ Story. Tổng ngân sách công việc gồm nhân công và AI là 103.000.000 đồng. Cộng 1.350.000 đồng họp/in và 435.000 đồng dự phòng thành 104.785.000 đồng. Lịch kế hoạch đã đồng bộ Jira, còn ngày công gốc được giữ nguyên.
+P182 [Table Caption] Bảng 10. Ngân sách phân bổ theo Epic
+P183 [Normal] 
+P184 [Heading 2] 4.3 Chi phí thực tế và giới hạn số liệu
+P185 [Normal] Chi phí nhân công thực tế = số ngày công thực tế × lương tháng / 26. AI ghi nhận theo thanh toán ngày 11/09 và 11/10, mỗi lần 1.500.000 đồng. Thiết bị, họp, in ấn và dự phòng chỉ ghi nhận khi có khoản chi thực tế. Riêng Sprint 1 sử dụng ngày công WBS theo xác nhận công việc hoàn thành đúng hạn nhưng cập nhật Jira trễ.
+P186 [Normal] Nguồn Jira hiện được dùng để suy ra số ngày từ khi bắt đầu xử lý đến hoàn thành hoặc đến ngày chốt. Khoảng thời gian này có thể chứa chờ đợi hoặc trùng lịch giữa các việc của cùng người; chưa tương đương bảng chấm công. Số tổng hợp dưới đây giữ trạng thái tạm tính từ hồ sơ đã có, cần đối chiếu ngày công thực tế trước khi chốt chi phí nhân công. Không có căn cứ coi toàn bộ số này là lương đã thanh toán.
+P187 [Table Caption] Bảng 11. Chi phí từ dữ liệu lịch sử Jira hiện có bằng đồng
+P188 [Normal] 
+P189 [Heading 2] 4.4 Báo cáo giá trị thu được EMV
+P190 [Normal] Báo cáo sử dụng ACWP (AC) là chi phí thực tế, BCWP (EV) là giá trị công việc hoàn thành theo ngân sách, BCWS (PV) là giá trị kế hoạch đến ngày chốt. CPI = EV/AC; CV = EV − AC; SPI = EV/PV; SV = EV − PV. Các chỉ số phải dùng cùng một đường cơ sở ngân sách và cùng ngày chốt.
+P191 [Normal] Báo cáo EMV được lập lũy kế sau các Sprint 2, 3, 4 và 6, lần lượt chốt ngày 26/09, 05/10, 10/10 và 27/10/2026. Mỗi kỳ có đủ 119 công việc; chỉ cộng một lần từ 82 Subtask rồi tổng hợp lên Story và Epic. PV tính theo tỷ lệ cửa sổ kế hoạch đến ngày chốt; EV chỉ ghi đủ khi công việc lá Done. Ngân sách công việc là 103 triệu đồng; họp, in và dự phòng theo dõi riêng, chưa tự gán PV/EV khi chưa có lịch giải ngân. AC tạm tính từ lịch sử Jira đến 25/10, giữ ngoại lệ cập nhật trễ cho đúng nhóm Sprint 1 cũ. Kỳ 27/10 chưa đủ dữ liệu cuối kỳ nên chưa ghi EV, AC, CPI và SPI.
+P192 [Table Caption] Bảng 12. EMV theo lịch Sprint mới với PV EV AC tính bằng triệu đồng
+P193 [Normal] 
+P194 [Normal] Quy tắc đánh dấu đỏ là chi phí thực tế vượt ngân sách dự kiến của cùng công việc hoặc cùng khoản mục. Không tô đỏ chỉ vì ngày cập nhật Jira muộn; không dùng CV âm thay thế cho điều kiện vượt tổng ngân sách công việc.
+P195 [Heading 2] 4.5 Ước lượng COCOMO và biểu đồ Gantt
+P196 [Normal] Nhóm chưa có KLOC được xác nhận để lập ước lượng COCOMO. Gantt và các kỳ báo cáo trong workbook đã cập nhật theo sáu Sprint trên Jira. Mỗi báo cáo EMV có đường thẳng đứng màu đỏ tại ngày report. Ngày hoàn thành thực tế được giữ độc lập với lịch kế hoạch.
+P197 [Heading 1] Chương 5 Quản lý chất lượng dự án
+P198 [Heading 2] 5.1 Tiêu chí chất lượng sản phẩm
+P199 [Normal] Nhóm đánh giá chất lượng theo khả năng thực hiện luồng nghiệp vụ và tính nhất quán dữ liệu. Trạng thái Done trên Jira là nguồn theo dõi hoàn thành công việc, nhưng cần kết hợp kiểm tra mã nguồn và demo để đánh giá chất lượng tích hợp. Tiêu chí dưới đây là cơ sở kiểm tra; không phải bảng kết quả kiểm thử đã đạt.
+P200 [Table Caption] Bảng 13. Tiêu chí kiểm tra chất lượng
+P201 [Normal] 
+P202 [Heading 2] 5.2 Tiêu chí hoàn thành Sprint
+P203 [Normal] Tiêu chí đánh giá thành viên được tổ chức theo sáu Sprint trên Jira. Trước Sprint, nhóm thống nhất mục tiêu và công việc; trong Sprint, thành viên cập nhật tiến độ, vướng mắc; cuối Sprint, nhóm kiểm tra demo và giải thích phần chưa hoàn thành. Đây là tiêu chí đánh giá, chưa tự gán điểm hay kết luận nghiệm thu.
+P204 [Heading 2] 5.3 Phát hiện lỗi tại mốc kết thúc Sprint
+P205 [Normal] Pareto được lập riêng cho từng Sprint, chọn commit cuối trên nhánh Develops không muộn hơn hết ngày kết thúc kế hoạch theo giờ Việt Nam. Các mốc mới là 20/09, 26/09, 05/10, 10/10, 20/10 và 27/10. Đây là kiểm tra hồi cứu ngày 27/10/2026 trên snapshot lịch sử, không phải log test đã chạy tại thời điểm đó. Các phát hiện có thể lặp giữa các kỳ và không được cộng thành tổng lỗi mới độc lập. Hồ sơ thực tế vẫn chốt 25/10, vì vậy chưa kết luận cuối Sprint 6.
+P206 [Heading 3] 5.3.1 Pareto Sprint 1
+P207 [Normal] Mốc 20/09/2026, commit 2c8eb27a475c chỉ có README, chưa có mã ứng dụng để phân tích. Không coi đây là 0 lỗi; tiến độ khảo sát và backlog cần đối chiếu tài liệu/Jira.
+P208 [Heading 3] 5.3.2 Pareto Sprint 2
+P209 [Normal] Mốc 26/09/2026, commit 2c8eb27a475c chỉ có README, chưa có mã ứng dụng để phân tích. Không coi đây là 0 lỗi; tiến độ khảo sát và backlog cần đối chiếu tài liệu/Jira.
+P210 [Heading 3] 5.3.3 Pareto Sprint 3
+P211 [Normal] Mốc 05/10/2026, commit e1603f21528f: 42 phát hiện trong phạm vi kiểm tra. Có thể gồm lỗi lint và lỗi chức năng, không thay thế kiểm thử hệ thống đầy đủ.
+P212 [Normal] 
+P213 [Figure Caption] Hình 1. Pareto Sprint 3 tại ngày 05/10/2026
+P214 [Normal] Chi tiết từng phát hiện, vị trí tệp/dòng, phương pháp và commit được lưu ở sheet Pareto tương ứng trong workbook. Bằng chứng cũ chỉ được tái sử dụng khi mã nguồn liên quan không đổi; các snapshot mới được kiểm tra lint/cú pháp và hồi quy mock booking.
+P215 [Heading 3] 5.3.4 Pareto Sprint 4
+P216 [Normal] Mốc 10/10/2026, commit 33170177f361: 58 phát hiện trong phạm vi kiểm tra. Có thể gồm lỗi lint và lỗi chức năng, không thay thế kiểm thử hệ thống đầy đủ.
+P217 [Normal] 
+P218 [Figure Caption] Hình 2. Pareto Sprint 4 tại ngày 10/10/2026
+P219 [Normal] Chi tiết từng phát hiện, vị trí tệp/dòng, phương pháp và commit được lưu ở sheet Pareto tương ứng trong workbook. Bằng chứng cũ chỉ được tái sử dụng khi mã nguồn liên quan không đổi; các snapshot mới được kiểm tra lint/cú pháp và hồi quy mock booking.
+P220 [Heading 3] 5.3.5 Pareto Sprint 5
+P221 [Normal] Mốc 20/10/2026, commit 9a8395a8b50e: 63 phát hiện trong phạm vi kiểm tra. Có thể gồm lỗi lint và lỗi chức năng, không thay thế kiểm thử hệ thống đầy đủ.
+P222 [Normal] 
+P223 [Figure Caption] Hình 3. Pareto Sprint 5 tại ngày 20/10/2026
+P224 [Normal] Chi tiết từng phát hiện, vị trí tệp/dòng, phương pháp và commit được lưu ở sheet Pareto tương ứng trong workbook. Bằng chứng cũ chỉ được tái sử dụng khi mã nguồn liên quan không đổi; các snapshot mới được kiểm tra lint/cú pháp và hồi quy mock booking.
+P225 [Heading 3] 5.3.6 Pareto Sprint 6
+P226 [Normal] Mốc 27/10/2026 nằm sau ngày chốt dữ liệu thực tế 25/10. Chưa ghi số lỗi hoặc lập biểu đồ kết quả cuối Sprint; cần cập nhật snapshot và kết quả khi chốt kỳ.
+P227 [Heading 2] 5.4 Nhận xét và hướng xử lý
+P228 [Normal] Nhóm ưu tiên lỗi sai dữ liệu và phân quyền trước, sau đó xử lý nhóm xuất hiện nhiều. Ngưỡng 80% hỗ trợ chọn nhóm nguyên nhân, không thay đánh giá mức nghiêm trọng. Lỗi lint không đồng nghĩa lỗi người dùng đã gặp. Kết quả kiểm thử chức năng, đồng thời, hồi quy và UAT cần có đầu vào, kỳ vọng và kết quả thực tế; hồ sơ hiện chưa đủ để kết luận nghiệm thu.
+P229 [Heading 1] Chương 6 Quản lý nhân sự dự án
+P230 [Heading 2] 6.1 Tổ chức và nguồn lực
+P231 [Normal] Nhóm duy trì ba thành viên trong kế hoạch hai tháng. Nguyễn Xuân Phú đảm nhiệm Project Manager / Scrum Master / BA / Integration; Nguyễn Hữu Dũng đảm nhiệm Frontend / UX/UI / DevOps; Lê Văn Phú đảm nhiệm Backend/API / Database / Tester. Phân công ở cấp Subtask được giữ theo WBS; vai trò chính không đồng nghĩa một người thực hiện toàn bộ công việc thuộc một Epic.
+P232 [Heading 2] 6.2 Ma trận trách nhiệm
+P233 [Normal] Bảng sau hệ thống hóa vai trò đã mô tả trong tài liệu. A là người điều phối và chịu trách nhiệm quyết định, R là người thực hiện chính, C là người phối hợp. Đây là ma trận tổng hợp theo vai trò, không thay thế người được gán ở từng Subtask.
+P234 [Table Caption] Bảng 14. Ma trận trách nhiệm tổng hợp
+P235 [Normal] 
+P236 [Heading 2] 6.3 Kỹ năng và phối hợp
+P237 [Table Caption] Bảng 15. Phạm vi kỹ năng theo phân công
+P238 [Normal] 
+P239 [Normal] Báo cáo không quy đổi phân công thành điểm kỹ năng vì chưa có đánh giá thực tế được xác nhận. Các tiêu chí trong tài liệu đánh giá thành viên gồm hoàn thành công việc, chất lượng, đúng hạn, tham gia, phối hợp, cập nhật Jira/Git và minh chứng. Điểm cá nhân cần được nhóm đánh giá dựa trên dữ liệu, không tự gán trong báo cáo.
+P240 [Heading 2] 6.4 Tải công việc và chi phí nhân sự
+P241 [Table Caption] Bảng 16. Phân công ở cấp công việc lá
+P242 [Normal] 
+P243 [Normal] Ngày công WBS thể hiện phần công sức đã phân bổ vào các Subtask, không đại diện toàn bộ năng lực hai tháng. Cần theo dõi thêm thời gian họp, sửa lỗi, hỗ trợ và tài liệu để đánh giá tải thực tế. Khi nhiều công việc trùng thời gian, nhóm cần đối chiếu khả năng của từng người trước khi kết luận lịch khả thi.
+P244 [Heading 1] Chương 7 Quản lý truyền thông dự án
+P245 [Heading 2] 7.1 Thu thập thông tin
+P246 [Normal] Nhóm trao đổi chủ yếu bằng các buổi gặp trực tiếp, khoảng 2–3 ngày một lần, mỗi buổi khoảng 30 phút. Trước và sau mỗi Sprint đều có họp. Nguyễn Xuân Phú chủ trì và theo dõi tiến độ của các thành viên. Thành viên cập nhật Jira hằng ngày để cung cấp trạng thái công việc.
+P247 [Table Caption] Bảng 17. Nội dung trao đổi theo giai đoạn Sprint
+P248 [Normal] 
+P249 [Normal] Khi gặp lỗi hoặc nguy cơ chậm việc, thành viên báo cáo trực tiếp cho Nguyễn Xuân Phú. Nhóm chưa xác lập thời hạn phản hồi cố định bằng văn bản; việc xử lý dựa trên tình huống và mức ảnh hưởng đến công việc liên quan.
+P250 [Heading 2] 7.2 Phân phối thông tin
+P251 [Normal] Nhóm theo dõi thông báo công việc qua Page trên Facebook. Jira được dùng để cập nhật tiến độ hằng ngày; tài liệu được lưu trong Documents trên Jira và do Nguyễn Xuân Phú cập nhật. Khi thay đổi yêu cầu, lịch hoặc phân công, Nguyễn Xuân Phú thông báo trực tiếp kết hợp tin nhắn để các thành viên nắm được nội dung.
+P252 [Table Caption] Bảng 18. Kế hoạch truyền thông theo thực tế nhóm
+P253 [Normal] 
+P254 [Normal] Nguyễn Xuân Phú đại diện liên hệ giảng viên qua Zalo. Các mốc trao đổi chưa được xác định rõ thành lịch cố định. Nhóm tiếp nhận góp ý và trao đổi lại để điều chỉnh phần việc liên quan.
+P255 [Heading 2] 7.3 Giám sát và điều chỉnh
+P256 [Normal] Nhóm theo dõi công việc chủ yếu bằng Jira và kiểm tra GitHub; đến cuối Sprint mới kiểm tra demo. Việc kết hợp ba nguồn giúp đối chiếu trạng thái task, thay đổi mã nguồn và kết quả chạy tích hợp. Khi phát hiện chậm việc, Nguyễn Xuân Phú nhắc nhở lần một và lần hai. Nếu thành viên chưa hoàn thành hoặc chưa phản hồi hợp lý, nhóm tổ chức họp để giải quyết nguyên nhân và thống nhất phương án.
+P257 [Normal] Do chủ yếu họp trực tiếp, nhóm không có ảnh hoặc biên bản họp để đính kèm. Jira và GitHub là các nguồn hỗ trợ đối chiếu tiến độ; các nguồn này không thay thế bằng chứng về nội dung một cuộc họp cụ thể.
+P258 [Heading 2] 7.4 Giải quyết khi có xung đột
+P259 [Normal] Khi có bất đồng, các thành viên họp, trình bày phương án và phân tích rõ ưu điểm, nhược điểm. Nguyễn Xuân Phú đưa ra quyết định cuối cùng sau khi nghe ý kiến. Đến thời điểm cung cấp thông tin, nhóm đã có tình trạng chậm việc nhưng chưa ghi nhận xung đột hoặc hiểu nhầm đáng kể. Cách xử lý là nhắc nhở và họp khi vấn đề chưa được giải quyết.
+P260 [Heading 1] Chương 8 Quản lý rủi ro dự án
+P261 [Heading 2] 8.1 Phương pháp nhận biết rủi ro
+P262 [Normal] Nhóm nhận biết rủi ro từ phạm vi WBS, luồng đặt vé, cấu hình triển khai bằng máy cá nhân và các phát hiện đã lưu trong mã nguồn. Danh sách được rà soát theo các nhóm nghiệp vụ, kỹ thuật, dữ liệu, nhân sự và chi phí. Rủi ro phân quyền và tài nguyên API tham khảo OWASP API Security Top 10 2023 [10]; giao dịch và sao lưu tham khảo Microsoft SQL Server [11], [12].
+P263 [Heading 2] 8.2 Danh sách rủi ro và biện pháp
+P264 [Table Caption] Bảng 19. Danh mục rủi ro đặc thù của DatVeXe sau rà soát
+P265 [Normal] 
+P266 [Normal] Bảng 19 là đánh giá kế hoạch sau rà soát, không phải thống kê xác suất hay khẳng định tất cả sự cố đã xảy ra. P là khả năng và I là tác động, cùng thang 1–3: thấp, trung bình, cao. Điểm 6–9 ưu tiên cao, 3–4 trung bình, 1–2 thấp. Điểm của nhóm phân quyền và kiểm thử được ưu tiên do các phát hiện trong hồ sơ Pareto. Nguyễn Xuân Phú điều phối; người phụ trách công việc và kỹ thuật liên quan cùng xử lý theo phân công được xác nhận.
+P267 [Heading 2] 8.3 Đối phó rủi ro ngoài dự kiến
+P268 [Normal] Đối với rủi ro chưa có trong danh sách, phương án đề xuất là báo ngay cho trưởng nhóm, xác định phần bị ảnh hưởng và họp nếu cần. Nhóm lựa chọn cách xử lý theo mức tác động đến dữ liệu, thời hạn và phạm vi MVP; chỉ sử dụng dự phòng khi đã xác định nhu cầu. Sau xử lý cần cập nhật task, tài liệu và nguyên nhân để tránh lặp lại.
+P269 [Heading 1] Chương 9 Quản lý mua sắm dự án
+P270 [Heading 2] 9.1 Danh sách mua sắm và dự toán
+P271 [Normal] Nhóm tận dụng máy tính cá nhân và các công cụ sẵn có. Tổng ngân sách mua sắm và chi phí hỗ trợ sau điều chỉnh là 4.785.000 đồng, gồm AI 3.000.000 đồng, họp/di chuyển 1.200.000 đồng, in và đóng báo cáo 150.000 đồng, dự phòng 435.000 đồng. Không bố trí chi mua/thuê thiết bị hoặc VPS khi chưa có nhu cầu cụ thể.
+P272 [Table Caption] Bảng 20. Kế hoạch mua sắm và tình trạng ghi nhận
+P273 [Normal] 
+P274 [Heading 2] 9.2 Nhà cung cấp và lựa chọn dịch vụ
+P275 [Normal] Thông tin hiện có xác định ba tài khoản AI dùng trong hai tháng, thanh toán theo tháng. Tên nhà cung cấp, tên gói, người thanh toán và chứng từ chưa được cung cấp đầy đủ nên chưa thể ghi thành hồ sơ mua sắm hoàn chỉnh. Các khoản còn lại cần lựa chọn theo nhu cầu thực tế và ngân sách; không suy đoán đơn vị cung cấp từ tên công cụ đang sử dụng.
+P276 [Heading 2] 9.3 Thực hiện và kiểm soát mua sắm
+P277 [Normal] Theo tài liệu Chương 9, thành viên đề xuất nhu cầu, nêu mục đích và thời điểm sử dụng; nhóm xem xét phương án tận dụng, mượn, thuê hoặc mua. Nguyễn Xuân Phú tổng hợp và theo dõi ngân sách. Khi phát sinh khoản chi, cần lưu chứng từ hoặc thông tin giao dịch, người thanh toán, nội dung và ngày ghi nhận. Phát sinh vượt dự toán cần được đánh giá trong tổng ngân sách trước khi điều chỉnh.
+P278 [Normal] Tiền AI chỉ được ghi nhận một lần, không cộng lại phần đã phân bổ cho task. Dự phòng chỉ chuyển thành thực chi khi có khoản sử dụng cụ thể được chấp thuận.
+P279 [Heading 1] Chương 10 Đính kèm sản phẩm
+P280 [Heading 2] 10.1 Mã nguồn và tài liệu sản phẩm
+P281 [Normal] Mã nguồn DatVeXe gồm Frontend React/Vite và Backend Express, sử dụng Prisma với SQL Server. Tài liệu README hướng dẫn cấu hình và chạy môi trường phát triển. Các liên kết dưới đây là địa chỉ sản phẩm và tài liệu được nhóm cung cấp; sự tồn tại của liên kết không đồng nghĩa mọi chức năng đã nghiệm thu.
+P282 [Normal] GitHub: https://github.com/NguyenXuanPhuNXP/DatVeXe
+P283 [Normal] Jira: https://datvexe.atlassian.net/jira/software/c/projects/TASK/pages
+P284 [Normal] Figma: https://www.figma.com/design/K4Wkz3rdaxlmw0qo5vso4F/Untitled
+P285 [Normal] Bài trình bày: https://canva.link/12j79hp9nfkow1f
+P286 [Heading 2] 10.2 Giao diện và cơ sở dữ liệu
+P287 [Normal] Các hình đính kèm lấy từ thư mục UI-DB của dự án, thể hiện thiết kế hoặc giao diện đã lưu. Chúng minh họa sản phẩm, không thay thế kết quả kiểm thử chức năng hay xác nhận thanh toán thực tế.
+P288 [Normal] 
+P289 [Figure Caption] Hình 4. Giao diện trang chủ được cung cấp
+P290 [Normal] 
+P291 [Figure Caption] Hình 5. Giao diện kết quả tìm chuyến
+P292 [Normal] 
+P293 [Figure Caption] Hình 6. Giao diện chọn ghế
+P294 [Normal] 
+P295 [Figure Caption] Hình 7. Giao diện thông tin hành khách
+P296 [Normal] 
+P297 [Figure Caption] Hình 8. Giao diện bước thanh toán trong luồng thiết kế
+P298 [Normal] 
+P299 [Figure Caption] Hình 9. Giao diện xử lý thanh toán trong luồng thiết kế
+P300 [Normal] 
+P301 [Figure Caption] Hình 10. Giao diện thông báo đặt vé thành công
+P302 [Normal] 
+P303 [Figure Caption] Hình 11. Sơ đồ cơ sở dữ liệu được cung cấp
+P304 [Heading 2] 10.3 Thành phần hồ sơ đính kèm
+P305 [Table Caption] Bảng 21. Danh mục sản phẩm và tài liệu liên quan
+P306 [Normal] 
+P307 [Normal] Jira, workbook và báo cáo đã được đối chiếu theo sáu Sprint; EMV chốt sau Sprint 2, 3, 4 và 6. Hai Sprint rỗng sau gộp đã được xóa trên Jira. Tổng dự toán gồm mua sắm vẫn là 104.785.000 đồng; chi phí thực tế là tạm tính từ hồ sơ Jira chốt 25/10 và cần đối chiếu ngày công trước khi xác nhận.
+P308 [Heading 1] Phụ lục A Danh mục 119 công việc theo WBS
+P309 [Normal] Danh mục giữ đủ 119 công việc và thứ tự WBS; E là Epic, S là Story, T là Subtask. Cột ngày là kế hoạch, không phải ngày thực tế. Ngày Epic đối chiếu Jira và ảnh Timeline người dùng cung cấp: Epic 8 và 9 từ 17–23/10, Epic 10 từ 24–27/10. Việc con phân bổ tương đối theo WBS gốc, giữ ngày công và Previous; cần rà soát tải nhân sự trước khi coi đây là lịch đã cân bằng nguồn lực. Chuẩn bị 07–13/09 và dự trữ 28/10–01/11 không tạo thêm mã công việc vào tổng 119. Dũng Nguyễn trên Jira là Nguyễn Hữu Dũng; Lê Văn phú là Lê Văn Phú.
+P310 [Heading 3] TASK-1 Phân tích nghiệp vụ & Quản lý dự án
+P311 [Normal] 
+P312 [Heading 3] TASK-2 UI/UX & Frontend Foundation
+P313 [Normal] 
+P314 [Heading 3] TASK-3 Authentication & Authorization
+P315 [Normal] 
+P316 [Heading 3] TASK-4 Quản lý dữ liệu vận tải
+P317 [Normal] 
+P318 [Heading 3] TASK-5 Tìm kiếm & Thông tin chuyến xe
+P319 [Normal] 
+P320 [Heading 3] TASK-6 Đặt lịch/Đặt chỗ & Quản lý vé
+P321 [Normal] 
+P322 [Heading 3] TASK-7 Quản trị & Dashboard thống kê
+P323 [Normal] 
+P324 [Heading 3] TASK-8 Import/Export & Báo cáo
+P325 [Normal] 
+P326 [Heading 3] TASK-9 AI/ML phát hiện vé trùng
+P327 [Normal] 
+P328 [Heading 3] TASK-10 Kiểm thử, Tích hợp & Triển khai
+P329 [Normal] 
+P330 [Heading 1] Tài liệu tham khảo và nguồn dữ liệu
+P331 [Normal] [1] Báo cáo mẫu BaoCao_QLDACNTT.pdf trong OneDrive_2026-10-25.zip, dùng tham khảo bố cục.
+P332 [Normal] [2] Báo cáo giữa kỳ.docx của nhóm 6, dùng thông tin đề tài, thành viên, Charter và phạm vi.
+P333 [Normal] [3] Workbook DatVeXe - 119 cong viec - ke hoach den 01-11-2026.xlsx, các sheet WBS, CPM, EMV và Pareto.
+P334 [Normal] [4] Tài liệu Xác định Actor và Phạm vi MVP; Phân tích quy trình Tìm kiếm→Đặt vé; Xác định trạng thái vé và business rule.
+P335 [Normal] [5] Tài liệu Chương 8 về quản lý rủi ro; Chương 9 về quản lý mua sắm; Tiêu chí đánh giá thành viên.
+P336 [Normal] [6] Thư mục UI-DB, DB_UI.docx và Link tài liệu.docx do nhóm cung cấp.
+P337 [Normal] [7] Dữ liệu Jira và hồ sơ rà soát snapshot GitHub đã lưu, chốt ngày 25/10/2026.
+P338 [Normal] [8] Nội dung xác nhận trực tiếp của Nguyễn Xuân Phú về lương, mua AI, mua sắm, ngày chốt và cách truyền thông của nhóm.
+P339 [Normal] [9] README.md và backend/prisma/schema.prisma trong mã nguồn DatVeXe, đối chiếu thành phần kỹ thuật.
+P340 [Normal] [10] OWASP. API Security Top 10 2023. https://api-security.owasp.org/editions/2023/en/0x11-t10/ (truy cập 26/10/2026).
+P341 [Normal] [11] Microsoft Learn. Transaction locking and row versioning guide. https://learn.microsoft.com/en-us/sql/relational-databases/sql-server-transaction-locking-and-row-versioning-guide (truy cập 26/10/2026).
+P342 [Normal] [12] Microsoft Learn. Back up and restore SQL Server databases. https://learn.microsoft.com/en-us/sql/relational-databases/backup-restore/back-up-and-restore-of-sql-server-databases (truy cập 26/10/2026).
+TABLES
+TABLE 0
+Sinh viên thực hiện | Mã số sinh viên
+Nguyễn Hữu Dũng | 2380600299
+Lê Văn Phú | 2380601701
+Nguyễn Xuân Phú | 2380601708
+TABLE 1
+Thành viên | Vai trò chính | Trách nhiệm
+Nguyễn Xuân Phú | Project Manager / Scrum Master / BA / Integration | Quản lý dự án, điều phối Scrum, phân tích nghiệp vụ và tích hợp hệ thống
+Nguyễn Hữu Dũng | Frontend / UX/UI / DevOps | Frontend, trải nghiệm/giao diện người dùng và DevOps/triển khai
+Lê Văn Phú | Backend/API / Database / Tester | Backend/API, cơ sở dữ liệu và kiểm thử
+TABLE 2
+Thuộc tính | Nội dung
+Tên dự án | Hệ thống hỗ trợ đặt lịch đặt chỗ trong vé xe
+Mã dự án | DatVeXe; Jira project TASK
+Ngày bắt đầu | 07/09/2026
+Quản lý dự án | Nguyễn Xuân Phú
+Kết thúc dự kiến | 01/11/2026
+Ngân sách gồm dự phòng | 104.785.000 đồng
+Sản phẩm | Mã nguồn, giao diện, API, CSDL, tài liệu và các bảng quản lý dự án
+TABLE 3
+Nhóm chức năng | Nội dung trong phạm vi
+Tài khoản | Đăng ký, đăng nhập, đăng xuất, JWT và phân quyền
+Vận tải | Quản lý xe, tuyến đường, điểm đón trả, chuyến xe và lịch chạy
+Khách hàng | Tìm kiếm, lọc chuyến, xem chi tiết, chọn ghế và đặt vé
+Vé và quản trị | Xem/hủy vé, quản trị booking, người dùng và dashboard
+Mở rộng theo kế hoạch | Import/export, báo cáo và hỗ trợ phát hiện vé trùng
+Hoàn thiện | Kiểm thử, tích hợp, tài liệu và triển khai demo
+TABLE 4
+Quy tắc | Yêu cầu
+Quyền truy cập | Người dùng đăng nhập trước khi đặt vé và chỉ xem vé của mình; Admin có quyền phù hợp.
+Ghế hợp lệ | Chỉ đặt ghế còn trống; kiểm tra lại ở máy chủ tại thời điểm xác nhận.
+Chống đặt trùng | Một ghế không được có hai vé hợp lệ trên cùng chuyến và ngày đi.
+Tính nguyên tử | Kiểm tra, giữ ghế và tạo booking/ticket phải được xử lý nhất quán bằng transaction.
+Thời điểm và hủy vé | Không đặt khi chuyến đã khởi hành; hủy vé theo điều kiện và trả ghế phù hợp.
+Lưu lịch sử | Hạn chế xóa vật lý vé đã phát sinh; dùng trạng thái để phục vụ đối chiếu.
+TABLE 5
+Mã Epic | Nhóm công việc | Số Story | Số Subtask
+TASK-1 | Phân tích nghiệp vụ & Quản lý dự án | 2 | 5
+TASK-2 | UI/UX & Frontend Foundation | 2 | 6
+TASK-3 | Authentication & Authorization | 3 | 11
+TASK-4 | Quản lý dữ liệu vận tải | 3 | 10
+TASK-5 | Tìm kiếm & Thông tin chuyến xe | 3 | 10
+TASK-6 | Đặt lịch/Đặt chỗ & Quản lý vé | 4 | 14
+TASK-7 | Quản trị & Dashboard thống kê | 3 | 8
+TASK-8 | Import/Export & Báo cáo | 2 | 6
+TASK-9 | AI/ML phát hiện vé trùng | 1 | 4
+TASK-10 | Kiểm thử, Tích hợp & Triển khai | 4 | 8
+TABLE 6
+Sprint | Thời gian 2026 | Ngày lịch | Mục tiêu trên Jira
+1 | 14/09–20/09 | 7 | Nền tảng, UI/UX và xác thực: nghiệp vụ, routing, đăng ký, đăng nhập, phân quyền.
+2 | 21/09–26/09 | 6 | Dữ liệu vận tải và tìm chuyến: xe, tuyến, lịch chạy, tìm kiếm, lọc và chi tiết chuyến.
+3 | 27/09–05/10 | 9 | Luồng đặt vé: sơ đồ ghế, chọn ghế, booking và quản lý vé.
+4 | 06/10–10/10 | 5 | Quản trị người dùng, booking Admin và dashboard
+5 | 11/10–20/10 | 10 | Quản trị, dashboard, import/export, báo cáo, AI và tích hợp
+6 | 21/10–27/10 | 7 | Kiểm thử, sửa lỗi, tài liệu, triển khai và bàn giao.
+TABLE 7
+Mạng | Số việc | Tổng đường | Ngắn nhất | Dài nhất | Số đường găng
+Subtask | 82 | 8982 | 17 ngày | 41 ngày | 210
+TABLE 8
+Thành viên | Lương tháng | Hai tháng | Đơn giá ngày
+Nguyễn Xuân Phú | 20.000.000 | 40.000.000 | 769.231
+Nguyễn Hữu Dũng | 15.000.000 | 30.000.000 | 576.923
+Lê Văn Phú | 15.000.000 | 30.000.000 | 576.923
+Tổng | 50.000.000 | 100.000.000 | —
+TABLE 9
+Khoản mục | Dự toán đồng | Cơ sở tính
+Nhân công | 100.000.000 | Ba thành viên trong hai tháng; giữ nguyên
+AI | 3.000.000 | Ba tài khoản trong hai tháng; giữ nguyên
+Thiết bị | 0 | Dùng máy tính cá nhân, chưa có nhu cầu mua/thuê mới
+Họp và di chuyển | 1.200.000 | 20 buổi × 3 người × 20.000 đồng/người/buổi
+In và đóng báo cáo | 150.000 | 3 bộ × 60 trang × 500 đồng + 3 bìa × 20.000 đồng
+VPS | 0 | Triển khai bằng máy tính cá nhân
+Dự phòng ngoài nhân công | 435.000 | 10% × (3.000.000 + 1.200.000 + 150.000)
+Tổng gồm dự phòng | 104.785.000 | 100.000.000 + 4.785.000
+TABLE 10
+Epic | Ngân sách nhân công và AI đồng
+TASK-1 Phân tích nghiệp vụ & Quản lý dự án | 9.111.111
+TASK-2 UI/UX & Frontend Foundation | 5.636.364
+TASK-3 Authentication & Authorization | 10.619.707
+TASK-4 Quản lý dữ liệu vận tải | 8.709.943
+TASK-5 Tìm kiếm & Thông tin chuyến xe | 13.005.040
+TASK-6 Đặt lịch/Đặt chỗ & Quản lý vé | 14.001.526
+TASK-7 Quản trị & Dashboard thống kê | 6.930.966
+TASK-8 Import/Export & Báo cáo | 5.486.648
+TASK-9 AI/ML phát hiện vé trùng | 6.101.810
+TASK-10 Kiểm thử, Tích hợp & Triển khai | 23.396.886
+Tổng phân bổ cho công việc | 103.000.000
+TABLE 11
+Kỳ báo cáo | Nhân công tạm tính | AI ghi nhận | Tổng tạm tính
+Sau Sprint 2 26/09 | 10.288.462 | 1.500.000 | 11.788.462
+Sau Sprint 3 05/10 | 29.711.538 | 1.500.000 | 31.211.538
+Sau Sprint 4 10/10 | 33.173.077 | 1.500.000 | 34.673.077
+Sau Sprint 6 27/10 | — | — | —
+TABLE 12
+Sau Sprint | Chốt 2026 | PV | EV | AC | CPI | SPI
+2 | 26/09 | 27,384 | 25,367 | 11,788 | 2.152 | 0.926
+3 | 05/10 | 52,322 | 47,082 | 31,212 | 1.508 | 0.900
+4 | 10/10 | 61,084 | 49,337 | 34,673 | 1.423 | 0.808
+6 | 27/10 | 103,000 | — | — | — | —
+TABLE 13
+Nhóm tiêu chí | Điều kiện cần kiểm tra
+Chức năng | Đăng nhập, tìm chuyến, chọn ghế, đặt vé và xem vé hoạt động qua API.
+Dữ liệu | Giá, chuyến, ghế và người đặt được lưu đúng; transaction không để lại dữ liệu dở dang.
+Bảo mật | Từ chối truy cập trái quyền, kiểm tra đầu vào và bảo vệ thông tin xác thực.
+Đồng thời | Hai yêu cầu không tạo hai vé hợp lệ cho cùng ghế/chuyến/ngày.
+Giao diện | Thông báo lỗi rõ, trạng thái ghế dễ phân biệt, bố cục phù hợp màn hình.
+Triển khai | Build chạy được trong môi trường dự kiến và có thể tái lập cấu hình.
+TABLE 14
+Nhóm phát hiện | Số lượng | Tỷ lệ
+Biến / import không dùng | 28 | 66.7%
+React Hooks | 6 | 14.3%
+Phân quyền / dữ liệu | 3 | 7.1%
+Kiểm tra dữ liệu / nghiệp vụ | 2 | 4.8%
+React Fast Refresh | 2 | 4.8%
+Đồng thời / toàn vẹn dữ liệu | 1 | 2.4%
+TABLE 15
+Nhóm phát hiện | Số lượng | Tỷ lệ
+Biến / import không dùng | 32 | 55.2%
+Lint khác | 10 | 17.2%
+React Hooks | 8 | 13.8%
+Phân quyền / dữ liệu | 3 | 5.2%
+Kiểm tra dữ liệu / nghiệp vụ | 2 | 3.4%
+React Fast Refresh | 2 | 3.4%
+Đồng thời / toàn vẹn dữ liệu | 1 | 1.7%
+TABLE 16
+Nhóm phát hiện | Số lượng | Tỷ lệ
+Biến / import không dùng | 41 | 65.1%
+React Hooks | 13 | 20.6%
+React Fast Refresh | 3 | 4.8%
+Phân quyền / dữ liệu | 3 | 4.8%
+Khóa thuộc tính trùng | 2 | 3.2%
+Lint khác | 1 | 1.6%
+TABLE 17
+Nhóm việc | Xuân Phú | Hữu Dũng | Văn Phú
+Quản lý dự án và Scrum | A/R | C | C
+BA và phân tích yêu cầu | A/R | C | C
+Frontend và UX/UI | C | A/R | C
+Backend/API và Database | C | C | A/R
+Tích hợp hệ thống | A/R | R | R
+Kiểm thử | C | C | A/R
+DevOps và triển khai | C | A/R | C
+TABLE 18
+Thành viên | Phạm vi chuyên môn chính | Phối hợp
+Nguyễn Xuân Phú | Project Manager / Scrum Master / BA / Integration | Quản lý phạm vi, Scrum, yêu cầu và tích hợp
+Nguyễn Hữu Dũng | Frontend / UX/UI / DevOps | Giao diện, trải nghiệm, cấu hình và triển khai
+Lê Văn Phú | Backend/API / Database / Tester | API, dữ liệu, test case và kiểm thử
+TABLE 19
+Thành viên | Số Subtask | Ngày công WBS | Quỹ lương hai tháng
+Nguyễn Xuân Phú | 13 | 13.5 | 40.000.000
+Nguyễn Hữu Dũng | 29 | 27.5 | 30.000.000
+Lê Văn Phú | 40 | 32 | 30.000.000
+TABLE 20
+Giai đoạn | Nội dung trao đổi
+Trước Sprint | Ý nghĩa, mục tiêu, công việc trong Sprint; vướng mắc có thể gặp và thắc mắc sơ bộ.
+Trong Sprint | Việc đã làm, việc tiếp theo, lỗi hoặc vướng mắc và dự kiến hoàn thành.
+Sau Sprint | Vấn đề đã gặp, lý do phát sinh và cách khắc phục.
+TABLE 21
+Thông tin | Kênh | Tần suất | Phụ trách
+Thông báo công việc | Page trên Facebook | Khi có thông báo | Nguyễn Xuân Phú điều phối
+Tiến độ công việc | Jira | Hằng ngày | Từng thành viên
+Vướng mắc | Báo cáo trực tiếp | Khi phát sinh | Người thực hiện
+Tài liệu | Documents trên Jira | Khi cập nhật | Nguyễn Xuân Phú
+Thay đổi | Trực tiếp và tin nhắn | Khi quyết định | Nguyễn Xuân Phú
+Trao đổi giảng viên | Zalo | Chưa có mốc cố định | Nguyễn Xuân Phú
+TABLE 22
+Rủi ro | P × I | Dấu hiệu cảnh báo | Phòng ngừa và ứng phó
+R01 Phạm vi tăng | 2 × 3 = 6 | Yêu cầu mới ngoài backlog; điều kiện nghiệm thu thay đổi | Chốt MVP và tiêu chí chấp nhận; đánh giá ảnh hưởng rồi mới duyệt thay đổi. Hoãn chức năng ngoài MVP nếu ảnh hưởng hạn bàn giao.
+R02 Sai lệch hợp đồng API | 3 × 2 = 6 | FE và BE khác tên trường, mã lỗi hoặc cấu trúc dữ liệu | Thống nhất request/response và ví dụ dữ liệu; kiểm tra tích hợp sớm, bổ sung kiểm thử hợp đồng.
+R03 Đặt trùng ghế | 2 × 3 = 6 | Hai request cùng giữ hoặc tạo vé cho một ghế/chuyến/ngày | Kiểm tra phía máy chủ, transaction và ràng buộc dữ liệu; kiểm thử đồng thời. Khi phát hiện, chặn luồng lỗi và đối soát booking.
+R04 Truy cập vé trái quyền | 3 × 3 = 9 | Đổi booking ID vẫn đọc/hủy được vé của tài khoản khác | Kiểm tra chủ sở hữu ở mọi API theo ID; thử nhiều tài khoản và trường hợp chưa đăng nhập; ưu tiên sửa trước demo.
+R05 Mất hoặc hỏng dữ liệu | 2 × 3 = 6 | Migration/import sai, xóa nhầm hoặc không có bản sao hợp lệ | Sao lưu trước migration/import; lưu bản sao tách máy chạy và thử khôi phục. Dừng ghi dữ liệu khi cần phục hồi.
+R06 Gián đoạn máy triển khai | 2 × 3 = 6 | Máy cá nhân tắt/ngủ, mất điện/mạng hoặc cấu hình không tái lập | Kiểm tra nguồn, mạng và cấu hình; chuẩn bị môi trường demo dự phòng, bản build và dữ liệu mẫu đã lưu.
+R07 Thiếu người hoặc quá tải | 2 × 3 = 6 | Task không tiến triển, trùng tải nhiều việc hoặc thành viên vắng | Kiểm tra năng lực và việc phụ thuộc; chia sẻ cách chạy hệ thống, bàn giao và hỗ trợ chéo; điều phối lại khi có dấu hiệu chậm.
+R08 Thiếu kiểm thử hồi quy | 3 × 3 = 9 | Sửa một chức năng làm hỏng luồng đã chạy; còn lỗi tích hợp cuối kỳ | Duy trì test luồng chính và kiểm thử lại sau sửa; ưu tiên booking, phân quyền, import; dành thời gian sửa và kiểm tra lại.
+R09 Nhận diện vé trùng sai | 2 × 2 = 4 | Cảnh báo sai nhiều hoặc bỏ sót trường hợp trùng | Dùng bộ tình huống có nhãn; tách gợi ý AI khỏi quyết định giữ ghế; kiểm soát trùng bằng quy tắc dữ liệu ở máy chủ.
+R10 Sai lệch ghi nhận chi phí | 3 × 2 = 6 | Cộng trùng AI hoặc dùng ngày trạng thái thay ngày công; thiếu chứng từ | Đối chiếu ngày công theo người, hóa đơn và công việc; cộng chi phí lá một lần; xử lý riêng Sprint 1 theo xác nhận.
+R11 Lộ cấu hình và dữ liệu | 2 × 3 = 6 | Đẩy khóa, mật khẩu hoặc dữ liệu hành khách vào Git/log | Dùng biến môi trường, không đưa bí mật vào repo; dữ liệu demo giả lập; thu hồi và thay khóa nếu đã lộ.
+R12 Lạm dụng tài nguyên API | 2 × 2 = 4 | Gửi yêu cầu liên tục hoặc import lớn khiến API chậm | Giới hạn tần suất, kích thước đầu vào và thời gian xử lý; phân trang và theo dõi log; giảm tải trước khi mở demo.
+TABLE 23
+Hạng mục | Dự toán đồng | Cơ sở và ghi nhận
+AI ba tài khoản | 3.000.000 | 1.500.000 ngày 11/09; 1.500.000 ngày 11/10
+Thiết bị | 0 | Tận dụng máy cá nhân; phát sinh xử lý từ dự phòng
+Họp và di chuyển | 1.200.000 | 20 buổi × 3 người × 20.000; thực chi chưa chốt
+In và đóng báo cáo | 150.000 | 3 bộ, tối đa 60 trang/bộ; thực chi chưa chốt
+Dự phòng | 435.000 | 10% khoản ngoài nhân công; chưa ghi nhận sử dụng
+VPS | 0 | Không thuê
+Tổng ngoài nhân công | 4.785.000 | Đã biết AI 3.000.000; khoản khác là dự toán
+TABLE 24
+Thành phần | Đường dẫn hoặc vị trí
+WBS, CPM, EMV và Pareto | DatVeXe - 119 cong viec - ke hoach den 01-11-2026.xlsx
+Nghiệp vụ | Actor/MVP, phân tích Tìm kiếm→Đặt vé, trạng thái vé và Business Rule
+Giao diện và ERD | Thư mục UI-DB; tài liệu DB_UI.docx
+Rủi ro và mua sắm | Các file Word Chương 8 và Chương 9
+Mã nguồn | Repository DatVeXe trên GitHub
+TABLE 25
+Mã và cấp | Tên công việc | Phụ trách | Bắt đầu / Kết thúc | Công
+TASK-1 E | Phân tích nghiệp vụ & Quản lý dự án | Xuân Phú | 18/09 – 20/09 | 3
+TASK-11 S | Phân tích nghiệp vụ đặt vé | Xuân Phú | 18/09 – 19/09 | 2
+TASK-38 T | Xác định actor và phạm vi MVP | Xuân Phú | 18/09 – 18/09 | 0.5
+TASK-39 T | Phân tích flow tìm kiếm → đặt vé | Xuân Phú | 18/09 – 19/09 | 1
+TASK-40 T | Xác định trạng thái vé và business rule | Xuân Phú | 19/09 – 19/09 | 0.5
+TASK-12 S | Quản lý Backlog và Sprint | Xuân Phú | 20/09 – 20/09 | 1
+TASK-41 T | Tạo Product Backlog trên Jira | Xuân Phú | 20/09 – 20/09 | 0.5
+TASK-42 T | Thiết lập Sprint và workflow Jira | Xuân Phú | 20/09 – 20/09 | 0.5
+TABLE 26
+Mã và cấp | Tên công việc | Phụ trách | Bắt đầu / Kết thúc | Công
+TASK-2 E | UI/UX & Frontend Foundation | Hữu Dũng | 19/09 – 24/09 | 5
+TASK-13 S | Thiết kế giao diện website | Hữu Dũng | 19/09 – 21/09 | 2.5
+TASK-43 T | Thiết kế wireframe trang khách hàng | Hữu Dũng | 19/09 – 20/09 | 1
+TASK-44 T | Thiết kế prototype luồng đặt vé | Hữu Dũng | 20/09 – 21/09 | 1
+TASK-45 T | Thiết kế responsive layout | Hữu Dũng | 21/09 – 21/09 | 0.5
+TASK-14 S | Xây dựng Frontend Foundation | Hữu Dũng | 22/09 – 24/09 | 2.5
+TASK-46 T | Setup React + Vite + Bootstrap | Hữu Dũng | 22/09 – 22/09 | 0.5
+TASK-47 T | Tạo routing và layout Customer/Admin | Hữu Dũng | 22/09 – 23/09 | 1
+TASK-48 T | Tạo reusable Button/Input/Table/Modal | Hữu Dũng | 23/09 – 24/09 | 1
+TABLE 27
+Mã và cấp | Tên công việc | Phụ trách | Bắt đầu / Kết thúc | Công
+TASK-3 E | Authentication & Authorization | Văn Phú | 20/09 – 26/09 | 8.5
+TASK-15 S | Đăng ký tài khoản | Văn Phú | 20/09 – 25/09 | 3
+TASK-49 T | Thiết kế bảng tài khoản và validation | Văn Phú | 20/09 – 20/09 | 0.5
+TASK-50 T | Implement API đăng ký | Văn Phú | 20/09 – 21/09 | 1
+TASK-51 T | Hash và kiểm tra mật khẩu | Văn Phú | 21/09 – 21/09 | 0.5
+TASK-52 T | Tạo RegisterPage.jsx | Hữu Dũng | 24/09 – 25/09 | 1
+TASK-16 S | Đăng nhập và đăng xuất | Văn Phú | 22/09 – 25/09 | 3.5
+TASK-53 T | Implement API login | Văn Phú | 22/09 – 22/09 | 1
+TASK-54 T | Implement JWT middleware | Văn Phú | 23/09 – 23/09 | 1
+TASK-55 T | Implement API logout/session handling | Văn Phú | 24/09 – 24/09 | 0.5
+TASK-56 T | Tích hợp LoginPage với API | Xuân Phú | 24/09 – 25/09 | 1
+TASK-17 S | Phân quyền người dùng | Văn Phú | 24/09 – 26/09 | 2
+TASK-57 T | Thiết kế role và permission | Văn Phú | 24/09 – 24/09 | 0.5
+TASK-58 T | Middleware kiểm tra role Admin | Văn Phú | 25/09 – 25/09 | 0.5
+TASK-59 T | Route protection trên React | Hữu Dũng | 25/09 – 26/09 | 1
+TABLE 28
+Mã và cấp | Tên công việc | Phụ trách | Bắt đầu / Kết thúc | Công
+TASK-4 E | Quản lý dữ liệu vận tải | Văn Phú | 25/09 – 01/10 | 8.5
+TASK-18 S | CRUD xe | Văn Phú | 25/09 – 27/09 | 2.5
+TASK-60 T | Tạo CRUD API xe | Văn Phú | 25/09 – 26/09 | 1
+TASK-61 T | Tạo trang quản lý xe | Hữu Dũng | 26/09 – 27/09 | 1
+TASK-62 T | Validate và test CRUD xe | Văn Phú | 27/09 – 27/09 | 0.5
+TASK-19 S | CRUD tuyến đường và điểm đón/trả | Văn Phú | 26/09 – 29/09 | 2.5
+TASK-63 T | Tạo CRUD API tuyến đường | Văn Phú | 26/09 – 27/09 | 1
+TASK-64 T | Tạo CRUD API điểm đón/trả | Văn Phú | 28/09 – 28/09 | 0.5
+TASK-65 T | Tạo UI quản lý tuyến/điểm | Hữu Dũng | 28/09 – 29/09 | 1
+TASK-20 S | CRUD chuyến xe/lịch chạy | Văn Phú | 28/09 – 01/10 | 3.5
+TASK-66 T | Tạo API quản lý chuyến | Văn Phú | 28/09 – 29/09 | 1
+TASK-67 T | Tạo API lịch chạy | Văn Phú | 29/09 – 30/09 | 1
+TASK-68 T | Tạo UI quản lý chuyến/lịch | Hữu Dũng | 30/09 – 01/10 | 1
+TASK-69 T | Kiểm tra xung đột lịch/xe | Văn Phú | 01/10 – 01/10 | 0.5
+TABLE 29
+Mã và cấp | Tên công việc | Phụ trách | Bắt đầu / Kết thúc | Công
+TASK-5 E | Tìm kiếm & Thông tin chuyến xe | Hữu Dũng | 27/09 – 05/10 | 8.5
+TASK-21 S | Tìm kiếm chuyến xe | Hữu Dũng | 27/09 – 03/10 | 4
+TASK-70 T | Thiết kế SearchForm | Hữu Dũng | 27/09 – 28/09 | 1
+TASK-71 T | API tìm kiếm chuyến | Văn Phú | 30/09 – 01/10 | 1
+TASK-72 T | Trang kết quả tìm kiếm | Hữu Dũng | 01/10 – 02/10 | 1
+TASK-73 T | Tích hợp Search API | Xuân Phú | 02/10 – 03/10 | 1
+TASK-22 S | Lọc và sắp xếp chuyến xe | Hữu Dũng | 02/10 – 03/10 | 2
+TASK-74 T | API filter/sort chuyến | Văn Phú | 02/10 – 02/10 | 0.5
+TASK-75 T | UI bộ lọc chuyến | Hữu Dũng | 02/10 – 03/10 | 1
+TASK-76 T | Kiểm thử filter/sort | Văn Phú | 03/10 – 03/10 | 0.5
+TASK-23 S | Xem chi tiết chuyến xe | Hữu Dũng | 02/10 – 05/10 | 2.5
+TASK-77 T | API chi tiết chuyến | Văn Phú | 02/10 – 02/10 | 0.5
+TASK-78 T | TripDetailPage.jsx | Hữu Dũng | 03/10 – 04/10 | 1
+TASK-79 T | Tích hợp dữ liệu chi tiết | Xuân Phú | 04/10 – 05/10 | 1
+TABLE 30
+Mã và cấp | Tên công việc | Phụ trách | Bắt đầu / Kết thúc | Công
+TASK-6 E | Đặt lịch/Đặt chỗ & Quản lý vé | Xuân Phú | 29/09 – 10/10 | 11.5
+TASK-24 S | Xem sơ đồ ghế | Hữu Dũng | 29/09 – 05/10 | 2.5
+TASK-80 T | Thiết kế SeatMap component | Hữu Dũng | 29/09 – 30/09 | 1
+TASK-81 T | API lấy trạng thái ghế | Văn Phú | 03/10 – 03/10 | 0.5
+TASK-82 T | Hiển thị ghế trống/đã đặt | Hữu Dũng | 04/10 – 05/10 | 1
+TASK-25 S | Chọn ghế | Hữu Dũng | 05/10 – 06/10 | 1.5
+TASK-83 T | Xử lý chọn/bỏ chọn ghế | Hữu Dũng | 05/10 – 06/10 | 1
+TASK-84 T | Validate ghế trước khi đặt | Văn Phú | 06/10 – 06/10 | 0.5
+TASK-26 S | Đặt vé/đặt chỗ | Xuân Phú | 04/10 – 08/10 | 4.5
+TASK-85 T | Thiết kế dữ liệu booking/ticket | Văn Phú | 04/10 – 04/10 | 0.5
+TASK-86 T | API tạo booking | Văn Phú | 04/10 – 05/10 | 1.5
+TASK-87 T | Kiểm tra ghế đã được đặt | Văn Phú | 06/10 – 06/10 | 0.5
+TASK-88 T | Tạo BookingPage.jsx | Hữu Dũng | 06/10 – 07/10 | 1
+TASK-89 T | Tích hợp đặt vé FE–BE | Xuân Phú | 07/10 – 08/10 | 1
+TASK-27 S | Quản lý vé đã đặt | Xuân Phú | 07/10 – 10/10 | 3
+TASK-90 T | API danh sách vé của user | Văn Phú | 07/10 – 07/10 | 0.5
+TASK-91 T | API chi tiết/hủy vé | Văn Phú | 07/10 – 07/10 | 0.5
+TASK-92 T | Trang MyTickets | Hữu Dũng | 08/10 – 09/10 | 1
+TASK-93 T | Kiểm thử trạng thái vé | Văn Phú | 09/10 – 10/10 | 1
+TABLE 31
+Mã và cấp | Tên công việc | Phụ trách | Bắt đầu / Kết thúc | Công
+TASK-7 E | Quản trị & Dashboard thống kê | Văn Phú | 12/10 – 18/10 | 6.5
+TASK-28 S | Quản lý người dùng | Văn Phú | 13/10 – 16/10 | 2
+TASK-94 T | API CRUD user | Văn Phú | 13/10 – 13/10 | 0.5
+TASK-95 T | API khóa/mở khóa tài khoản | Văn Phú | 13/10 – 13/10 | 0.5
+TASK-96 T | Admin User Management UI | Hữu Dũng | 14/10 – 16/10 | 1
+TASK-29 S | Quản lý đặt vé Admin | Văn Phú | 14/10 – 17/10 | 1.5
+TASK-97 T | API quản lý booking Admin | Văn Phú | 14/10 – 14/10 | 0.5
+TASK-98 T | UI quản lý booking Admin | Hữu Dũng | 16/10 – 17/10 | 1
+TASK-30 S | Dashboard thống kê | Hữu Dũng | 12/10 – 18/10 | 3
+TASK-99 T | API thống kê dashboard | Văn Phú | 16/10 – 17/10 | 1
+TASK-100 T | Thiết kế Dashboard | Hữu Dũng | 12/10 – 13/10 | 1
+TASK-101 T | Tạo biểu đồ/thẻ thống kê | Hữu Dũng | 17/10 – 18/10 | 1
+TABLE 32
+Mã và cấp | Tên công việc | Phụ trách | Bắt đầu / Kết thúc | Công
+TASK-8 E | Import/Export & Báo cáo | Văn Phú | 17/10 – 23/10 | 5.5
+TASK-31 S | Import dữ liệu | Văn Phú | 17/10 – 19/10 | 2.5
+TASK-102 T | Thiết kế file Excel mẫu | Văn Phú | 17/10 – 17/10 | 0.5
+TASK-103 T | Implement Excel import | Văn Phú | 18/10 – 19/10 | 1.5
+TASK-104 T | Validate dữ liệu import | Văn Phú | 19/10 – 19/10 | 0.5
+TASK-32 S | Export và báo cáo | Văn Phú | 21/10 – 23/10 | 3
+TASK-105 T | Implement Excel export | Văn Phú | 21/10 – 21/10 | 0.5
+TASK-106 T | Implement PDF report | Văn Phú | 21/10 – 22/10 | 1.5
+TASK-107 T | Tạo UI chọn điều kiện báo cáo | Hữu Dũng | 23/10 – 23/10 | 1
+TABLE 33
+Mã và cấp | Tên công việc | Phụ trách | Bắt đầu / Kết thúc | Công
+TASK-9 E | AI/ML phát hiện vé trùng | Xuân Phú | 17/10 – 23/10 | 4
+TASK-33 S | Gợi ý phát hiện vé trùng | Xuân Phú | 17/10 – 23/10 | 4
+TASK-108 T | Xác định feature dùng phát hiện vé trùng | Xuân Phú | 17/10 – 17/10 | 1
+TASK-109 T | Implement similarity/anomaly detection | Văn Phú | 22/10 – 23/10 | 1.5
+TASK-110 T | API trả về vé nghi ngờ trùng | Văn Phú | 23/10 – 23/10 | 0.5
+TASK-111 T | UI danh sách vé nghi ngờ | Hữu Dũng | 23/10 – 23/10 | 1
+TABLE 34
+Mã và cấp | Tên công việc | Phụ trách | Bắt đầu / Kết thúc | Công
+TASK-10 E | Kiểm thử, Tích hợp & Triển khai | Xuân Phú | 24/10 – 27/10 | 12
+TASK-34 S | Kiểm thử chức năng | Văn Phú | 24/10 – 25/10 | 4
+TASK-112 T | Viết test case chức năng | Văn Phú | 24/10 – 24/10 | 1
+TASK-113 T | Kiểm thử CRUD/Search/Filter | Văn Phú | 24/10 – 25/10 | 3
+TASK-35 S | Kiểm thử tích hợp | Xuân Phú | 25/10 – 25/10 | 2
+TASK-114 T | Test end-to-end tìm → đặt vé | Xuân Phú | 25/10 – 25/10 | 2
+TASK-36 S | Hoàn thiện tài liệu | Xuân Phú | 25/10 – 26/10 | 2
+TASK-115 T | Hoàn thiện tài liệu hướng dẫn sử dụng | Xuân Phú | 25/10 – 26/10 | 2
+TASK-37 S | Deploy | Hữu Dũng | 26/10 – 27/10 | 4
+TASK-116 T | Chuẩn bị cấu hình production | Hữu Dũng | 26/10 – 26/10 | 0.5
+TASK-117 T | Build Frontend production | Hữu Dũng | 26/10 – 26/10 | 0.5
+TASK-118 T | Deploy Frontend và Backend | Hữu Dũng | 27/10 – 27/10 | 1.5
+TASK-119 T | Kiểm tra hệ thống sau deployment | Xuân Phú | 27/10 – 27/10 | 1.5
