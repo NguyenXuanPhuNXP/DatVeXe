@@ -577,16 +577,36 @@ router.get(
         booking: { select: { bookingCode: true, paymentStatus: true } },
       },
     });
+    // Legacy paid bookings predate receipt tracking. Keep their source explicit.
+    const legacyBookings = await prisma.booking.findMany({
+      where: {
+        trip: { companyId: req.member.companyId },
+        paymentStatus: "paid",
+        status: { not: "cancelled" },
+        receipt: { is: null },
+        ...(f.fromDate || f.toDate ? { createdAt: {
+          ...(f.fromDate ? { gte: new Date(f.fromDate + "T00:00:00+07:00") } : {}),
+          ...(f.toDate ? { lt: new Date(new Date(f.toDate + "T00:00:00+07:00").getTime() + 86400000) } : {}),
+        } } : {}),
+      },
+      select: { id: true, bookingCode: true, totalPrice: true, createdAt: true, paymentMethod: true },
+      orderBy: { createdAt: "desc" },
+    });
+    const legacyRevenue = legacyBookings.reduce((sum, b) => sum + b.totalPrice, 0);
+    const legacyIds = new Set(legacyBookings.map(b => b.id));
     const adjustmentTotal = adjustments
+      .filter(a => !legacyIds.has(a.bookingId))
       .filter((a) => a.booking.paymentStatus === "paid")
       .reduce((sum, a) => sum + a.difference, 0);
     const netRevenue =
-      adjustmentTotal +
+      legacyRevenue + adjustmentTotal +
       receipts
         .filter((r) => r.booking.paymentStatus === "paid")
         .reduce((sum, r) => sum + r.amount, 0);
     res.json({
       netRevenue,
+      legacyRevenue,
+      legacyBookings,
       adjustments,
       adjustmentTotal,
       refunded: receipts
@@ -650,6 +670,7 @@ router.post(
 );
 router.post(
   "/qr/board",
+  roles("staff"),
   wrap(async (req, res) => {
     const { qr, tripId, tripDate } = z
       .object({

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 const SearchForm = () => {
+  const [today] = useState(() => new Date(Date.now() + 7 * 3600000).toISOString().slice(0,10));
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const storedSearch = (() => {
@@ -50,7 +51,7 @@ const SearchForm = () => {
         <i className="bi bi-calendar-event"></i>
         <div style={{width: '100%', position: 'relative'}}>
           <label>Ngày đi</label>
-          <input type="date" style={{paddingTop: '16px'}} value={date} onChange={(event) => setDate(event.target.value)} />
+          <input type="date" min={today} style={{paddingTop: '16px'}} value={date} onChange={(event) => setDate(event.target.value)} />
         </div>
       </div>
       

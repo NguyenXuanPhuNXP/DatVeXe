@@ -6,6 +6,14 @@
   color: #17283f;
 }
 .op-layout aside {
+  position: sticky;
+  top: 0;
+  align-self: start;
+  height: 100dvh;
+  box-sizing: border-box;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scrollbar-gutter: stable;
   background: #132c47;
   color: white;
   padding: 30px 22px;
@@ -203,6 +211,9 @@
   }
   .op-layout aside {
     padding: 18px;
+    position: static;
+    height: auto;
+    overflow-y: visible;
   }
   .op-layout nav {
     display: flex;
@@ -236,7 +247,7 @@
   width: 100%;
 }
 .op-layout aside {
-  align-self: stretch;
+  align-self: start;
 }
 .op-layout nav a {
   padding: 9px 12px;

@@ -1,3 +1,4 @@
+import PasswordInput from '../../components/auth/PasswordInput';
 import {
   CounterSalePage,
   ExchangePage,
@@ -39,7 +40,7 @@ const date = (value) =>
       })
     : "Định kỳ";
 const errorText = (e) =>
-  e.response?.data?.error?.message ||
+  e.response?.data?.error?.message || e.response?.data?.message || e.message ||
   "Không thể thực hiện thao tác. Vui lòng thử lại.";
 function useData(path, params) {
   const [data, setData] = useState([]);
@@ -137,6 +138,8 @@ function Editor({ title, fields, initial, onSave, onClose }) {
                     </option>
                   ))}
                 </select>
+              ) : f.type === "password" ? (
+                <PasswordInput required={!f.optional} placeholder="Nhập mật khẩu 8–72 ký tự" autoComplete="new-password" value={values[f.key] ?? ""} onChange={e => setValues({ ...values, [f.key]: e.target.value })} />
               ) : (
                 <input
                   required={!f.optional}
@@ -379,14 +382,9 @@ export function TripsPage() {
     },
     { key: "departureTime", label: "Giờ khởi hành", type: "time" },
     { key: "arrivalTime", label: "Giờ đến", type: "time" },
-    { key: "duration", label: "Thời lượng (ví dụ 5h 30p)" },
+    { key: "arrivalDayOffset", label: "Ngày đến so với ngày khởi hành", options: [{value:"auto",label:"Tự tính theo giờ đi và giờ đến"}, ...Array.from({length:42}, (_,i) => ({value:String(i),label:i === 0 ? "Cùng ngày" : "Sau " + i + " ngày"}))] },
     { key: "price", label: "Giá vé (đ)", type: "number", min: 1 },
-    {
-      key: "availableDate",
-      label: "Ngày chạy (bỏ trống: định kỳ)",
-      type: "date",
-      optional: true,
-    },
+
   ];
   async function action(t, remove) {
     if (remove && !confirm("Xóa chuyến chưa có vé?")) return;
@@ -405,7 +403,7 @@ export function TripsPage() {
   return (
     <>
       <h1>Quản lý chuyến</h1>
-      <p>Lập lịch và giá vé cho các xe của nhà xe.</p>
+      <p>Chuyến chạy định kỳ hằng ngày. Khách chọn ngày khởi hành khi tìm và đặt vé.</p>
       <button
         onClick={() =>
           setEdit({
@@ -415,7 +413,7 @@ export function TripsPage() {
             arrivalTime: "13:00",
             duration: "5h",
             price: 200000,
-            availableDate: "",
+            arrivalDayOffset: "auto",
           })
         }
       >
@@ -446,7 +444,7 @@ export function TripsPage() {
                 <td>
                   {t.departureTime}–{t.arrivalTime}
                 </td>
-                <td>{date(t.availableDate)}</td>
+                <td>{t.availableDate ? date(t.availableDate) : "Định kỳ hằng ngày"}</td>
                 <td>{money(t.price)}</td>
                 <td>{t.isActive ? "Đang mở" : "Tạm dừng"}</td>
                 <td>
@@ -454,7 +452,7 @@ export function TripsPage() {
                     onClick={() =>
                       setEdit({
                         ...t,
-                        availableDate: t.availableDate?.slice(0, 10) || "",
+                        arrivalDayOffset: String(Math.floor((Number(t.departureTime.split(':')[0])*60+Number(t.departureTime.split(':')[1])+Number(t.duration.match(/(\d+)h/)?.[1]||0)*60+Number(t.duration.match(/h\s*(\d+)/)?.[1]||0))/1440)),
                       })
                     }
                   >
@@ -483,7 +481,13 @@ export function TripsPage() {
             const body = Object.fromEntries(
               fields.map((f) => [f.key, v[f.key]]),
             );
-            body.availableDate = body.availableDate || null;
+            const toMinutes = time => Number(time.split(':')[0])*60+Number(time.split(':')[1]);
+            const dayOffset = body.arrivalDayOffset === 'auto' ? (toMinutes(body.arrivalTime) <= toMinutes(body.departureTime) ? 1 : 0) : Number(body.arrivalDayOffset);
+            const minutes = dayOffset*1440+toMinutes(body.arrivalTime)-toMinutes(body.departureTime);
+            if(!Number.isFinite(minutes)||minutes<60||minutes>59999) throw new Error('Thời lượng phải từ 1 giờ đến tối đa 999 giờ. Chọn ngày đến phù hợp.');
+            body.duration = Math.floor(minutes/60)+'h '+(minutes%60)+'p';
+            body.availableDate = null;
+            delete body.arrivalDayOffset;
             await (edit.id
               ? api.put(`/operator/trips/${edit.id}`, body)
               : api.post("/operator/trips", body));
@@ -710,8 +714,8 @@ export function RevenuePage() {
     <>
       <h1>Thống kê doanh thu</h1>
       <p>
-        Lọc theo ngày thu tiền (giờ Việt Nam). Chỉ tính khoản thu có biên nhận;
-        loại khoản đã ghi nhận hoàn tiền khỏi doanh thu.
+        Lọc theo ngày thu tiền (giờ Việt Nam). Đơn cũ đã thanh toán nhưng chưa có biên nhận
+        được tính riêng theo ngày tạo đơn; ngày thu tiền thực tế chưa được ghi nhận.
       </p>
       <div className="op-filters">
         <label>
@@ -748,6 +752,14 @@ export function RevenuePage() {
         </article>
       </div>
       <p>Chênh lệch đổi vé đã thu/hoàn: {money(state.data.adjustmentTotal)}</p>
+      {state.data.legacyBookings?.length > 0 && <section>
+        <h2>Đơn đã thanh toán chưa có biên nhận</h2>
+        <p>{state.data.legacyBookings.length} đơn · {money(state.data.legacyRevenue)} (đã gồm trong tổng doanh thu).
+          Ngày bên dưới là ngày tạo đơn, không phải ngày xác nhận thu tiền.</p>
+        <div className="op-table"><table><thead><tr><th>Mã vé</th><th>Ngày tạo đơn</th><th>Số tiền</th><th>Nguồn</th></tr></thead>
+          <tbody>{state.data.legacyBookings.map(b => <tr key={b.id}><td>{b.bookingCode}</td><td>{date(b.createdAt)}</td><td>{money(b.totalPrice)}</td><td>Dữ liệu cũ đã thanh toán</td></tr>)}</tbody>
+        </table></div>
+      </section>}
       {state.data.adjustments?.length > 0 && (
         <div className="op-table">
           <table>
@@ -828,7 +840,7 @@ export default function OperatorPortal() {
     ["counter", "Bán vé tại quầy"],
     ["exchange", "Đổi ghế / chuyến"],
     ["qr-info", "Quét QR xem vé"],
-    ["qr-board", "Quét QR lên xe"],
+    ...(member.role === "staff" ? [["qr-board", "Quét QR lên xe"]] : []),
     ...(!owner ? [["customers", "Thông tin khách"]] : []),
     ...(["owner", "manager"].includes(member.role)
       ? [
@@ -864,7 +876,7 @@ export default function OperatorPortal() {
           <Route path={`${base}/counter`} element={<CounterSalePage />} />
           <Route path={`${base}/exchange`} element={<ExchangePage />} />
           <Route path={`${base}/qr-info`} element={<QrInfoPage />} />
-          <Route path={`${base}/qr-board`} element={<QrBoardPage />} />
+          {member.role === "staff" && <Route path={`${base}/qr-board`} element={<QrBoardPage />} />}
           {["owner", "manager"].includes(member.role) && (
             <Route
               path={`${base}/payment-issues`}

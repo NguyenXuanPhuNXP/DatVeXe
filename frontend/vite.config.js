@@ -9,5 +9,10 @@ export default defineConfig({
     proxy: {
       '/api': 'http://localhost:3000',
     },
+    host: '0.0.0.0',
+    port: 5173,
+    strictPort: true,
+    allowedHosts: ['handed-employer-radio.ngrok-free.dev'],
+    proxy: { '/api': 'http://localhost:3000' },
   },
 })

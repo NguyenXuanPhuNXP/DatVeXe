@@ -2,7 +2,7 @@ import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { NotificationProvider } from './context/NotificationContext';
-import { AdminRoute, GuestRoute } from './components/auth/RouteGuards';
+import { AdminRoute, GuestRoute, ProtectedRoute } from './components/auth/RouteGuards';
 import VnpayReturnPage from './pages/TicketPaymentPanel';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
@@ -14,6 +14,7 @@ import PassengerInfoPage from './pages/PassengerInfoPage';
 import PaymentPage from './pages/PaymentPage';
 import BookingSuccessPage from './pages/BookingSuccessPage';
 import BookingLookupPage from './pages/BookingLookupPage';
+import MyBookingsPage from './pages/MyBookingsPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import AdminLayout from './components/admin/AdminLayout';
@@ -45,13 +46,13 @@ function MainLayout() {
           <Route path="/" element={<HomePage />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/trips/:tripId" element={<TripDetailPage />} />
-          <Route path="/booking/seats" element={<SeatSelectionPage />} />
-          <Route path="/booking/passenger" element={<PassengerInfoPage />} />
-          <Route path="/booking/payment" element={<PaymentPage />} />
-          <Route path="/booking/success" element={<BookingSuccessPage />} />
+          <Route path="/booking/seats" element={<ProtectedRoute><SeatSelectionPage /></ProtectedRoute>} />
+          <Route path="/booking/passenger" element={<ProtectedRoute><PassengerInfoPage /></ProtectedRoute>} />
+          <Route path="/booking/payment" element={<ProtectedRoute><PaymentPage /></ProtectedRoute>} />
+          <Route path="/booking/success" element={<ProtectedRoute><BookingSuccessPage /></ProtectedRoute>} />
           <Route path="/payment/vnpay-return" element={<VnpayReturnPage />} />
           <Route path="/lookup" element={<BookingLookupPage />} />
-          <Route path="/my-bookings" element={<BookingLookupPage />} />
+          <Route path="/my-bookings" element={<ProtectedRoute><MyBookingsPage /></ProtectedRoute>} />
           <Route
             path="/login"
             element={(

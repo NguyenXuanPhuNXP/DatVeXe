@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 const SearchHeader = ({ searchParams, onSearchSubmit }) => {
+  const [today] = useState(() => new Date(Date.now() + 7 * 3600000).toISOString().slice(0,10));
   const [isEditing, setIsEditing] = useState(false);
   const currentOrigin = searchParams.get('origin') || '';
   const currentDestination = searchParams.get('destination') || '';
@@ -16,7 +17,7 @@ const SearchHeader = ({ searchParams, onSearchSubmit }) => {
   const displayDestination = currentDestination || 'Tất cả điểm đến';
   const formattedDate = currentDate
     ? new Date(`${currentDate}T00:00:00`).toLocaleDateString('vi-VN')
-    : 'Mọi ngày';
+    : 'Hôm nay · ' + new Date().toLocaleDateString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' });
 
   const handleApply = (e) => {
     e.preventDefault();
@@ -94,7 +95,7 @@ const SearchHeader = ({ searchParams, onSearchSubmit }) => {
                 Ngày đi
               </label>
               <input
-                type="date"
+                type="date" min={today}
                 className="form-control"
                 value={editDate}
                 onChange={(e) => setEditDate(e.target.value)}
