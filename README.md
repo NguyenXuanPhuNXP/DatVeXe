@@ -105,6 +105,22 @@ Trạng thái không hợp lệ hoặc không thể chuyển sẽ trả HTTP 409
 
 ### Phát hiện vé trùng lặp và bất thường
 
+- [x] Xác định các thuộc tính dùng để đánh giá khả năng trùng vé.
+
+Các thuộc tính đã được sử dụng trong `backend/src/modules/admin/anomalies.service.js` (`bookingAnomalySelect`, `scoreBookings`):
+
+| Nhóm thuộc tính | Thuộc tính | Cách đánh giá hiện tại |
+| --- | --- | --- |
+| Chuyến, ngày và ghế | `tripId`, `tripDate`, `tickets[].seatCode` (dự phòng bằng `Booking.seatCode`) | Cùng chuyến, cùng ngày và cùng ghế ở nhiều booking đang hoạt động: +70 điểm. Mã ghế được bỏ khoảng trắng đầu/cuối và chuyển thành chữ hoa. |
+| Danh tính, liên hệ | `passengerPhone`, `passengerEmail`, `userId` | Trùng ít nhất một thuộc tính ở nhiều booking cùng chuyến/ngày: +25 điểm, không cộng lặp theo từng thuộc tính. Điện thoại chỉ giữ chữ số; email bỏ khoảng trắng đầu/cuối và chuyển thành chữ thường. |
+| Tên hành khách | `passengerName` kết hợp điện thoại/email | Tên trùng hoặc có độ tương đồng bigram từ 0,84 trong cùng chuyến/ngày, nhưng có thông tin liên hệ khác nhau: +15 điểm. Tên được chuẩn hóa chữ thường, bỏ dấu và ký tự ngoài chữ/số. |
+| Thời điểm đặt | `createdAt` kết hợp điện thoại/email/tài khoản | Cùng danh tính tạo ít nhất 4 booking đang hoạt động trong cửa sổ 10 phút: +35 điểm; có thể thuộc các chuyến khác nhau. |
+| Trạng thái đơn | `status` | Chỉ `pending`, `confirmed`, `completed` tham gia đối chiếu trùng ghế, lặp danh tính, tên tương tự và đặt dồn; booking `cancelled` được loại khỏi các đối chiếu này. |
+
+Các trường `totalPrice`, giá vé, thông tin hành khách trên vé, `paymentStatus`, trạng thái vé và liên kết `SeatStatus` còn được dùng để phát hiện dữ liệu bất nhất. Đây là các tín hiệu bất thường bổ sung, không phải khóa xác định trùng ghế. `bookingCode` và `ticketCode` phục vụ tra cứu/hiển thị.
+
+Đã xác minh bằng `node --test tests/anomalies.service.test.js` trong thư mục `backend`: 11/11 kiểm thử đạt (27/10/2026).
+
 - Trang `/admin/anomalies` phân tích booking, vé và trạng thái ghế; API `GET /api/admin/anomalies` hỗ trợ tìm kiếm, lọc theo `tripId`, ngày khởi hành/mức rủi ro/trạng thái rà soát và phân trang. `GET /api/admin/anomalies/:bookingId` trả chi tiết vé nghi vấn, điểm, lý do và booking liên quan cùng chuyến; nếu booking không tồn tại hoặc không có phát hiện thì trả HTTP 404. Các endpoint yêu cầu xác thực và vai trò `admin`.
 - Điểm nghi ngờ cộng theo tín hiệu: ghế trùng giữa booking đang hoạt động (+70), thông tin liên hệ lặp lại cùng chuyến/ngày (+25), 4+ booking trong cửa sổ 10 phút (+35), tên tương tự/trùng nhưng liên hệ khác nhau (+15), ghế/giá/thông tin hành khách/trạng thái vé không nhất quán (+25–35). Điểm hiển thị giới hạn 100; mức thấp 15–39, trung bình 40–69, cao từ 70.
 - Chỉ thông tin tên đã che một phần được trả về từ API; số điện thoại và email chỉ được dùng nội bộ để so khớp, không đưa vào kết quả. Hệ thống quét tối đa 2.000 booking gần nhất mỗi lần; lọc ngày hoặc tìm kiếm để thu hẹp phạm vi khi được cảnh báo giới hạn.
