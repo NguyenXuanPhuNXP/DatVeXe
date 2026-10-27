@@ -12,7 +12,7 @@ const PaymentPage = () => {
   const { user } = useAuth();
   const { addNotification, addSavedBooking } = useNotification();
 
-  const [paymentMethod, setPaymentMethod] = useState('momo');
+  const [paymentMethod, setPaymentMethod] = useState('vnpay');
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -117,7 +117,7 @@ const PaymentPage = () => {
           )}
 
           <div className="payment-methods">
-            {[['momo','Ví MoMo','Mở cổng MoMo để thanh toán trong thời gian giữ ghế 5 phút.'],['bank_transfer','Chuyển khoản cho nhà xe','Liên hệ nhà xe để nhận thông tin ngân hàng. Nhân viên cần xác nhận đã nhận tiền trong 5 phút.']].map(([value,label,description]) => <label key={value} className={`payment-method ${paymentMethod===value?'active':''}`}><input type="radio" name="payment" checked={paymentMethod===value} onChange={()=>setPaymentMethod(value)}/><div><strong>{label}</strong><p>{description}</p></div></label>)}
+            {[['vnpay','VNPAY (QR / ngân hàng / thẻ)','Mở cổng VNPAY để thanh toán trong thời gian giữ ghế 5 phút.'],['bank_transfer','Chuyển khoản cho nhà xe','Liên hệ nhà xe để nhận thông tin ngân hàng. Nhân viên cần xác nhận đã nhận tiền trong 5 phút.']].map(([value,label,description]) => <label key={value} className={`payment-method ${paymentMethod===value?'active':''}`}><input type="radio" name="payment" checked={paymentMethod===value} onChange={()=>setPaymentMethod(value)}/><div><strong>{label}</strong><p>{description}</p></div></label>)}
           </div>
 
           <div

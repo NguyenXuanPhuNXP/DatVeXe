@@ -2,14 +2,10 @@ const { Router } = require("express");
 const { z } = require("zod");
 const { optionalAuthenticate } = require("../../middleware/authenticate");
 const { getBookingService } = require("../bookings/bookings.service");
-const { ticketAssets, ticketInclude } = require("./qr.service");
+const { ticketAssets } = require("./qr.service");
 const { prisma } = require("../../lib/prisma");
 const { HttpError } = require("../../utils/http-error");
-const {
-  createMomoPayment,
-  handleMomoIpn,
-  configured,
-} = require("./momo.service");
+const { handleMomoIpn } = require("./momo.service");
 const { queueTicketEmail } = require("./email.service");
 const { rateLimit } = require("express-rate-limit");
 const router = Router();
@@ -20,7 +16,17 @@ const wrap = (fn) => async (req, res, next) => {
     next(e);
   }
 };
-router.get("/capabilities", (_req, res) => res.json({ momo: configured() }));
+const vnpay = require("./vnpay.service");
+router.get("/capabilities", (_req, res) =>
+  res.json({ gateway: "vnpay", vnpay: vnpay.configured() }),
+);
+router.get("/vnpay/ipn", async (req, res) => {
+  try {
+    res.json(await vnpay.handleVnpayIpn(req.query));
+  } catch {
+    res.json({ RspCode: "99", Message: "Unable to process notification" });
+  }
+});
 router.post(
   "/momo/ipn",
   wrap(async (req, res) => {
@@ -37,7 +43,7 @@ router.use(
   }),
 );
 router.post(
-  "/bookings/:id/momo",
+  "/bookings/:id/vnpay",
   optionalAuthenticate,
   wrap(async (req, res) => {
     const { phone } = z
@@ -45,13 +51,26 @@ router.post(
       .strict()
       .parse(req.body || {});
     res.json(
-      await createMomoPayment(req.params.id, {
-        userId: req.auth?.userId,
-        phone,
-      }),
+      await vnpay.createVnpayPayment(
+        req.params.id,
+        { userId: req.auth?.userId, phone },
+        req.ip,
+      ),
     );
   }),
 );
+router.post("/bookings/:id/momo", (_req, res) =>
+  res
+    .status(410)
+    .json({
+      error: {
+        code: "PAYMENT_GATEWAY_CHANGED",
+        message:
+          "Hệ thống đã chuyển sang VNPAY. Vui lòng tải lại trang đặt vé.",
+      },
+    }),
+);
+
 router.get(
   "/bookings/:id/tickets",
   optionalAuthenticate,

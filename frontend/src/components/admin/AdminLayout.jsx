@@ -42,7 +42,7 @@ const AdminLayout = ({ children }) => {
         </div>
         
         <nav className="admin-menu">
-          <NavLink to="/admin/momo-issues" className="admin-menu-item">Đối soát MoMo</NavLink>
+          <NavLink to="/admin/payment-issues" className="admin-menu-item">Đối soát thanh toán</NavLink>
           <NavLink to="/admin/company-access" className="admin-menu-item">Phân quyền nhà xe</NavLink>
           <NavLink to="/admin/payments" className="admin-menu-item">Ghi nhận thu tiền</NavLink>
           <NavLink to="/admin" end className={({ isActive }) => `admin-menu-item ${isActive ? 'active' : ''}`}>

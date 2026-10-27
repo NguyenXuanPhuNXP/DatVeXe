@@ -283,6 +283,7 @@ model PaymentReceipt {
 }
 
 model PaymentAttempt {
+  provider String @default("momo") @db.NVarChar(20)
   id String @id @default(cuid()) @db.NVarChar(30)
   bookingId String @db.NVarChar(30)
   orderId String @unique @db.NVarChar(100)

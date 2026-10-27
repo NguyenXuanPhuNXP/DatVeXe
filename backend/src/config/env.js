@@ -2,6 +2,12 @@ require("dotenv/config");
 const { z } = require("zod");
 
 const envSchema = z.object({
+  VNPAY_ENV: z.enum(['sandbox','production']).default('sandbox'),
+  VNPAY_TMN_CODE: z.string().default(''),
+  VNPAY_HASH_SECRET: z.string().default(''),
+  VNPAY_RETURN_URL: z.string().default(''),
+  VNPAY_IPN_URL: z.string().default(''),
+  VNPAY_PAYMENT_URL: z.string().default(''),
   MOMO_PARTNER_CODE: z.string().default(''),
   MOMO_ACCESS_KEY: z.string().default(''),
   MOMO_SECRET_KEY: z.string().default(''),
