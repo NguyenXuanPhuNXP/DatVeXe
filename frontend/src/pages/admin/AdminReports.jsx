@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import * as XLSX from 'xlsx';
 import { adminService } from '../../services/adminApi';
 
@@ -60,7 +60,9 @@ const AdminReports = () => {
   }, [filters]);
 
   useEffect(() => {
-    fetchReports();
+    let active = true;
+    Promise.resolve().then(() => { if (active) fetchReports(); });
+    return () => { active = false; };
   }, [fetchReports]);
 
   // Handle Quick Date ranges

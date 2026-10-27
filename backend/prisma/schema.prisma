@@ -19,6 +19,7 @@ model User {
   sessions     Session[]
   bookings     Booking[]
   anomalyReviews BookingAnomalyReview[]
+  companyMembership CompanyMembership?
 }
 
 model Session {
@@ -80,6 +81,7 @@ model BusCompany {
   totalReviews Int     @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  members     CompanyMembership[]
   buses       Bus[]
   trips       Trip[]
 }
@@ -183,6 +185,12 @@ model Booking {
   seatStatuses    SeatStatus[]
   tickets         Ticket[]
   anomalyReview  BookingAnomalyReview?
+  receipt PaymentReceipt?
+  expiresAt DateTime?
+  qrVersion Int @default(1)
+  paymentAttempts PaymentAttempt[]
+  emailJobs TicketEmailJob[]
+  changes BookingChange[]
 
   @@index([tripId, tripDate])
   @@index([userId])
@@ -204,6 +212,8 @@ model Ticket {
   updatedAt      DateTime     @updatedAt
   booking        Booking      @relation(fields: [bookingId], references: [id], onDelete: NoAction)
   seatStatuses   SeatStatus[]
+  checkedInAt DateTime?
+  checkedInById String? @db.NVarChar(30)
 
   @@unique([bookingId, seatCode])
   @@index([bookingId, status])
@@ -248,4 +258,75 @@ model News {
   publishedAt DateTime @default(now())
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model CompanyMembership {
+  id String @id @default(cuid()) @db.NVarChar(30)
+  userId String @unique @db.NVarChar(30)
+  companyId String @db.NVarChar(30)
+  role String @db.NVarChar(20)
+  isActive Boolean @default(true)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  company BusCompany @relation(fields: [companyId], references: [id], onDelete: NoAction)
+  @@index([companyId, role])
+}
+model PaymentReceipt {
+  id String @id @default(cuid()) @db.NVarChar(30)
+  bookingId String @unique @db.NVarChar(30)
+  amount Int
+  method String @db.NVarChar(20)
+  reference String? @db.NVarChar(100)
+  receivedById String @db.NVarChar(30)
+  receivedAt DateTime @default(now())
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: NoAction)
+  @@index([receivedAt])
+}
+
+model PaymentAttempt {
+  id String @id @default(cuid()) @db.NVarChar(30)
+  bookingId String @db.NVarChar(30)
+  orderId String @unique @db.NVarChar(100)
+  requestId String @unique @db.NVarChar(100)
+  amount Int
+  status String @default("pending") @db.NVarChar(30)
+  payUrl String? @db.NVarChar(2000)
+  transId String? @db.NVarChar(100)
+  resultCode Int?
+  message String? @db.NVarChar(500)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: NoAction)
+  @@index([bookingId, status])
+}
+model TicketEmailJob {
+  id String @id @default(cuid()) @db.NVarChar(30)
+  bookingId String @db.NVarChar(30)
+  version Int
+  status String @default("pending") @db.NVarChar(20)
+  attempts Int @default(0)
+  nextAttemptAt DateTime @default(now())
+  lockedUntil DateTime?
+  sentAt DateTime?
+  lastError String? @db.NVarChar(500)
+  createdAt DateTime @default(now())
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: NoAction)
+  @@unique([bookingId, version])
+  @@index([status, nextAttemptAt])
+}
+model BookingChange {
+  id String @id @default(cuid()) @db.NVarChar(30)
+  bookingId String @db.NVarChar(30)
+  oldTripId String @db.NVarChar(30)
+  oldDate DateTime @db.Date
+  oldSeats String @db.NVarChar(200)
+  newTripId String @db.NVarChar(30)
+  newDate DateTime @db.Date
+  newSeats String @db.NVarChar(200)
+  difference Int
+  method String @db.NVarChar(20)
+  reference String? @db.NVarChar(100)
+  performedById String @db.NVarChar(30)
+  createdAt DateTime @default(now())
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: NoAction)
+  @@index([bookingId, createdAt])
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { adminService } from '../../services/adminApi';
 
 const DEFAULT_PROMOS = [
@@ -33,7 +33,9 @@ const AdminPromotions = () => {
   };
 
   useEffect(() => {
-    fetchPromotions();
+    let active = true;
+    Promise.resolve().then(() => { if (active) fetchPromotions(); });
+    return () => { active = false; };
   }, []);
 
   const handleOpenModal = (promo = null) => {

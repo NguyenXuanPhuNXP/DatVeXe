@@ -13,6 +13,7 @@ const bookingInclude = {
   },
   tickets: { orderBy: { seatCode: "asc" } },
   seatStatuses: true,
+  receipt: true,
 };
 
 function buildBookingWhere(filters) {
@@ -64,15 +65,18 @@ async function getBooking(id) {
   return booking;
 }
 
-async function updateBookingStatus(id, nextStatus) {
+async function updateBookingStatus(id, nextStatus, companyId) {
+  await require('../ticketing/expiry.service').expireUnpaidBookings({id,...(companyId?{trip:{companyId}}:{})});
   return prisma.$transaction(async (transaction) => {
-    const booking = await transaction.booking.findUnique({
-      where: { id },
-      select: { id: true, status: true, paymentStatus: true },
+    const booking = await transaction.booking.findFirst({
+      where: { id, ...(companyId ? { trip: { companyId } } : {}) },
+      select: { id: true, status: true, paymentStatus: true, tickets:{select:{checkedInAt:true}} },
     });
     if (!booking) {
       throw new HttpError(404, "BOOKING_NOT_FOUND", "Booking not found");
     }
+    if (nextStatus==='completed' && booking.paymentStatus!=='paid') throw new HttpError(409,'PAYMENT_REQUIRED','Vé chưa thanh toán không được hoàn thành');
+    if(nextStatus==='cancelled'&&booking.tickets?.some(t=>t.checkedInAt))throw new HttpError(409,'ALREADY_BOARDED','Vé đã lên xe không được hủy trực tiếp');
     if (booking.status === nextStatus) {
       throw new HttpError(409, "BOOKING_STATUS_UNCHANGED", "Booking already has this status");
     }
@@ -92,7 +96,7 @@ async function updateBookingStatus(id, nextStatus) {
     }
 
     const update = await transaction.booking.updateMany({
-      where: { id, status: booking.status },
+      where: { id, status: booking.status, paymentStatus: booking.paymentStatus },
       data: {
         status: nextStatus,
         ...(nextStatus === "cancelled" && booking.paymentStatus === "paid"
@@ -106,7 +110,7 @@ async function updateBookingStatus(id, nextStatus) {
 
     if (nextStatus === "cancelled") {
       await transaction.seatStatus.updateMany({
-        where: { bookingId: id, status: "booked" },
+        where: { bookingId: id, status: { in:["booked","held"] } },
         data: { status: "available", bookingId: null, ticketId: null },
       });
       await transaction.ticket.updateMany({

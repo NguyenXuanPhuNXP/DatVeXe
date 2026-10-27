@@ -61,6 +61,7 @@ async function authenticate(request, _response, next) {
 
   request.auth = {
     userId: session.user.id,
+    companyMembership: session.user.companyMembership?.isActive ? session.user.companyMembership : null,
     sessionId: session.id,
     email: session.user.email,
     fullName: session.user.fullName,

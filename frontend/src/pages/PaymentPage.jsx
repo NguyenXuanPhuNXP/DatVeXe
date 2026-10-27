@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import BookingSteps from '../components/booking/BookingSteps';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { useNotification } from '../context/NotificationContext';
+import { useAuth } from '../context/auth-context';
+import { useNotification } from '../context/notification-context';
 import { bookingService } from '../services/api';
 import '../styles/booking.css';
 
@@ -12,31 +12,19 @@ const PaymentPage = () => {
   const { user } = useAuth();
   const { addNotification, addSavedBooking } = useNotification();
 
-  const [bookingData, setBookingData] = useState(null);
-  const [paymentMethod, setPaymentMethod] = useState('vnpay');
+  const [paymentMethod, setPaymentMethod] = useState('momo');
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
+  const bookingData = useMemo(() => {
+    if (location.state) return location.state;
+    try {
+      return JSON.parse(sessionStorage.getItem('currentBooking') || sessionStorage.getItem('rightwayBooking') || 'null');
+    } catch { return null; }
+  }, [location.state]);
   useEffect(() => {
-    let data = location.state;
-    if (!data) {
-      const stored = sessionStorage.getItem('currentBooking') || sessionStorage.getItem('rightwayBooking');
-      if (stored) {
-        try {
-          data = JSON.parse(stored);
-        } catch {
-          // ignore
-        }
-      }
-    }
-
-    if (!data || !data.trip || !data.selectedSeats || !data.passengerInfo) {
-      navigate('/search');
-      return;
-    }
-
-    setBookingData(data);
-  }, [location.state, navigate]);
+    if (!bookingData?.trip || !bookingData.selectedSeats?.length || !bookingData.passengerInfo) navigate('/search');
+  }, [bookingData,navigate]);
 
   const handleConfirmBooking = async () => {
     if (!bookingData || submitting) return;
@@ -55,16 +43,7 @@ const PaymentPage = () => {
         passengerName: passengerInfo.fullName,
         passengerPhone: passengerInfo.phone,
         passengerEmail: passengerInfo.email,
-        paymentMethod:
-          paymentMethod === 'vnpay'
-            ? 'VNPAY'
-            : paymentMethod === 'momo'
-            ? 'Ví MoMo'
-            : paymentMethod === 'card'
-            ? 'Thẻ Quốc tế (Visa/Mastercard)'
-            : paymentMethod === 'atm'
-            ? 'Thẻ ATM nội địa'
-            : 'Tiền mặt khi lên xe',
+        paymentMethod,
         totalPrice,
         userId: user?.id || null,
       };
@@ -80,7 +59,7 @@ const PaymentPage = () => {
         : `${trip.origin || ''} → ${trip.destination || ''}`;
       addNotification({
         title: 'Đặt vé thành công! 🎉',
-        message: `Đơn vé ${newBooking.bookingCode} (${routeName}) đã được gửi tới hệ thống và đang chờ Admin duyệt.`,
+        message: `Đơn vé ${newBooking.bookingCode} (${routeName}) đang được giữ ghế trong 5 phút. Vui lòng thanh toán trước khi hết hạn.`,
         type: 'info',
         link: `/lookup?code=${newBooking.bookingCode}`,
         bookingCode: newBooking.bookingCode,
@@ -91,7 +70,7 @@ const PaymentPage = () => {
       sessionStorage.removeItem('rightwayBooking');
 
       // Navigate to lookup page with success indicator
-      navigate(`/lookup?code=${newBooking.bookingCode}&phone=${encodeURIComponent(passengerInfo.phone)}&success=1`);
+      navigate(`/lookup?code=${newBooking.bookingCode}&success=1`);
     } catch (err) {
       console.error('Booking creation error:', err);
       setErrorMsg(
@@ -102,7 +81,7 @@ const PaymentPage = () => {
     }
   };
 
-  if (!bookingData) {
+  if (!bookingData?.trip || !Array.isArray(bookingData.selectedSeats) || !bookingData.selectedSeats.length || !bookingData.passengerInfo) {
     return null;
   }
 
@@ -138,83 +117,7 @@ const PaymentPage = () => {
           )}
 
           <div className="payment-methods">
-            <label className={`payment-method ${paymentMethod === 'vnpay' ? 'active' : ''}`}>
-              <input
-                type="radio"
-                name="payment"
-                checked={paymentMethod === 'vnpay'}
-                onChange={() => setPaymentMethod('vnpay')}
-              />
-              <img
-                src="https://vnpay.vn/s1/statics.vnpay.vn/2023/9/06ncktiwd6dc1694418189687.png"
-                alt="VNPAY"
-                style={{ height: '28px' }}
-              />
-              <div>
-                <span style={{ fontWeight: 600, display: 'block' }}>Thanh toán qua VNPAY (QR / Ngân hàng)</span>
-                <small style={{ color: '#6B7280' }}>Hỗ trợ tất cả ứng dụng ngân hàng và ví điện tử</small>
-              </div>
-            </label>
-
-            <label className={`payment-method ${paymentMethod === 'momo' ? 'active' : ''}`}>
-              <input
-                type="radio"
-                name="payment"
-                checked={paymentMethod === 'momo'}
-                onChange={() => setPaymentMethod('momo')}
-              />
-              <img
-                src="https://upload.wikimedia.org/wikipedia/vi/f/fe/MoMo_Logo.png"
-                alt="MoMo"
-                style={{ height: '28px' }}
-              />
-              <div>
-                <span style={{ fontWeight: 600, display: 'block' }}>Ví điện tử MoMo</span>
-                <small style={{ color: '#6B7280' }}>Thanh toán tức thì qua ứng dụng MoMo</small>
-              </div>
-            </label>
-
-            <label className={`payment-method ${paymentMethod === 'cash' ? 'active' : ''}`}>
-              <input
-                type="radio"
-                name="payment"
-                checked={paymentMethod === 'cash'}
-                onChange={() => setPaymentMethod('cash')}
-              />
-              <i className="bi bi-cash-stack" style={{ fontSize: '28px', color: '#10B981' }}></i>
-              <div>
-                <span style={{ fontWeight: 600, display: 'block' }}>Thanh toán bằng tiền mặt khi lên xe</span>
-                <small style={{ color: '#6B7280' }}>Thanh toán trực tiếp cho phụ xe khi bắt đầu khởi hành</small>
-              </div>
-            </label>
-
-            <label className={`payment-method ${paymentMethod === 'atm' ? 'active' : ''}`}>
-              <input
-                type="radio"
-                name="payment"
-                checked={paymentMethod === 'atm'}
-                onChange={() => setPaymentMethod('atm')}
-              />
-              <i className="bi bi-bank" style={{ fontSize: '28px', color: 'var(--primary)' }}></i>
-              <div>
-                <span style={{ fontWeight: 600, display: 'block' }}>Thẻ ATM nội địa (Internet Banking)</span>
-                <small style={{ color: '#6B7280' }}>Miễn phí giao dịch</small>
-              </div>
-            </label>
-
-            <label className={`payment-method ${paymentMethod === 'card' ? 'active' : ''}`}>
-              <input
-                type="radio"
-                name="payment"
-                checked={paymentMethod === 'card'}
-                onChange={() => setPaymentMethod('card')}
-              />
-              <i className="bi bi-credit-card" style={{ fontSize: '28px', color: 'var(--primary)' }}></i>
-              <div>
-                <span style={{ fontWeight: 600, display: 'block' }}>Thẻ quốc tế Visa / Mastercard / JCB</span>
-                <small style={{ color: '#6B7280' }}>Bảo mật thanh toán 3D Secure</small>
-              </div>
-            </label>
+            {[['momo','Ví MoMo','Mở cổng MoMo để thanh toán trong thời gian giữ ghế 5 phút.'],['bank_transfer','Chuyển khoản cho nhà xe','Liên hệ nhà xe để nhận thông tin ngân hàng. Nhân viên cần xác nhận đã nhận tiền trong 5 phút.']].map(([value,label,description]) => <label key={value} className={`payment-method ${paymentMethod===value?'active':''}`}><input type="radio" name="payment" checked={paymentMethod===value} onChange={()=>setPaymentMethod(value)}/><div><strong>{label}</strong><p>{description}</p></div></label>)}
           </div>
 
           <div
@@ -229,7 +132,7 @@ const PaymentPage = () => {
             }}
           >
             <i className="bi bi-shield-check" style={{ fontSize: '18px', marginRight: '8px', verticalAlign: 'middle' }}></i>
-            Thông tin đặt vé của bạn được truyền đi an toàn và chuyển trực tiếp tới hệ thống quản lý để nhân viên xác nhận chỗ ngồi.
+            Ghế được giữ trong 5 phút từ khi tạo đơn. Sau khi thanh toán được xác nhận, hệ thống cấp QR vé và gửi vé qua email.
           </div>
         </div>
 

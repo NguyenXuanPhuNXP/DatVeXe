@@ -1,6 +1,5 @@
-import React from 'react';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/auth-context';
 import '../../styles/admin.css';
 
 const AdminLayout = ({ children }) => {
@@ -43,6 +42,9 @@ const AdminLayout = ({ children }) => {
         </div>
         
         <nav className="admin-menu">
+          <NavLink to="/admin/momo-issues" className="admin-menu-item">Đối soát MoMo</NavLink>
+          <NavLink to="/admin/company-access" className="admin-menu-item">Phân quyền nhà xe</NavLink>
+          <NavLink to="/admin/payments" className="admin-menu-item">Ghi nhận thu tiền</NavLink>
           <NavLink to="/admin" end className={({ isActive }) => `admin-menu-item ${isActive ? 'active' : ''}`}>
             <i className="bi bi-speedometer2"></i> Dashboard
           </NavLink>

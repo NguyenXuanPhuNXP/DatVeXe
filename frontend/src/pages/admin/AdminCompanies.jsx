@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { adminService } from '../../services/adminApi';
 
 const DEFAULT_COMPANIES = [
@@ -32,7 +32,9 @@ const AdminCompanies = () => {
   };
 
   useEffect(() => {
-    fetchCompanies();
+    let active = true;
+    Promise.resolve().then(() => { if (active) fetchCompanies(); });
+    return () => { active = false; };
   }, []);
 
   const handleOpenModal = (company = null) => {

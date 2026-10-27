@@ -1,6 +1,5 @@
-import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { isAdminUser, useAuth } from '../../context/AuthContext';
+import { isAdminUser, userHome, useAuth } from '../../context/auth-context';
 import '../../styles/auth.css';
 
 export function AuthLoading() {
@@ -54,7 +53,7 @@ export function GuestRoute({ children }) {
 
   if (loading) return <AuthLoading />;
   if (user) {
-    return <Navigate to={isAdminUser(user) ? '/admin' : '/'} replace />;
+    return <Navigate to={userHome(user)} replace />;
   }
   return children;
 }

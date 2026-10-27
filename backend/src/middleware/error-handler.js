@@ -21,6 +21,9 @@ function errorHandler(error, _request, response, _next) {
     return;
   }
 
+  if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2034') {
+    response.status(409).json({error:{code:'WRITE_CONFLICT',message:'Dữ liệu vừa thay đổi bởi thao tác khác. Vui lòng thử lại.'}});return;
+  }
   if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
     response.status(409).json({ error: { code: "CONFLICT", message: "Resource already exists" } });
     return;

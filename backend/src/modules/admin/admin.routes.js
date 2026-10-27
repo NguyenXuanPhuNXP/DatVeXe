@@ -18,6 +18,9 @@ const { receiveExcelFile } = require("./trip-import.middleware");
 const adminRouter = Router();
 
 adminRouter.use(authenticate, requireRole("admin"));
+adminRouter.get('/momo-issues', async(_req,res,next)=>{
+  try{res.json(await prisma.paymentAttempt.findMany({where:{status:'refund_required'},include:{booking:{select:{bookingCode:true,passengerName:true,passengerPhone:true}}},orderBy:{createdAt:'desc'}}));}catch(e){next(e);}
+});
 adminRouter.get("/users", adminController.listUsers);
 adminRouter.post("/users", adminController.createUser);
 adminRouter.get("/users/:userId/status", adminController.getUserStatus);
@@ -30,6 +33,10 @@ adminRouter.delete("/users/:userId", adminController.deleteUser);
 adminRouter.put("/users/:userId/roles", adminController.replaceUserRoles);
 adminRouter.get("/roles", adminController.listRoles);
 adminRouter.get("/bookings", adminBookingsController.listBookings);
+adminRouter.post("/bookings/:id/payment", async (req, res, next) => {
+  try { res.json(await require("../bookings/payments.service").receivePayment(req.params.id, req.body, req.auth.userId)); }
+  catch (error) { next(error); }
+});
 adminRouter.get("/bookings/:id", adminBookingsController.getBooking);
 adminRouter.patch("/bookings/:id/status", adminBookingsController.updateBookingStatus);
 adminRouter.put("/bookings/:id", adminBookingsController.updateBookingStatus);

@@ -72,6 +72,7 @@ function me(request, response, next) {
       email: request.auth.email,
       fullName: request.auth.fullName,
       roles: request.auth.roles,
+      companyMembership: request.auth.companyMembership,
       permissions: request.auth.permissions,
     },
   });

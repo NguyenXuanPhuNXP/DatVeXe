@@ -21,7 +21,7 @@ const createBookingSchema = z.object({
   passengerName: z.string().trim().min(1).max(120),
   passengerPhone: z.string().trim().min(1).max(20),
   passengerEmail: z.string().trim().email().max(254).or(z.literal("")),
-  paymentMethod: z.string().trim().max(50).optional(),
+  paymentMethod: z.enum(["cash", "bank_transfer", "momo"]).default("cash"),
   totalPrice: z.number().int().positive().optional(),
 }).passthrough()
   .superRefine((data, context) => {

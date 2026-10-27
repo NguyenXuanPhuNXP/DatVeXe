@@ -16,6 +16,7 @@ function serializeUser(user) {
     id: user.id,
     email: user.email,
     fullName: user.fullName,
+    companyMembership: user.companyMembership?.isActive ? user.companyMembership : null,
     roles: user.roles.map(({ role }) => role.name),
     permissions: [
       ...new Set(

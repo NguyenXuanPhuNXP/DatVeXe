@@ -1,4 +1,3 @@
-import React from 'react';
 
 const DEPARTURE_PERIODS = [
   { id: 'early', label: 'Sáng sớm 00:00 - 06:00' },

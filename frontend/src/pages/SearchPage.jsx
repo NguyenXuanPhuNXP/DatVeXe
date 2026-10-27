@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import SearchHeader from '../components/search/SearchHeader';
 import FilterSidebar from '../components/search/FilterSidebar';
@@ -103,7 +103,9 @@ const SearchPage = () => {
   }, [searchParams, filters, sortBy]);
 
   useEffect(() => {
-    fetchTrips();
+    let active = true;
+    Promise.resolve().then(() => { if (active) fetchTrips(); });
+    return () => { active = false; };
   }, [fetchTrips]);
 
   const handleFilterChange = (key, value) => {

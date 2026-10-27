@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:3000/api',
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api',
   withCredentials: true,
 });
 
@@ -13,9 +13,12 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+let refreshingSession;
+
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
+    if (error.response?.data?.error?.message) error.response.data.message = error.response.data.error.message;
     const original = error.config;
     const status = error.response?.status;
     const url = original?.url || '';
@@ -24,7 +27,8 @@ api.interceptors.response.use(
     if (status === 401 && original && !original._retry && !isAuthEndpoint) {
       original._retry = true;
       try {
-        const { data } = await api.post('/auth/refresh');
+        refreshingSession ||= api.post('/auth/refresh').finally(() => { refreshingSession = null; });
+        const { data } = await refreshingSession;
         localStorage.setItem('accessToken', data.accessToken);
         original.headers = original.headers || {};
         original.headers.Authorization = `Bearer ${data.accessToken}`;

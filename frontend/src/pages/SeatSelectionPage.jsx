@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import BookingSteps from '../components/booking/BookingSteps';
 import SearchHeader from '../components/search/SearchHeader';
 import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
@@ -40,26 +40,25 @@ const SeatSelectionPage = () => {
 
   const [trip, setTrip] = useState(location.state?.trip || null);
   const [bookedSeats, setBookedSeats] = useState([]);
-  const [loading, setLoading] = useState(!location.state?.trip);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [activeFloor, setActiveFloor] = useState('lower');
   const [selectedSeats, setSelectedSeats] = useState([]);
 
   useEffect(() => {
     if (!resolvedTripId) {
-      setLoading(false);
-      setError('Chưa chọn chuyến xe. Vui lòng quay lại trang tìm kiếm để chọn chuyến.');
       return;
     }
 
     const fetchData = async () => {
       try {
-        if (!trip) setLoading(true);
+        await Promise.resolve();
+        setLoading(true);
         setError('');
 
         const promises = [
           tripService.getById(resolvedTripId),
-          tripService.getSeats(resolvedTripId, resolvedTripDate).catch(() => ({ data: [] })),
+          tripService.getSeats(resolvedTripId, resolvedTripDate),
         ];
 
         const results = await Promise.all(promises);
@@ -150,6 +149,7 @@ const SeatSelectionPage = () => {
     return seats;
   };
 
+  if (!resolvedTripId) return <div className="booking-page"><p>Chưa chọn chuyến xe.</p><button onClick={() => navigate('/search')}>Tìm chuyến</button></div>;
   if (loading) {
     return (
       <div className="booking-page">

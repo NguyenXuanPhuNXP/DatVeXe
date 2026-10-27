@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { adminService } from '../../services/adminApi';
 ///////////////
 const DEFAULT_ROUTES = [
@@ -32,7 +32,9 @@ const AdminRoutes = () => {
   };
 
   useEffect(() => {
-    fetchRoutes();
+    let active = true;
+    Promise.resolve().then(() => { if (active) fetchRoutes(); });
+    return () => { active = false; };
   }, []);
 
   const handleOpenModal = (route = null) => {
