@@ -10,6 +10,8 @@ const DEFAULT_NEWS = [
 
 const AdminNews = () => {
   const [news, setNews] = useState(DEFAULT_NEWS);
+  const [formError,setFormError] = useState('');
+  const [isSaving,setIsSaving] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentNews, setCurrentNews] = useState(null);
 
@@ -20,6 +22,7 @@ const AdminNews = () => {
         setNews(res.data.map(n => ({
           id: n.id,
           title: n.title,
+          content: n.content || '', summary: n.summary || '',
           category: n.category || 'Tin tức',
           publishedAt: n.publishedAt ? new Date(n.publishedAt).toLocaleDateString('vi-VN') : '25/09/2025',
           status: n.isPublished ? 'Đã xuất bản' : 'Bản nháp',
@@ -38,27 +41,17 @@ const AdminNews = () => {
 
   const handleOpenModal = (item = null) => {
     setCurrentNews(item || { title: '', category: 'Tin tức', status: 'Đã xuất bản' });
+    setFormError('');
     setIsModalOpen(true);
   };
 
-  const handleSave = async (e) => {
-    e.preventDefault();
-    try {
-      if (currentNews.id && typeof currentNews.id === 'string' && currentNews.id.length > 5) {
-        await adminService.updateNews(currentNews.id, currentNews);
-      } else {
-        await adminService.createNews(currentNews);
-      }
-      setIsModalOpen(false);
-      fetchNews();
-    } catch {
-      if (currentNews.id) {
-        setNews(news.map(n => n.id === currentNews.id ? currentNews : n));
-      } else {
-        setNews([...news, { ...currentNews, id: String(Date.now()), publishedAt: new Date().toLocaleDateString('vi-VN') }]);
-      }
-      setIsModalOpen(false);
-    }
+  const handleSave = async e => {
+    e.preventDefault(); if(isSaving) return; setFormError(''); setIsSaving(true);
+    try { const payload={title:currentNews.title.trim(),category:currentNews.category,summary:currentNews.summary||'',content:currentNews.content||'',isPublished:currentNews.status==='Đã xuất bản'};
+      if(currentNews.id) await adminService.updateNews(currentNews.id,payload); else await adminService.createNews(payload);
+      setIsModalOpen(false); await fetchNews();
+    } catch(error) {setFormError(error.response?.data?.message || 'Không lưu được dữ liệu. Vui lòng kiểm tra và thử lại.');}
+    finally {setIsSaving(false);}
   };
 
   const handleDelete = async (id) => {
@@ -125,20 +118,20 @@ const AdminNews = () => {
               <button type="button" className="modal-close" onClick={() => setIsModalOpen(false)}>&times;</button>
             </div>
             <form onSubmit={handleSave}>
-              <div className="modal-body">
+              <div className="modal-body">{formError && <p role="alert">{formError}</p>}
                 <div className="form-group">
-                  <label>Tiêu đề</label>
-                  <input
+                  <label htmlFor="adminnews-field-1">Tiêu đề</label>
+                  <input id="adminnews-field-1"
                     type="text"
                     className="form-control"
                     value={currentNews?.title || ''}
-                    onChange={e => setCurrentNews({ ...currentNews, title: e.target.value })}
+                    placeholder="Nhập tiêu đề chương trình hoặc bài viết" onChange={e => setCurrentNews({ ...currentNews, title: e.target.value })}
                     required
                   />
                 </div>
                 <div className="form-group">
-                  <label>Chuyên mục</label>
-                  <select
+                  <label htmlFor="adminnews-field-2">Chuyên mục</label>
+                  <select id="adminnews-field-2"
                     className="form-control"
                     value={currentNews?.category || 'Tin tức'}
                     onChange={e => setCurrentNews({ ...currentNews, category: e.target.value })}
@@ -150,9 +143,13 @@ const AdminNews = () => {
                   </select>
                 </div>
               </div>
-              <div className="modal-footer">
+<div className="modal-body">
+<div className="form-group"><label htmlFor="news-summary">Tóm tắt</label><textarea id="news-summary" className="form-control" maxLength={500} placeholder="Giới thiệu ngắn nội dung bài viết (tối đa 500 ký tự)" value={currentNews.summary || ''} onChange={e => setCurrentNews({...currentNews,summary:e.target.value})} /></div>
+<div className="form-group"><label htmlFor="news-content">Nội dung bài viết</label><textarea id="news-content" className="form-control" rows={5} placeholder="Nhập nội dung chi tiết bài viết" value={currentNews.content || ''} onChange={e => setCurrentNews({...currentNews,content:e.target.value})} /></div>
+<div className="form-group"><label htmlFor="news-status">Trạng thái xuất bản</label><select id="news-status" className="form-control" value={currentNews.status} onChange={e => setCurrentNews({...currentNews,status:e.target.value})}><option>Bản nháp</option><option>Đã xuất bản</option></select></div>
+</div><div className="modal-footer">
                 <button type="button" className="btn btn-secondary" onClick={() => setIsModalOpen(false)}>Hủy</button>
-                <button type="submit" className="btn btn-primary">Lưu</button>
+                <button type="submit" className="btn btn-primary" disabled={isSaving}>{isSaving ? 'Đang lưu...' : 'Lưu'}</button>
               </div>
             </form>
           </div>

@@ -4,8 +4,12 @@ const { HttpError } = require("../../utils/http-error");
 const {expireUnpaidBookings}=require('../ticketing/expiry.service');
 async function searchTripsService(query) {
   await expireUnpaidBookings();
-  const { origin, destination, date, minPrice, maxPrice, companies, busTypes, rating, departurePeriods, sort } = query;
+  const { origin, destination, date: requestedDate, minPrice, maxPrice, companies, busTypes, rating, departurePeriods, sort } = query;
 
+  const now = new Date();
+  const today = new Date(now.getTime() + 7 * 3600000).toISOString().slice(0, 10);
+  const date = requestedDate || new Date(today + 'T00:00:00.000Z');
+  if (date.toISOString().slice(0, 10) < today) return [];
   const whereClause = { isActive: true };
   if (origin || destination) {
     whereClause.route = {};
@@ -94,7 +98,10 @@ async function searchTripsService(query) {
     orderBy: sortOptions[sort] || { departureTime: "asc" },
   });
 
-  return trips.map((trip) => {
+  return trips.filter(trip => {
+    const day = (trip.availableDate || date).toISOString().slice(0, 10);
+    return new Date(day + 'T' + trip.departureTime + ':00+07:00') > now;
+  }).map((trip) => {
     const bookedSeatCodes = new Set();
     if (trip.seatStatuses) {
       for (const s of trip.seatStatuses) {

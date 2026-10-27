@@ -4,5 +4,11 @@ import { defineConfig } from 'vite'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  server: { proxy: { '/api': 'http://localhost:3000' } },
+  server: {
+    host: '0.0.0.0',
+    port: 5173,
+    strictPort: true,
+    allowedHosts: ['handed-employer-radio.ngrok-free.dev'],
+    proxy: { '/api': 'http://localhost:3000' },
+  },
 })

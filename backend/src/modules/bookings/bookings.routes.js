@@ -10,9 +10,9 @@ bookingsRouter.use(rateLimit({ windowMs: 60_000, limit: 100, standardHeaders: "d
 bookingsRouter.get("/my", authenticate, ctrl.getMyBookings);
 bookingsRouter.get("/my-bookings", authenticate, ctrl.getMyBookings);
 bookingsRouter.get("/me", authenticate, ctrl.listMyBookings || ctrl.getMyBookings);
-bookingsRouter.get("/status-check", ctrl.statusCheck);
+bookingsRouter.get("/status-check", authenticate, ctrl.statusCheck);
 
-bookingsRouter.post("/", optionalAuthenticate, ctrl.createBooking);
+bookingsRouter.post("/", authenticate, ctrl.createBooking);
 bookingsRouter.get("/lookup", optionalAuthenticate, ctrl.lookupBooking);
 bookingsRouter.get("/:id", optionalAuthenticate, ctrl.getBooking);
 bookingsRouter.patch("/:id/cancel", optionalAuthenticate, ctrl.cancelBooking);

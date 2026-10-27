@@ -1,3 +1,4 @@
+import PasswordInput from '../components/auth/PasswordInput';
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { isAdminUser, userHome, useAuth } from '../context/auth-context';
@@ -28,7 +29,7 @@ const LoginPage = () => {
       const from = location.state?.from?.pathname;
       const admin = isAdminUser(user);
       if (from && !(from.startsWith('/admin') && !admin)) {
-        navigate(from, { replace: true });
+        navigate(from + (location.state.from.search || '') + (location.state.from.hash || ''), { replace: true, state: location.state.from.state });
         return;
       }
       navigate(userHome(user), { replace: true });
@@ -65,9 +66,8 @@ const LoginPage = () => {
 
           <div className="auth-input-group">
             <label htmlFor="login-password">Mật khẩu</label>
-            <input
+            <PasswordInput
               id="login-password"
-              type="password"
               placeholder="Nhập mật khẩu (VD: Admin@123)"
               value={password}
               onChange={(event) => setPassword(event.target.value)}

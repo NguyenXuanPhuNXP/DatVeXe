@@ -196,7 +196,7 @@ const SearchPage = () => {
                 <i className="bi bi-bus-front" style={{ fontSize: '48px', color: '#D1D5DB', display: 'block', marginBottom: '12px' }}></i>
                 <h3>Không tìm thấy chuyến xe nào phù hợp</h3>
                 <p style={{ marginTop: '8px', fontSize: '14px' }}>
-                  Vui lòng điều chỉnh lại bộ lọc giá, giờ chạy, nhà xe hoặc chọn ngày đi khác.
+                  Chỉ hiển thị chuyến chưa khởi hành trong ngày đã chọn. Nếu chưa chọn ngày, hệ thống tìm hôm nay. Bạn có thể chọn ngày mai hoặc điều chỉnh bộ lọc.
                 </p>
                 <button
                   type="button"
@@ -206,6 +206,11 @@ const SearchPage = () => {
                 >
                   Xoá toàn bộ bộ lọc
                 </button>
+                <button type="button" className="btn-primary" style={{marginLeft:12}} onClick={() => {
+                  const params = new URLSearchParams(searchParams);
+                  params.set('date', new Date(Date.now() + 7 * 3600000 + 86400000).toISOString().slice(0,10));
+                  setSearchParams(params);
+                }}>Tìm chuyến ngày mai</button>
               </div>
             )}
           </div>

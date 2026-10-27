@@ -10,6 +10,8 @@ const DEFAULT_COMPANIES = [
 
 const AdminCompanies = () => {
   const [companies, setCompanies] = useState(DEFAULT_COMPANIES);
+  const [formError,setFormError] = useState('');
+  const [isSaving,setIsSaving] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentCompany, setCurrentCompany] = useState(null);
 
@@ -39,27 +41,17 @@ const AdminCompanies = () => {
 
   const handleOpenModal = (company = null) => {
     setCurrentCompany(company || { name: '', rating: 5, totalBuses: 10, phone: '', desc: '' });
+    setFormError('');
     setIsModalOpen(true);
   };
 
-  const handleSave = async (e) => {
-    e.preventDefault();
-    try {
-      if (currentCompany.id && typeof currentCompany.id === 'string' && currentCompany.id.length > 5) {
-        await adminService.updateCompany(currentCompany.id, currentCompany);
-      } else {
-        await adminService.createCompany(currentCompany);
-      }
-      setIsModalOpen(false);
-      fetchCompanies();
-    } catch {
-      if (currentCompany.id) {
-        setCompanies(companies.map(c => c.id === currentCompany.id ? currentCompany : c));
-      } else {
-        setCompanies([...companies, { ...currentCompany, id: String(Date.now()) }]);
-      }
-      setIsModalOpen(false);
-    }
+  const handleSave = async e => {
+    e.preventDefault(); if(isSaving) return; setFormError(''); setIsSaving(true);
+    try { const payload={name:currentCompany.name.trim(),description:currentCompany.desc || ''};
+      if(currentCompany.id) await adminService.updateCompany(currentCompany.id,payload); else await adminService.createCompany(payload);
+      setIsModalOpen(false); await fetchCompanies();
+    } catch(error) {setFormError(error.response?.data?.message || 'Không lưu được dữ liệu. Vui lòng kiểm tra và thử lại.');}
+    finally {setIsSaving(false);}
   };
 
   const handleDelete = async (id) => {
@@ -128,39 +120,31 @@ const AdminCompanies = () => {
               <button type="button" className="modal-close" onClick={() => setIsModalOpen(false)}>&times;</button>
             </div>
             <form onSubmit={handleSave}>
-              <div className="modal-body">
+              <div className="modal-body">{formError && <p role="alert">{formError}</p>}
                 <div className="form-group">
-                  <label>Tên nhà xe</label>
-                  <input
+                  <label htmlFor="admincompanies-field-1">Tên nhà xe</label>
+                  <input id="admincompanies-field-1"
                     type="text"
                     className="form-control"
                     value={currentCompany?.name || ''}
-                    onChange={e => setCurrentCompany({ ...currentCompany, name: e.target.value })}
+                    placeholder="VD: Phương Trang" onChange={e => setCurrentCompany({ ...currentCompany, name: e.target.value })}
                     required
                   />
                 </div>
                 <div className="form-group">
-                  <label>Mô tả</label>
-                  <input
+                  <label htmlFor="admincompanies-field-2">Mô tả</label>
+                  <input id="admincompanies-field-2"
                     type="text"
                     className="form-control"
                     value={currentCompany?.desc || ''}
-                    onChange={e => setCurrentCompany({ ...currentCompany, desc: e.target.value })}
+                    placeholder="VD: Chuyên tuyến TP.HCM – Đà Lạt" onChange={e => setCurrentCompany({ ...currentCompany, desc: e.target.value })}
                   />
                 </div>
-                <div className="form-group">
-                  <label>Hotline</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    value={currentCompany?.phone || ''}
-                    onChange={e => setCurrentCompany({ ...currentCompany, phone: e.target.value })}
-                  />
-                </div>
+                <p className="form-hint">Ghi hotline trong phần mô tả nhà xe nếu cần công bố số liên hệ.</p>
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" onClick={() => setIsModalOpen(false)}>Hủy</button>
-                <button type="submit" className="btn btn-primary">Lưu</button>
+                <button type="submit" className="btn btn-primary" disabled={isSaving}>{isSaving ? 'Đang lưu...' : 'Lưu'}</button>
               </div>
             </form>
           </div>

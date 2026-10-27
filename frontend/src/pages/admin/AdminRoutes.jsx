@@ -11,6 +11,8 @@ const DEFAULT_ROUTES = [
 
 const AdminRoutes = () => {
   const [routes, setRoutes] = useState(DEFAULT_ROUTES);
+  const [formError,setFormError] = useState('');
+  const [isSaving,setIsSaving] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentRoute, setCurrentRoute] = useState(null);
 
@@ -39,27 +41,17 @@ const AdminRoutes = () => {
 
   const handleOpenModal = (route = null) => {
     setCurrentRoute(route || { origin: '', destination: '', distance: 0 });
+    setFormError('');
     setIsModalOpen(true);
   };
 
-  const handleSave = async (e) => {
-    e.preventDefault();
-    try {
-      if (currentRoute.id && typeof currentRoute.id === 'string' && currentRoute.id.length > 5) {
-        await adminService.updateRoute(currentRoute.id, currentRoute);
-      } else {
-        await adminService.createRoute(currentRoute);
-      }
-      setIsModalOpen(false);
-      fetchRoutes();
-    } catch {
-      if (currentRoute.id) {
-        setRoutes(routes.map(r => r.id === currentRoute.id ? currentRoute : r));
-      } else {
-        setRoutes([...routes, { ...currentRoute, id: String(Date.now()), tripsCount: 0 }]);
-      }
-      setIsModalOpen(false);
-    }
+  const handleSave = async e => {
+    e.preventDefault(); if(isSaving) return; setFormError(''); setIsSaving(true);
+    try { const payload={origin:currentRoute.origin.trim(),destination:currentRoute.destination.trim(),distance:Number(currentRoute.distance)};
+      if(currentRoute.id) await adminService.updateRoute(currentRoute.id,payload); else await adminService.createRoute(payload);
+      setIsModalOpen(false); await fetchRoutes();
+    } catch(error) {setFormError(error.response?.data?.message || 'Không lưu được dữ liệu. Vui lòng kiểm tra và thử lại.');}
+    finally {setIsSaving(false);}
   };
 
   const handleDelete = async (id) => {
@@ -124,33 +116,34 @@ const AdminRoutes = () => {
               <button type="button" className="modal-close" onClick={() => setIsModalOpen(false)}>&times;</button>
             </div>
             <form onSubmit={handleSave}>
-              <div className="modal-body">
+              <datalist id="admin-route-locations">{[...new Set(routes.flatMap(r => [r.origin, r.destination]))].sort().map(city => <option key={city} value={city} />)}</datalist>
+              <div className="modal-body">{formError && <p role="alert">{formError}</p>}
                 <div className="form-group">
-                  <label>Điểm đi</label>
-                  <input
+                  <label htmlFor="adminroutes-field-1">Điểm đi</label>
+                  <input id="adminroutes-field-1"
                     type="text"
                     className="form-control"
-                    placeholder="VD: Hà Nội"
+                    list="admin-route-locations" placeholder="Chọn gợi ý hoặc nhập điểm đi mới"
                     value={currentRoute?.origin || ''}
                     onChange={e => setCurrentRoute({ ...currentRoute, origin: e.target.value })}
                     required
                   />
                 </div>
                 <div className="form-group">
-                  <label>Điểm đến</label>
-                  <input
+                  <label htmlFor="adminroutes-field-2">Điểm đến</label>
+                  <input id="adminroutes-field-2"
                     type="text"
                     className="form-control"
-                    placeholder="VD: Đà Nẵng"
+                    list="admin-route-locations" placeholder="Chọn gợi ý hoặc nhập điểm đến mới"
                     value={currentRoute?.destination || ''}
                     onChange={e => setCurrentRoute({ ...currentRoute, destination: e.target.value })}
                     required
                   />
                 </div>
                 <div className="form-group">
-                  <label>Khoảng cách (km)</label>
-                  <input
-                    type="number"
+                  <label htmlFor="adminroutes-field-3">Khoảng cách (km)</label>
+                  <input id="adminroutes-field-3"
+                    type="number" min="1" step="1"
                     className="form-control"
                     placeholder="VD: 760"
                     value={currentRoute?.distance || 0}
@@ -161,7 +154,7 @@ const AdminRoutes = () => {
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" onClick={() => setIsModalOpen(false)}>Hủy</button>
-                <button type="submit" className="btn btn-primary">Lưu</button>
+                <button type="submit" className="btn btn-primary" disabled={isSaving}>{isSaving ? 'Đang lưu...' : 'Lưu'}</button>
               </div>
             </form>
           </div>

@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api, { bookingService } from "../services/api";
+import { useAuth } from "../context/auth-context";
 
-export function TicketPaymentPanel({ booking, onRefresh }) {
+export function TicketPaymentPanel({ booking, onRefresh, showContinuePayment = false }) {
+  const { user } = useAuth();
   const [now, setNow] = useState(Date.now);
   const [assets, setAssets] = useState(null);
   const [error, setError] = useState("");
@@ -167,6 +169,11 @@ export function TicketPaymentPanel({ booking, onRefresh }) {
             Thanh toán trong 5 phút từ lúc tạo đơn. Hết hạn, đơn tự hủy và ghế
             được mở lại cho khách khác.
           </p>
+          {showContinuePayment && user?.id === booking.userId && seconds > 0 && booking.paymentStatus === 'unpaid' && booking.status === 'pending' && (
+            <Link className="btn-primary" style={{ display: 'inline-block', margin: '8px 12px 8px 0' }} to={`/booking/payment?bookingId=${encodeURIComponent(booking.id)}`}>
+              Tiếp tục thanh toán
+            </Link>
+          )}
           <button
             type="button"
             disabled={busy || seconds === 0}

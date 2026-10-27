@@ -10,6 +10,8 @@ const DEFAULT_PROMOS = [
 
 const AdminPromotions = () => {
   const [promotions, setPromotions] = useState(DEFAULT_PROMOS);
+  const [formError,setFormError] = useState('');
+  const [isSaving,setIsSaving] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentPromo, setCurrentPromo] = useState(null);
 
@@ -22,8 +24,8 @@ const AdminPromotions = () => {
           title: p.title,
           code: p.code || 'PROMO',
           discount: p.discount || 10,
-          startDate: p.startDate ? new Date(p.startDate).toLocaleDateString('vi-VN') : '01/09/2025',
-          endDate: p.endDate ? new Date(p.endDate).toLocaleDateString('vi-VN') : '30/09/2025',
+          startDate: p.startDate ? new Date(p.startDate).toISOString().slice(0, 10) : '',
+          endDate: p.endDate ? new Date(p.endDate).toISOString().slice(0, 10) : '',
           status: p.isActive ? 'Đang áp dụng' : 'Hết hạn',
         })));
       }
@@ -40,27 +42,17 @@ const AdminPromotions = () => {
 
   const handleOpenModal = (promo = null) => {
     setCurrentPromo(promo || { title: '', code: '', discount: 10, startDate: '', endDate: '', status: 'Đang áp dụng' });
+    setFormError('');
     setIsModalOpen(true);
   };
 
-  const handleSave = async (e) => {
-    e.preventDefault();
-    try {
-      if (currentPromo.id && typeof currentPromo.id === 'string' && currentPromo.id.length > 5) {
-        await adminService.updatePromotion(currentPromo.id, currentPromo);
-      } else {
-        await adminService.createPromotion(currentPromo);
-      }
-      setIsModalOpen(false);
-      fetchPromotions();
-    } catch {
-      if (currentPromo.id) {
-        setPromotions(promotions.map(p => p.id === currentPromo.id ? currentPromo : p));
-      } else {
-        setPromotions([...promotions, { ...currentPromo, id: String(Date.now()) }]);
-      }
-      setIsModalOpen(false);
-    }
+  const handleSave = async e => {
+    e.preventDefault(); if(isSaving) return; setFormError(''); setIsSaving(true);
+    try { const payload={title:currentPromo.title.trim(),code:currentPromo.code.trim(),discount:Number(currentPromo.discount),startDate:currentPromo.startDate ? new Date(currentPromo.startDate+'T00:00:00Z').toISOString():null,endDate:currentPromo.endDate ? new Date(currentPromo.endDate+'T23:59:59Z').toISOString():null,isActive:currentPromo.status==='Đang áp dụng'};
+      if(currentPromo.id) await adminService.updatePromotion(currentPromo.id,payload); else await adminService.createPromotion(payload);
+      setIsModalOpen(false); await fetchPromotions();
+    } catch(error) {setFormError(error.response?.data?.message || 'Không lưu được dữ liệu. Vui lòng kiểm tra và thử lại.');}
+    finally {setIsSaving(false);}
   };
 
   const handleDelete = async (id) => {
@@ -128,44 +120,48 @@ const AdminPromotions = () => {
               <h3>{currentPromo?.id ? 'Sửa khuyến mãi' : 'Thêm khuyến mãi mới'}</h3>
               <button type="button" className="modal-close" onClick={() => setIsModalOpen(false)}>&times;</button>
             </div>
-            <form onSubmit={handleSave}>
-              <div className="modal-body">
+            <form onSubmit={handleSave}><datalist id="admin-discounts">{[5,10,15,20,25,30,50].map(n => <option key={n} value={n} />)}</datalist>
+              <div className="modal-body">{formError && <p role="alert">{formError}</p>}
                 <div className="form-group">
-                  <label>Tiêu đề</label>
-                  <input
+                  <label htmlFor="adminpromotions-field-1">Tiêu đề</label>
+                  <input id="adminpromotions-field-1"
                     type="text"
                     className="form-control"
                     value={currentPromo?.title || ''}
-                    onChange={e => setCurrentPromo({ ...currentPromo, title: e.target.value })}
+                    placeholder="Nhập tiêu đề chương trình hoặc bài viết" onChange={e => setCurrentPromo({ ...currentPromo, title: e.target.value })}
                     required
                   />
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                   <div className="form-group">
-                    <label>Mã giảm giá</label>
-                    <input
+                    <label htmlFor="adminpromotions-field-2">Mã giảm giá</label>
+                    <input id="adminpromotions-field-2"
                       type="text"
                       className="form-control"
                       value={currentPromo?.code || ''}
-                      onChange={e => setCurrentPromo({ ...currentPromo, code: e.target.value })}
+                      placeholder="VD: HE2026" onChange={e => setCurrentPromo({ ...currentPromo, code: e.target.value })}
                       required
                     />
                   </div>
                   <div className="form-group">
-                    <label>Mức giảm (%)</label>
-                    <input
-                      type="number"
+                    <label htmlFor="adminpromotions-field-3">Mức giảm (%)</label>
+                    <input id="adminpromotions-field-3"
+                      type="number" min="1" max="100" step="1" list="admin-discounts"
                       className="form-control"
                       value={currentPromo?.discount || 0}
-                      onChange={e => setCurrentPromo({ ...currentPromo, discount: Number(e.target.value) })}
+                      placeholder="VD: 10" onChange={e => setCurrentPromo({ ...currentPromo, discount: Number(e.target.value) })}
                       required
                     />
                   </div>
                 </div>
               </div>
+
+                <div className="form-group"><label htmlFor="promo-start">Ngày bắt đầu</label><input id="promo-start" className="form-control" type="date" value={currentPromo.startDate || ''} max={currentPromo.endDate || undefined} onChange={e => setCurrentPromo({...currentPromo,startDate:e.target.value})} /><small className="form-hint">Để trống nếu không giới hạn ngày bắt đầu.</small></div>
+                <div className="form-group"><label htmlFor="promo-end">Ngày kết thúc</label><input id="promo-end" className="form-control" type="date" value={currentPromo.endDate || ''} min={currentPromo.startDate || undefined} onChange={e => setCurrentPromo({...currentPromo,endDate:e.target.value})} /></div>
+                <div className="form-group"><label htmlFor="promo-status">Trạng thái</label><select id="promo-status" className="form-control" value={currentPromo.status} onChange={e => setCurrentPromo({...currentPromo,status:e.target.value})}><option>Đang áp dụng</option><option>Tạm dừng</option></select></div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" onClick={() => setIsModalOpen(false)}>Hủy</button>
-                <button type="submit" className="btn btn-primary">Lưu</button>
+                <button type="submit" className="btn btn-primary" disabled={isSaving}>{isSaving ? 'Đang lưu...' : 'Lưu'}</button>
               </div>
             </form>
           </div>

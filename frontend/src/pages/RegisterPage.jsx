@@ -1,3 +1,4 @@
+import PasswordInput from '../components/auth/PasswordInput';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/auth-context';
@@ -82,9 +83,8 @@ const RegisterPage = () => {
 
           <div className="auth-input-group">
             <label htmlFor="register-password">Mật khẩu *</label>
-            <input
+            <PasswordInput
               id="register-password"
-              type="password"
               placeholder="Nhập mật khẩu (từ 8 ký tự)"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
@@ -96,9 +96,8 @@ const RegisterPage = () => {
 
           <div className="auth-input-group">
             <label htmlFor="register-confirm">Xác nhận mật khẩu *</label>
-            <input
+            <PasswordInput
               id="register-confirm"
-              type="password"
               placeholder="Nhập lại mật khẩu"
               value={confirmPassword}
               onChange={(event) => setConfirmPassword(event.target.value)}

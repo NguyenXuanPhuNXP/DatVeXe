@@ -20,6 +20,7 @@ function save(key, value) {
 }
 function summary(b) {
   return {
+    userId: b.userId,
     id: b.id,
     bookingCode: b.bookingCode,
     passengerName: b.passengerName,
@@ -46,22 +47,24 @@ export function NotificationProvider({ children }) {
 }
 function AccountNotifications({ children, userId }) {
   const account = userId ? `user_${userId}` : "guest";
-  const notifKey = `datvexe_notifications_${account}`;
+  const notifKey = `datvexe_notifications_v2_${account}`;
   const bookingKey = `datvexe_my_saved_bookings_${account}`;
-  const [notifications, setNotifications] = useState(() => read(notifKey));
-  const [savedBookings, setSavedBookings] = useState(() => read(bookingKey));
+  const [notifications, setNotifications] = useState(() => userId ? read(notifKey).filter(n => n.userId === userId) : []);
+  const [savedBookings, setSavedBookings] = useState([]);
   const [activeToast, setActiveToast] = useState(null);
   const current = useRef(savedBookings);
   const timeout = useRef(null);
   useEffect(() => {
     current.current = savedBookings;
-    save(bookingKey, savedBookings);
-  }, [bookingKey, savedBookings]);
-  useEffect(() => save(notifKey, notifications), [notifKey, notifications]);
+    if (userId) save(bookingKey, savedBookings);
+  }, [bookingKey, savedBookings, userId]);
+  useEffect(() => { if (userId) save(notifKey, notifications); }, [notifKey, notifications, userId]);
   useEffect(() => () => clearTimeout(timeout.current), []);
   const addNotification = useCallback((notif) => {
+    if (!userId || !current.current.some(b => b.bookingCode === notif.bookingCode && b.userId === userId)) return;
     const item = {
       ...notif,
+      userId,
       id: crypto.randomUUID(),
       isRead: false,
       timestamp: new Date().toISOString(),
@@ -70,14 +73,16 @@ function AccountNotifications({ children, userId }) {
     setActiveToast(item);
     clearTimeout(timeout.current);
     timeout.current = setTimeout(() => setActiveToast(null), 5000);
-  }, []);
+  }, [userId]);
   const addSavedBooking = useCallback((b) => {
-    if (!b?.bookingCode) return;
+    if (!userId || !b?.bookingCode || b.userId !== userId) return;
+    const item = summary(b);
+    current.current = [item, ...current.current.filter(x => x.bookingCode !== b.bookingCode)];
     setSavedBookings((prev) => {
-      const item = summary(b);
+
       return [item, ...prev.filter((x) => x.bookingCode !== b.bookingCode)];
     });
-  }, []);
+  }, [userId]);
   useEffect(() => {
     if (!userId) return;
     let active = true;
@@ -85,7 +90,7 @@ function AccountNotifications({ children, userId }) {
       .getMyBookings()
       .then((res) => {
         if (active && Array.isArray(res.data))
-          setSavedBookings(res.data.map(summary));
+          setSavedBookings(res.data.filter(b => b.userId === userId).map(summary));
       })
       .catch(() => {});
     return () => {
@@ -93,6 +98,7 @@ function AccountNotifications({ children, userId }) {
     };
   }, [userId]);
   useEffect(() => {
+    if (!userId) return;
     let active = true;
     let running = false;
     async function poll() {
@@ -143,7 +149,7 @@ function AccountNotifications({ children, userId }) {
       active = false;
       clearInterval(interval);
     };
-  }, [addNotification]);
+  }, [addNotification, userId]);
   return (
     <NotificationContext.Provider
       value={{

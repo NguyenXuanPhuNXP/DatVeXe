@@ -80,6 +80,9 @@ test(
       );
       await req("GET", "/operator/buses", null, staff, 403);
       await req("GET", "/operator/buses", null, manager, 403);
+      await req("POST", "/operator/qr/board", {}, owner, 403);
+      await req("POST", "/operator/qr/board", {}, manager, 403);
+      await req("POST", "/operator/qr/board", {}, staff, 400);
       const bus = await req(
         "POST",
         "/operator/buses",
@@ -145,7 +148,7 @@ test(
         "POST",
         "/bookings",
         { ...bookingBody, tripDate: "2020-01-01" },
-        null,
+        customer,
         409,
       );
       const booking = await req(
@@ -282,7 +285,7 @@ test(
         "POST",
         "/bookings",
         { ...bookingBody, seatCodes: ["B1"] },
-        null,
+        customer,
         201,
       );
       bookingIds.push(guest.id);
