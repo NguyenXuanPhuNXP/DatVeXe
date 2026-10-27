@@ -12,7 +12,7 @@ const prisma = {
   $transaction: async (fn) => fn(prisma),
 };
 const expiryPath=require.resolve('../src/modules/ticketing/expiry.service');
-require.cache[expiryPath]={id:expiryPath,filename:expiryPath,loaded:true,exports:{expireUnpaidBookings:async()=>0,isExpired:b=>b.expiresAt ? new Date(b.expiresAt)<=new Date() : false,HOLD_MS:300000}};
+require.cache[expiryPath]={id:expiryPath,filename:expiryPath,loaded:true,exports:{expireUnpaidBookings:async()=>0,isExpired:b=>b.paymentStatus==="unpaid"&&new Date(b.createdAt).getTime()+300000<=Date.now(),withBookingExpiry:b=>b,HOLD_MS:300000}};
 const prismaPath = require.resolve("../src/lib/prisma");
 require.cache[prismaPath] = {
   id: prismaPath,

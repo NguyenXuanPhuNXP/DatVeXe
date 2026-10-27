@@ -3,8 +3,12 @@ const { randomBytes } = require("node:crypto");
 const { Prisma } = require("@prisma/client");
 const { prisma } = require("../../lib/prisma");
 const { HttpError } = require("../../utils/http-error");
-
-const { HOLD_MS,expireUnpaidBookings,isExpired,releaseExpired } = require('../ticketing/expiry.service');
+const {
+  expireUnpaidBookings,
+  isExpired,
+  releaseExpired,
+  withBookingExpiry,
+} = require("../ticketing/expiry.service");
 const { finalizePayment } = require('./payments.service');
 const bookingInclude = {
   emailJobs: { select: { status:true, sentAt:true, version:true }, orderBy:{createdAt:'desc'}, take:1 },
@@ -66,7 +70,11 @@ async function assertSeatsAvailable(tx, tripId, tripDate, seatCodes) {
       tripDate,
       seatCode: { in: seatCodes },
     },
-    include: { booking: { select:{id:true,status:true,paymentStatus:true,expiresAt:true,createdAt:true} } },
+    include: {
+      booking: {
+        select: { id: true, status: true, paymentStatus: true, createdAt: true },
+      },
+    },
   });
   // Reclaim an expired blocker even when the background batch has a backlog.
   for(const seat of existingSeats){
@@ -276,7 +284,6 @@ async function createBookingService(data, options = {}) {
           paymentMethod,
           status: "pending",
           paymentStatus: "unpaid",
-          expiresAt: new Date(Date.now()+HOLD_MS),
           tickets: {
             create: normalizedSeatCodes.map((seatCode) => ({
               ticketCode: `${bookingCode}-${randomBytes(3).toString("hex").toUpperCase()}`,
@@ -297,10 +304,12 @@ async function createBookingService(data, options = {}) {
 
       if (options.payment) await finalizePayment(tx,newBooking,options.payment,options.receivedById);
       // ── 6. Trả về booking đầy đủ ─────────────────────────────────────────
-      return tx.booking.findUnique({
-        where: { id: newBooking.id },
-        include: bookingInclude,
-      });
+      return withBookingExpiry(
+        await tx.booking.findUnique({
+          where: { id: newBooking.id },
+          include: bookingInclude,
+        }),
+      );
     },
     {
       // SERIALIZABLE đảm bảo range lock trên tập ghế đang kiểm tra,
@@ -324,16 +333,17 @@ async function lookupBookingService(bookingCode, phone, userId) {
 
   const booking = await prisma.booking.findFirst({ where, include: bookingInclude });
   if (booking) assertBookingAccess(booking, { userId, phone });
-  return booking;
+  return withBookingExpiry(booking);
 }
 
 async function listUserBookingsService(userId) {
   await expireUnpaidBookings({userId});
-  return prisma.booking.findMany({
+  const bookings = await prisma.booking.findMany({
     where: { userId },
     include: bookingInclude,
     orderBy: { createdAt: "desc" },
   });
+  return bookings.map(withBookingExpiry);
 }
 
 async function getBookingService(id, identity = {}) {
@@ -349,7 +359,7 @@ async function getBookingService(id, identity = {}) {
 
   assertBookingAccess(booking, identity);
 
-  return booking;
+  return withBookingExpiry(booking);
 }
 
 async function cancelBookingService(id, identity = {}) {
@@ -396,7 +406,9 @@ async function cancelBookingService(id, identity = {}) {
       data: { status: "cancelled" },
     });
 
-    return tx.booking.findUnique({ where: { id }, include: bookingInclude });
+    return withBookingExpiry(
+      await tx.booking.findUnique({ where: { id }, include: bookingInclude }),
+    );
   });
 }
 

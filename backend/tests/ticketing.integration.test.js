@@ -19,6 +19,7 @@ test(
       exchangeBooking,
     } = require("../src/modules/ticketing/counter.service");
     const {
+      HOLD_MS,
       expireUnpaidBookings,
     } = require("../src/modules/ticketing/expiry.service");
     const {
@@ -150,7 +151,7 @@ test(
           );
           await prisma.booking.update({
             where: { id: b.id },
-            data: { expiresAt: new Date(Date.now() - 1) },
+            data: { createdAt: new Date(Date.now() - HOLD_MS - 1) },
           });
           assert.equal(await expireUnpaidBookings({ id: b.id }), 1);
           assert.equal(
@@ -565,7 +566,7 @@ test(
           await createMomo(lateMomo);
           await prisma.booking.update({
             where: { id: lateMomo.id },
-            data: { expiresAt: new Date(Date.now() - 1) },
+            data: { createdAt: new Date(Date.now() - HOLD_MS - 1) },
           });
           const result = await momo.handleMomoIpn(await notification(lateMomo));
           assert.equal(result.status, "refund_required");
