@@ -1,64 +1,31 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import BookingSteps from '../components/booking/BookingSteps';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/auth-context';
 import '../styles/booking.css';
 
-
-const getStoredBooking = () => {
-  try {
-    const stored = sessionStorage.getItem('rightwayBooking');
-    return stored ? JSON.parse(stored) : {};
-  } catch (error) {
-    return {};
-  }
-};
-
-const parsePrice = (value) => {
-  const normalized = Number(String(value || '0').replace(/[^\d]/g, ''));
-  return Number.isNaN(normalized) ? 0 : normalized;
-};
 
 const PassengerInfoPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useAuth();
 
-  const [bookingData, setBookingData] = useState(null);
-  const [fullName, setFullName] = useState('');
+  const [fullName, setFullName] = useState(user?.fullName || '');
   const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(user?.email || '');
   const [notes, setNotes] = useState('');
   const [acceptedTerms, setAcceptedTerms] = useState(true);
   const [errors, setErrors] = useState({});
 
+  const bookingData = useMemo(() => {
+    if (location.state) return location.state;
+    try {
+      return JSON.parse(sessionStorage.getItem('currentBooking') || sessionStorage.getItem('rightwayBooking') || 'null');
+    } catch { return null; }
+  }, [location.state]);
   useEffect(() => {
-    let data = location.state;
-    if (!data) {
-      const stored = sessionStorage.getItem('currentBooking') || sessionStorage.getItem('rightwayBooking');
-      if (stored) {
-        try {
-          data = JSON.parse(stored);
-        } catch {
-          // ignore
-        }
-      }
-    }
-
-    if (!data || !data.trip || !data.selectedSeats || data.selectedSeats.length === 0) {
-      navigate('/search');
-      return;
-    }
-
-    setBookingData(data);
-
-    // Auto-fill from user context if available
-    if (user) {
-      if (user.fullName && !fullName) setFullName(user.fullName);
-      if (user.email && !email) setEmail(user.email);
-      if (user.phone && !phone) setPhone(user.phone);
-    }
-  }, [location.state, navigate, user]);
+    if (!bookingData?.trip || !bookingData.selectedSeats?.length) navigate('/search');
+  }, [bookingData, navigate]);
 
   const validate = () => {
     const newErrors = {};
@@ -101,7 +68,7 @@ const PassengerInfoPage = () => {
     navigate('/booking/payment', { state: updatedData });
   };
 
-  if (!bookingData) {
+  if (!bookingData?.trip || !Array.isArray(bookingData.selectedSeats) || !bookingData.selectedSeats.length) {
     return null;
   }
 

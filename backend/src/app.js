@@ -12,6 +12,7 @@ const { routesRouter } = require("./modules/routes/routes.routes");
 const { promotionsRouter } = require("./modules/promotions/promotions.routes");
 const { newsRouter } = require("./modules/news/news.routes");
 
+const { operatorRouter, companyAccessRouter } = require("./modules/operator/operator.routes");
 const app = express();
 const allowedOrigins = new Set([
   env.CORS_ORIGIN,
@@ -39,8 +40,11 @@ app.use(cookieParser());
 app.get("/health", (_request, response) => response.json({ status: "ok" }));
 
 app.use("/api/auth", authRouter);
+app.use("/api/admin/company-access", companyAccessRouter);
+app.use("/api/operator", operatorRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/trips", tripsRouter);
+app.use("/api/ticketing", require("./modules/ticketing/ticketing.routes").ticketingRouter);
 app.use("/api/bookings", bookingsRouter);
 app.use("/api/routes", routesRouter);
 app.use("/api/promotions", promotionsRouter);

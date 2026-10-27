@@ -1,7 +1,9 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useState, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { bookingService } from '../services/api';
-import { useNotification } from '../context/NotificationContext';
+import { useAuth } from '../context/auth-context';
+import { useNotification } from '../context/notification-context';
+import { TicketPaymentPanel } from './TicketPaymentPanel';
 import '../styles/auth.css';
 import '../styles/booking.css';
 
@@ -11,6 +13,7 @@ const BookingLookupPage = () => {
   const urlPhone = searchParams.get('phone') || '';
   const isSuccessRedirect = searchParams.get('success') === '1';
 
+  const { user } = useAuth();
   const { savedBookings, addNotification, addSavedBooking } = useNotification();
 
   const [bookingCode, setBookingCode] = useState(urlCode);
@@ -43,22 +46,28 @@ const BookingLookupPage = () => {
       console.error('Lookup error:', err);
       setBooking(null);
       setError(
-        err.response?.data?.message ||
+        err.response?.data?.error?.message || err.response?.data?.message ||
           'Không tìm thấy thông tin vé với mã đặt vé và số điện thoại trên. Vui lòng kiểm tra lại.'
       );
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
-  }, []);
+  }, [addSavedBooking]);
 
+  const savedPhone = savedBookings.find(b => b.bookingCode === urlCode)?.passengerPhone || '';
   useEffect(() => {
-    if (urlCode) {
+    let active = true;
+    Promise.resolve().then(() => {
+      if (!active || !urlCode) return;
+      const knownPhone = urlPhone || savedPhone;
+      if (!user && !knownPhone) return;
       setBookingCode(urlCode);
-      if (urlPhone) setPhone(urlPhone);
-      fetchBooking(urlCode, urlPhone);
-    }
-  }, [urlCode, urlPhone, fetchBooking]);
+      if (knownPhone) setPhone(knownPhone);
+      fetchBooking(urlCode, knownPhone);
+    });
+    return () => { active = false; };
+  }, [urlCode, urlPhone, fetchBooking, user, savedPhone]);
 
   const handleSearch = (e) => {
     if (e) e.preventDefault();
@@ -66,7 +75,7 @@ const BookingLookupPage = () => {
       setError('Vui lòng nhập mã đặt vé');
       return;
     }
-    setSearchParams({ code: bookingCode.trim(), ...(phone.trim() ? { phone: phone.trim() } : {}) });
+    setSearchParams({ code: bookingCode.trim() });
     fetchBooking(bookingCode.trim(), phone.trim());
   };
 
@@ -91,7 +100,7 @@ const BookingLookupPage = () => {
         bookingCode: booking.bookingCode,
       });
     } catch (err) {
-      alert(err.response?.data?.message || 'Không thể hủy vé vào lúc này');
+      alert(err.response?.data?.error?.message || err.response?.data?.message || 'Không thể hủy vé vào lúc này');
     } finally {
       setCancelling(false);
     }
@@ -101,7 +110,7 @@ const BookingLookupPage = () => {
     if (!booking) return null;
     const status = booking.status;
 
-    if (status === 'pending') {
+    if (status === 'pending' || (status === 'confirmed' && booking.paymentStatus !== 'paid')) {
       return (
         <div
           style={{
@@ -132,15 +141,15 @@ const BookingLookupPage = () => {
                   border: '1px solid #FCD34D',
                 }}
               >
-                ĐANG CHỜ DUYỆT (CHỜ XỬ LÝ)
+                ĐANG CHỜ THANH TOÁN
               </span>
               <span style={{ fontSize: '13px', color: '#6B7280' }}>
-                Hệ thống đang chờ quản trị viên xác nhận
+                Hoàn tất thanh toán trước khi hết hạn giữ ghế
               </span>
             </div>
             <p style={{ margin: 0, fontSize: '14px', color: '#78350F', lineHeight: '1.5' }}>
-              Yêu cầu đặt vé của bạn đã được ghi nhận thành công. Ban quản trị đang kiểm duyệt chỗ ngồi.
-              Bạn có thể nhấn nút <strong>"Làm mới trạng thái"</strong> bên dưới để cập nhật ngay khi vé được duyệt!
+              Yêu cầu đặt vé đã được ghi nhận. Ghế chỉ được giữ trong 5 phút từ lúc tạo đơn.
+              Sau khi thanh toán được xác nhận, hệ thống sẽ cấp QR vé và gửi về email của bạn.
             </p>
           </div>
         </div>
@@ -178,14 +187,14 @@ const BookingLookupPage = () => {
                   border: '1px solid #6EE7B7',
                 }}
               >
-                VÉ ĐÃ ĐƯỢC DUYỆT (ĐÃ XÁC NHẬN)
+                VÉ ĐÃ XÁC NHẬN THANH TOÁN
               </span>
               <span style={{ fontSize: '13px', color: '#059669', fontWeight: 600 }}>
                 Hợp lệ để lên xe
               </span>
             </div>
             <p style={{ margin: 0, fontSize: '14px', color: '#064E3B', lineHeight: '1.5' }}>
-              Vé của bạn đã được quản trị viên duyệt thành công! Vui lòng lưu lại mã đặt vé này và có mặt tại điểm đón trước giờ khởi hành ít nhất 15-30 phút.
+              Vé của bạn đã được thanh toán và xác nhận! Vui lòng lưu lại mã đặt vé này và có mặt tại điểm đón trước giờ khởi hành ít nhất 15-30 phút.
             </p>
           </div>
         </div>
@@ -320,7 +329,7 @@ const BookingLookupPage = () => {
               Tra cứu thông tin đặt vé
             </h1>
             <p style={{ fontSize: '14px', color: '#6B7280', margin: 0 }}>
-              Nhập mã vé để kiểm tra trạng thái phê duyệt của Ban quản trị và thông tin chuyến đi
+              Nhập mã vé và điện thoại để kiểm tra thanh toán, xem QR vé và thông tin chuyến đi
             </p>
           </div>
 
@@ -349,7 +358,7 @@ const BookingLookupPage = () => {
 
               <div>
                 <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#374151', marginBottom: '6px' }}>
-                  Số điện thoại <span style={{ color: '#9CA3AF' }}>(tùy chọn)</span>
+                  Số điện thoại <span style={{ color: '#9CA3AF' }}>(cần với vé không thuộc tài khoản của bạn)</span>
                 </label>
                 <input
                   type="tel"
@@ -465,6 +474,7 @@ const BookingLookupPage = () => {
             }}
           >
             {/* Status explanation Banner */}
+            <TicketPaymentPanel booking={booking} onRefresh={() => fetchBooking(booking.bookingCode, booking.passengerPhone, true)} />
             {renderStatusBanner()}
 
             {/* Header: Code + Actions */}

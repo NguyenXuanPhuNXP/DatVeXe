@@ -1,7 +1,9 @@
 const { prisma } = require("../../lib/prisma");
 const { HttpError } = require("../../utils/http-error");
 
+const {expireUnpaidBookings}=require('../ticketing/expiry.service');
 async function searchTripsService(query) {
+  await expireUnpaidBookings();
   const { origin, destination, date, minPrice, maxPrice, companies, busTypes, rating, departurePeriods, sort } = query;
 
   const whereClause = { isActive: true };
@@ -173,6 +175,7 @@ function getSeatVariants(code) {
 }
 
 async function getTripSeatsService(id, date) {
+  await expireUnpaidBookings({tripId:id});
   const trip = await prisma.trip.findUnique({
     where: { id },
     select: { id: true, bus: { select: { totalSeats: true } } },
@@ -227,25 +230,12 @@ async function getTripSeatsService(id, date) {
   }
 
   const totalSeats = trip.bus?.totalSeats || 36;
-  const half = Math.max(18, Math.ceil(totalSeats / 2));
   const seatCodesSet = new Set();
-
-  for (let i = 1; i <= half; i++) {
-    const pad = i < 10 ? `0${i}` : `${i}`;
-    seatCodesSet.add(`A${pad}`);
-    seatCodesSet.add(`A${i}`);
-    seatCodesSet.add(`B${pad}`);
-    seatCodesSet.add(`B${i}`);
-  }
 
   const columns = ["A", "B", "C"];
   for (let index = 0; index < totalSeats; index++) {
     const seatCode = `${columns[index % columns.length]}${Math.floor(index / columns.length) + 1}`;
     seatCodesSet.add(seatCode);
-  }
-
-  for (const code of statusBySeatCode.keys()) {
-    seatCodesSet.add(code);
   }
 
   return Array.from(seatCodesSet).map((seatCode) => ({

@@ -3,7 +3,11 @@ const { Prisma } = require("@prisma/client");
 const { prisma } = require("../../lib/prisma");
 const { HttpError } = require("../../utils/http-error");
 
+const { HOLD_MS,expireUnpaidBookings,isExpired,releaseExpired } = require('../ticketing/expiry.service');
+const { finalizePayment } = require('./payments.service');
 const bookingInclude = {
+  emailJobs: { select: { status:true, sentAt:true, version:true }, orderBy:{createdAt:'desc'}, take:1 },
+  paymentAttempts: { where:{status:'refund_required'}, select:{status:true,message:true}, take:1 },
   tickets: { orderBy: { seatCode: "asc" } },
   trip: {
     include: {
@@ -61,7 +65,16 @@ async function assertSeatsAvailable(tx, tripId, tripDate, seatCodes) {
       tripDate,
       seatCode: { in: seatCodes },
     },
+    include: { booking: { select:{id:true,status:true,paymentStatus:true,expiresAt:true,createdAt:true} } },
   });
+  // Reclaim an expired blocker even when the background batch has a backlog.
+  for(const seat of existingSeats){
+    if(seat.booking&&isExpired(seat.booking)&&['pending','confirmed'].includes(seat.booking.status)){
+      if(await releaseExpired(tx,seat.booking.id)){
+        for(const old of existingSeats)if(old.bookingId===seat.booking.id)old.status='available';
+      }
+    }
+  }
 
   // Tìm các ghế không còn available (booked hoặc held bởi booking khác)
   const unavailableSeats = existingSeats
@@ -94,7 +107,7 @@ async function assertSeatsAvailable(tx, tripId, tripDate, seatCodes) {
  * @param {string}   bookingId
  * @param {Map}      existingSeatMap - Map từ assertSeatsAvailable
  */
-async function claimSeats(tx, tickets, tripId, tripDate, bookingId, existingSeatMap) {
+async function claimSeats(tx, tickets, tripId, tripDate, bookingId, existingSeatMap, status = 'held') {
   for (const ticket of tickets) {
     const existing = existingSeatMap.get(ticket.seatCode);
 
@@ -106,7 +119,7 @@ async function claimSeats(tx, tickets, tripId, tripDate, bookingId, existingSeat
           status: "available", // Guard: chỉ update nếu vẫn còn available
         },
         data: {
-          status: "booked",
+          status,
           bookingId,
           ticketId: ticket.id,
         },
@@ -130,7 +143,7 @@ async function claimSeats(tx, tickets, tripId, tripDate, bookingId, existingSeat
             tripId,
             tripDate,
             seatCode: ticket.seatCode,
-            status: "booked",
+            status,
             bookingId,
             ticketId: ticket.id,
           },
@@ -162,7 +175,7 @@ async function claimSeats(tx, tickets, tripId, tripDate, bookingId, existingSeat
  *  5. claimSeats → ghi SeatStatus với guard optimistic.
  *  6. Trả về booking đầy đủ.
  */
-async function createBookingService(data) {
+async function createBookingService(data, options = {}) {
   const {
     tripId,
     tripDate,
@@ -206,6 +219,7 @@ async function createBookingService(data) {
   }
   const bookingCode = `RW${randomBytes(8).toString("hex").toUpperCase()}`;
 
+  await expireUnpaidBookings({ tripId });
   return prisma.$transaction(
     async (tx) => {
       // ── 1. Kiểm tra trip ──────────────────────────────────────────────────
@@ -213,9 +227,11 @@ async function createBookingService(data) {
         where: { id: tripId },
         select: {
           id: true,
+          companyId: true,
           price: true,
           isActive: true,
           availableDate: true,
+          departureTime: true,
           bus: { select: { totalSeats: true } },
         },
       });
@@ -223,6 +239,7 @@ async function createBookingService(data) {
       if (!trip) {
         throw new HttpError(404, "TRIP_NOT_FOUND", "Trip not found");
       }
+      if (options.companyId && trip.companyId !== options.companyId) throw new HttpError(404,'TRIP_NOT_FOUND','Không tìm thấy chuyến trong nhà xe');
       if (!trip.isActive) {
         throw new HttpError(409, "TRIP_UNAVAILABLE", "Trip is not available");
       }
@@ -234,6 +251,10 @@ async function createBookingService(data) {
       }
 
       // ── 2. Xác thực seatCode hợp lệ với bus ─────────────────────────────
+      const departure = new Date(`${date.toISOString().slice(0, 10)}T${trip.departureTime}:00+07:00`);
+      if (!Number.isFinite(departure.getTime()) || departure <= new Date()) {
+        throw new HttpError(409, "TRIP_DEPARTED", "Chuyến xe đã khởi hành hoặc ngày đi đã qua");
+      }
       assertSeatCodesInRange(normalizedSeatCodes, trip.bus.totalSeats);
 
       // ── 3. Kiểm tra ghế còn khả dụng (atomic read với SERIALIZABLE lock) ─
@@ -254,6 +275,7 @@ async function createBookingService(data) {
           paymentMethod,
           status: "pending",
           paymentStatus: "unpaid",
+          expiresAt: new Date(Date.now()+HOLD_MS),
           tickets: {
             create: normalizedSeatCodes.map((seatCode) => ({
               ticketCode: `${bookingCode}-${randomBytes(3).toString("hex").toUpperCase()}`,
@@ -272,6 +294,7 @@ async function createBookingService(data) {
       // ── 5. Ghi SeatStatus (claim ghế) ────────────────────────────────────
       await claimSeats(tx, newBooking.tickets, tripId, date, newBooking.id, existingSeatMap);
 
+      if (options.payment) await finalizePayment(tx,newBooking,options.payment,options.receivedById);
       // ── 6. Trả về booking đầy đủ ─────────────────────────────────────────
       return tx.booking.findUnique({
         where: { id: newBooking.id },
@@ -286,8 +309,9 @@ async function createBookingService(data) {
   );
 }
 
-async function lookupBookingService(bookingCode, phone) {
+async function lookupBookingService(bookingCode, phone, userId) {
   if (!bookingCode) return null;
+  await expireUnpaidBookings({bookingCode:bookingCode.trim()});
 
   const where = {
     bookingCode: bookingCode.trim(),
@@ -297,13 +321,13 @@ async function lookupBookingService(bookingCode, phone) {
     where.passengerPhone = phone.trim();
   }
 
-  return prisma.booking.findFirst({
-    where,
-    include: bookingInclude,
-  });
+  const booking = await prisma.booking.findFirst({ where, include: bookingInclude });
+  if (booking) assertBookingAccess(booking, { userId, phone });
+  return booking;
 }
 
-function listUserBookingsService(userId) {
+async function listUserBookingsService(userId) {
+  await expireUnpaidBookings({userId});
   return prisma.booking.findMany({
     where: { userId },
     include: bookingInclude,
@@ -312,6 +336,7 @@ function listUserBookingsService(userId) {
 }
 
 async function getBookingService(id, identity = {}) {
+  await expireUnpaidBookings({id});
   const booking = await prisma.booking.findUnique({
     where: { id },
     include: bookingInclude,
@@ -321,11 +346,7 @@ async function getBookingService(id, identity = {}) {
     throw new HttpError(404, "BOOKING_NOT_FOUND", "Booking not found");
   }
 
-  if (identity.userId && booking.userId && booking.userId !== identity.userId) {
-    if (!identity.phone || booking.passengerPhone !== identity.phone) {
-      throw new HttpError(403, "FORBIDDEN", "You do not have access to this booking");
-    }
-  }
+  assertBookingAccess(booking, identity);
 
   return booking;
 }
@@ -336,6 +357,7 @@ async function cancelBookingService(id, identity = {}) {
       where: { id },
       include: {
         seatStatuses: true,
+        tickets: true,
         trip: { include: { route: true, company: true, bus: true } },
       },
     });
@@ -344,27 +366,27 @@ async function cancelBookingService(id, identity = {}) {
       throw new HttpError(404, "BOOKING_NOT_FOUND", "Booking not found");
     }
 
-    if (identity.userId && booking.userId && booking.userId !== identity.userId) {
-      if (!identity.phone || booking.passengerPhone !== identity.phone) {
-        throw new HttpError(403, "FORBIDDEN", "You do not have access to cancel this booking");
-      }
-    }
+    assertBookingAccess(booking, identity);
+    if(booking.tickets?.some(t=>t.checkedInAt))throw new HttpError(409,"ALREADY_BOARDED","Vé đã lên xe không được hủy trực tiếp");
 
     if (booking.status === "cancelled") {
       throw new HttpError(409, "ALREADY_CANCELLED", "Vé này đã được hủy trước đó");
     }
 
-    const updated = await tx.booking.update({
-      where: { id },
+    if (!["pending", "confirmed"].includes(booking.status)) {
+      throw new HttpError(409, "INVALID_BOOKING_STATUS_TRANSITION", "Không thể hủy vé đã hoàn thành");
+    }
+    const update = await tx.booking.updateMany({
+      where: { id, status: booking.status, paymentStatus: booking.paymentStatus },
       data: {
         status: "cancelled",
         ...(booking.paymentStatus === "paid" ? { paymentStatus: "refunded" } : {}),
       },
-      include: bookingInclude,
     });
+    if (update.count !== 1) throw new HttpError(409, "BOOKING_STATUS_CONFLICT", "Vé vừa thay đổi, vui lòng tải lại");
 
     await tx.seatStatus.updateMany({
-      where: { bookingId: id, status: "booked" },
+      where: { bookingId: id, status: { in:["booked","held"] } },
       data: { status: "available", bookingId: null, ticketId: null },
     });
 
@@ -373,7 +395,7 @@ async function cancelBookingService(id, identity = {}) {
       data: { status: "cancelled" },
     });
 
-    return updated;
+    return tx.booking.findUnique({ where: { id }, include: bookingInclude });
   });
 }
 
@@ -407,32 +429,22 @@ async function statusCheckService(codes) {
   });
 }
 
-async function getMyBookingsService(criteria) {
-  let userId, phone, email;
-  if (typeof criteria === "object" && criteria !== null) {
-    userId = criteria.userId;
-    phone = criteria.phone;
-    email = criteria.email;
-  } else {
-    userId = arguments[0];
-    phone = arguments[1];
-    email = arguments[2];
-  }
-
-  const conditions = [];
-  if (userId) conditions.push({ userId });
-  if (phone) conditions.push({ passengerPhone: phone });
-  if (email) conditions.push({ passengerEmail: email });
-
-  return prisma.booking.findMany({
-    where: conditions.length > 0 ? { OR: conditions } : {},
-    include: bookingInclude,
-    orderBy: { createdAt: "desc" },
-  });
+function getMyBookingsService({ userId } = {}) {
+  if (!userId) throw new HttpError(401, "UNAUTHORIZED", "Vui lòng đăng nhập để xem vé của bạn");
+  return listUserBookingsService(userId);
+}
+function assertBookingAccess(booking, identity) {
+  if (identity.userId && booking.userId === identity.userId) return;
+  if (identity.phone && booking.passengerPhone === identity.phone) return;
+  throw new HttpError(403, "FORBIDDEN", "Bạn không có quyền truy cập vé này");
 }
 
 module.exports = {
   createBookingService,
+  assertSeatCodesInRange,
+  assertSeatsAvailable,
+  claimSeats,
+  assertBookingAccess,
   lookupBookingService,
   listUserBookingsService,
   getBookingService,

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const SearchHeader = ({ searchParams, onSearchSubmit }) => {
   const [isEditing, setIsEditing] = useState(false);

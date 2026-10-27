@@ -15,7 +15,9 @@ const TripDetailPage = () => {
       return {};
     }
   })();
+
   const passengers = searchParams.get('passengers') || savedSearch.passengers || '1';
+  const tripDate = searchParams.get('date') || savedSearch.date || new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Ho_Chi_Minh' }).format(new Date());
 
   useEffect(() => {
     let isCurrentRequest = true;
@@ -180,18 +182,9 @@ const TripDetailPage = () => {
               className="btn-primary trip-book-button"
               type="button"
               onClick={() => {
-                const savedSearch = (() => {
-                  try {
-                    return JSON.parse(sessionStorage.getItem('rightwaySearch') || '{}');
-                  } catch {
-                    return {};
-                  }
-                })();
-                const today = new Date().toISOString().split('T')[0];
-                const passengers = savedSearch.passengers || '1';
-                sessionStorage.setItem('rightwaySearch', JSON.stringify({ ...savedSearch, passengers }));
-                navigate(`/booking/seats?tripId=${trip.id}&date=${today}&passengers=${passengers}`, {
-                  state: { trip, tripDate: today, passengers },
+                sessionStorage.setItem('rightwaySearch', JSON.stringify({ ...savedSearch, passengers, date: tripDate }));
+                navigate(`/booking/seats?tripId=${trip.id}&date=${tripDate}&passengers=${passengers}`, {
+                  state: { trip, tripDate, passengers },
                 });
               }}
             >

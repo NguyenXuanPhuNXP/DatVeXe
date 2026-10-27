@@ -1,6 +1,3 @@
-import React from 'react';
-import Header from '../components/layout/Header';
-import Footer from '../components/layout/Footer';
 import HeroSection from '../components/home/HeroSection';
 import QuickActions from '../components/home/QuickActions';
 import Promotions from '../components/home/Promotions';

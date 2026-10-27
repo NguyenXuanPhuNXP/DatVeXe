@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { isAdminUser, useAuth } from '../context/AuthContext';
+import { isAdminUser, userHome, useAuth } from '../context/auth-context';
 import '../styles/auth.css';
 
 function getErrorMessage(error) {
@@ -31,7 +31,7 @@ const LoginPage = () => {
         navigate(from, { replace: true });
         return;
       }
-      navigate(admin ? '/admin' : '/', { replace: true });
+      navigate(userHome(user), { replace: true });
     } catch (err) {
       setError(getErrorMessage(err));
     } finally {

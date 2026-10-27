@@ -2,6 +2,19 @@ require("dotenv/config");
 const { z } = require("zod");
 
 const envSchema = z.object({
+  MOMO_PARTNER_CODE: z.string().default(''),
+  MOMO_ACCESS_KEY: z.string().default(''),
+  MOMO_SECRET_KEY: z.string().default(''),
+  MOMO_ENV: z.enum(['production', 'sandbox']).default('production'),
+  MOMO_REDIRECT_URL: z.string().default(''),
+  MOMO_IPN_URL: z.string().default(''),
+  TICKET_QR_SECRET: z.union([z.literal(''),z.string().min(32)]).default(''),
+  SMTP_HOST: z.string().default(''),
+  SMTP_PORT: z.coerce.number().int().positive().default(587),
+  SMTP_SECURE: z.enum(['true','false']).default('false').transform(v=>v==='true'),
+  SMTP_USER: z.string().default(''),
+  SMTP_PASS: z.string().default(''),
+  MAIL_FROM: z.string().default(''),
   DATABASE_URL: z.string().regex(/^sqlserver:\/\/.+/, "Expected a SQL Server connection string"),
   JWT_ACCESS_SECRET: z.string().min(32),
   PORT: z.coerce.number().int().positive().default(3000),

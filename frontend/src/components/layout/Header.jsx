@@ -1,7 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import { useNotification } from '../../context/NotificationContext';
+import { userHome, useAuth } from '../../context/auth-context';
+import { useNotification } from '../../context/notification-context';
 import '../../styles/header.css';
 
 const Header = () => {
@@ -75,6 +75,7 @@ const Header = () => {
         </nav>
 
         <div className="header-actions">
+          {user?.companyMembership?.isActive && <Link to={userHome(user)} style={{color:"white"}}>Khu vực làm việc</Link>}
           {/* Notification Bell */}
           <div className="notification-wrapper" ref={notifRef} style={{ position: 'relative' }}>
             <button

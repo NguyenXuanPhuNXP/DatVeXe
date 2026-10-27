@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { adminService } from '../../services/adminApi';
 
 const DEFAULT_USERS = [
@@ -31,7 +31,9 @@ const AdminUsers = () => {
   };
 
   useEffect(() => {
-    fetchUsers();
+    let active = true;
+    Promise.resolve().then(() => { if (active) fetchUsers(); });
+    return () => { active = false; };
   }, []);
 
   const handleOpenModal = (user) => {

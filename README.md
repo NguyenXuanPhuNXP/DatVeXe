@@ -143,3 +143,86 @@ Các trường `totalPrice`, giá vé, thông tin hành khách trên vé, `payme
 
 - `GET /api/admin/trips/export-excel` xuất danh sách chuyến xe ra `.xlsx`. Endpoint nằm trong router Admin, yêu cầu xác thực và vai trò `admin`; workbook gồm mã chuyến, tuyến, xe, nhà xe, giờ đi/đến, thời lượng, giá vé, ngày chạy và trạng thái.
 - Trang `/admin/trips` có nút **Xuất Excel** để tải file về. Nếu không có chuyến xe, API trả HTTP 404 với mã `NO_TRIPS_TO_EXPORT`; các lỗi khác được chuyển qua error handler chung.
+
+
+### Khu vực nhà xe và nhân viên
+
+Mỗi tài khoản có tối đa một `CompanyMembership`, tách khỏi vai trò admin toàn hệ thống. Đăng ký công khai không được tự gán quyền nhà xe.
+
+| Vai trò | Khu vực | Quyền |
+| --- | --- | --- |
+| Chủ nhà xe (`owner`) | `/company/bookings`, `/company/buses`, `/company/trips`, `/company/employees`, `/company/revenue` | Quản lý xe, chuyến, vé, thu tiền, nhân viên và doanh thu trong nhà xe; cấp quyền quản lý hoặc nhân viên thường. |
+| Quản lý (`manager`) | `/staff/bookings`, `/staff/customers`, `/staff/employees` | Quản lý vé, thu tiền, sửa liên hệ hành khách; tạo, sửa tên, khóa/mở quyền làm việc của nhân viên thường. Không tự nâng quyền hoặc chỉnh sửa quản lý/chủ nhà xe. |
+| Nhân viên thường (`staff`) | `/staff/bookings`, `/staff/customers` | Duyệt/hủy/hoàn thành vé, xác nhận thu tiền, tìm và cập nhật thông tin khách trên vé đang hoạt động. |
+| Admin | `/admin/company-access`, `/admin/payments` | Gán tài khoản hiện có vào nhà xe và vai trò; thu hồi quyền; ghi nhận khoản thu cho booking. |
+
+**Bắt đầu:** cập nhật schema bằng `npm run db:push`, tạo Prisma Client bằng `npm run db:generate`, rồi đăng nhập admin và mở **Phân quyền nhà xe**. Chọn tài khoản và nhà xe, gán vai trò chủ nhà xe. Người đó đăng nhập lại để vào khu vực làm việc và tạo nhân viên. Backend kiểm tra membership hiện hành trong mọi request nghiệp vụ, nên khóa/thu hồi có hiệu lực ở request kế tiếp, kể cả khi token chưa hết hạn.
+
+API `/api/operator/*` luôn lấy `companyId` từ membership đã xác thực; client không được chọn nhà xe để mở rộng phạm vi. Quản lý/nhân viên không được gọi các endpoint xe, chuyến và doanh thu. Thông tin khách được sửa theo từng đơn, đồng bộ các ticket trong transaction; không thay đổi hồ sơ tài khoản khách hàng toàn hệ thống. Xe có vé đang hoạt động không được đổi số ghế. Chuyến có lịch sử booking không được đổi xe/tuyến/ngày/giờ khởi hành hoặc xóa; có thể tạm dừng bán.
+
+### Ghi nhận thanh toán và tra cứu an toàn
+
+- Trang đặt vé hỗ trợ `cash` (tiền mặt) và `bank_transfer` (chuyển khoản xác nhận thủ công). Đã tích hợp MoMo merchant (cấu hình ở phần dưới); chưa tích hợp VNPAY/thẻ. Lựa chọn phương thức không tự đánh dấu đã trả tiền.
+- Sau khi kiểm tra tiền thực nhận, người có quyền mở **Quản lý vé → Ghi nhận thu tiền**, chọn phương thức và nhập mã tham chiếu nếu chuyển khoản. `POST /api/operator/bookings/:id/payment` hoặc `/api/admin/bookings/:id/payment` nhận `{ "method": "bank_transfer", "reference": "BANK-001" }` hoặc `{ "method": "cash" }`. API lấy số tiền từ booking, ghi `PaymentReceipt` với người xác nhận và thời điểm; ngăn thu trùng và thu trên đơn đã hủy.
+- Thống kê nhà xe lọc theo ngày thu tiền (giờ Việt Nam), chỉ tính biên nhận có booking còn `paid`; hiển thị riêng khoản đã ghi nhận hoàn tiền. Booking cũ được seed `paid` nhưng không có biên nhận không nằm trong thống kê khoản thu của nhà xe. Dashboard admin hiện có vẫn theo ngày tạo booking như đã mô tả ở trên.
+- Hủy đơn đã thu tiền ghi nhận `refunded` trong sổ theo dõi; ứng dụng không tự chuyển tiền qua ngân hàng. Nhà xe thực hiện hoàn tiền bên ngoài hệ thống.
+- `/api/bookings/my` và `/my-bookings` yêu cầu đăng nhập, chỉ lấy `userId` từ phiên. Xem/tra cứu/hủy một booking cần tài khoản sở hữu hoặc đúng điện thoại đặt vé. Khách vãng lai cần nhập mã vé và điện thoại. Booking `completed` không được hủy; ngày khởi hành đã qua (theo múi giờ Việt Nam) không được đặt.
+- Frontend có thể cấu hình URL API bằng `VITE_API_URL`, mặc định `http://localhost:3000/api`.
+
+### Kiểm thử các sửa đổi
+
+```powershell
+# backend: bộ test không ghi database
+cd backend
+npm test
+# Kiểm thử HTTP và SQL Server với dữ liệu riêng, tự dọn sau kiểm thử
+$env:RUN_DB_TESTS='1'
+node --test tests/operator.integration.test.js
+Remove-Item Env:RUN_DB_TESTS
+# frontend
+cd ../frontend
+npm run lint
+npm run build
+```
+
+Test tích hợp tạo fixture riêng cho hai nhà xe và ba cấp nhân sự; kiểm tra cách ly dữ liệu, chống nâng quyền, thu tiền trùng, cập nhật khách/ticket, giới hạn sửa xe/chuyến, chặn đặt ngày cũ, quyền xem/hủy vé, thống kê và khóa nhân viên. Chỉ bật `RUN_DB_TESTS` với database phát triển dùng cho kiểm thử.
+
+
+### Giữ ghế 5 phút, vé tại quầy và QR
+
+- Tạo booking là thời điểm bắt đầu giữ ghế: `expiresAt = now + 5 phút`, SeatStatus là `held`. Mọi đơn chưa thanh toán (kể cả đã duyệt) hết hạn sẽ chuyển `cancelled`, vé bị hủy, ghế giải phóng trong cùng transaction. Không gia hạn khi tải lại trang hoặc thử thanh toán. Đơn cũ chưa có `expiresAt` tính hạn bằng `createdAt + 5 phút`.
+- Worker giải phóng ghế chạy mỗi 5 giây khi khởi động bằng `npm start`/`npm run dev`; việc tìm chuyến, xem ghế, tạo đơn và thu tiền cũng kiểm tra hạn. Hạn thanh toán được kiểm tra tại giao dịch, không dựa vào đồng hồ trình duyệt. Worker email chạy riêng, SMTP chậm không làm chậm giải phóng ghế.
+- Trang `/staff/counter` (chủ nhà xe: `/company/counter`) bán vé tại quầy. Nhân viên chọn chuyến/ngày/ghế, nhập tên, điện thoại, email, xác nhận đã thu đủ tiền mặt/chuyển khoản. Booking, tickets, ghế, biên nhận và job gửi email được ghi cùng transaction; vé được xác nhận ngay.
+- `/staff/exchange` hoặc `/company/exchange`: tìm vé đã thanh toán, chưa lên xe và chưa khởi hành, chọn chuyến/ghế mới trong cùng nhà xe, giữ nguyên số vé. API báo giá trước khi đổi; xác nhận số tiền thu thêm hoặc hoàn lại tại quầy. BookingChange lưu lịch sử, người xử lý, chênh lệch và mã tham chiếu. Biên nhận gốc được giữ nguyên; thống kê cộng/trừ các khoản chênh lệch đúng ngày xử lý. QR cũ bị vô hiệu; QR mới được gửi lại qua email.
+- `/staff/qr-info` hoặc `/company/qr-info`: quét camera, chọn ảnh QR hoặc dán nội dung mã để xem thông tin, không thay đổi trạng thái vé.
+- `/staff/qr-board` hoặc `/company/qr-board`: chọn chuyến hôm nay, quét, kiểm tra thông tin và nhấn **Xác nhận khách đã lên xe**. API kiểm tra chữ ký, phiên bản QR, nhà xe, chuyến, ngày, trạng thái thanh toán, trạng thái vé và chống xác nhận trùng. Camera cần HTTPS hoặc localhost và quyền camera của trình duyệt; chọn ảnh là phương án thay thế.
+- QR được ký HMAC-SHA256, chứa mã vé, ghế, tên hành khách, chuyến, tuyến, ngày/giờ và phiên bản. Không chứa email/điện thoại hoặc khóa bí mật. Trạng thái hiệu lực luôn lấy từ database; không tin thông tin tự khai trong mã QR. QR của booking cũ không có hiệu lực sau đổi vé/sửa liên hệ.
+- Sau thu tiền hoặc IPN MoMo hợp lệ, đơn tự chuyển `confirmed/paid`, ticket được xác nhận và `TicketEmailJob` được tạo trong cùng transaction. Job email chứa phiên bản vé, tự thử lại khi SMTP lỗi, không làm mất giao dịch thanh toán. Job của phiên bản cũ bị bỏ qua. Có thể tải QR tại trang tra cứu và yêu cầu gửi lại email tới đúng địa chỉ đã lưu trên đơn. Trong trường hợp tiến trình dừng sau khi SMTP nhận thư nhưng trước khi ghi trạng thái, email có thể được gửi lặp; tính hợp lệ và chống quét trùng vẫn theo database.
+
+### Cấu hình MoMo thật và email
+
+Điền biến trong `backend/.env` theo `backend/.env.example`, không commit khóa thật:
+
+- `MOMO_ENV=production`, `MOMO_PARTNER_CODE`, `MOMO_ACCESS_KEY`, `MOMO_SECRET_KEY`: lấy từ tài khoản merchant MoMo đã được cấp quyền production. Đây là cấu hình merchant chung của nền tảng.
+- `MOMO_IPN_URL=https://<api-domain>/api/ticketing/momo/ipn`: URL HTTPS công khai để MoMo gọi từ server; không dùng localhost. `MOMO_REDIRECT_URL=https://<frontend-domain>/payment/momo-return`: trang khách quay về sau khi trả tiền. Cập nhật `CORS_ORIGIN`, `VITE_API_URL` và cấu hình cookie theo tên miền triển khai.
+- `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`, `MAIL_FROM`: tài khoản gửi thư của nhà cung cấp SMTP. Cổng 587 yêu cầu STARTTLS; cổng 465 dùng `SMTP_SECURE=true`. Khi chưa có SMTP, thanh toán vẫn được lưu và job chờ gửi, QR có thể tải trực tiếp. Khi cấu hình xong và khởi động lại, worker xử lý hàng đợi.
+- `TICKET_QR_SECRET`: khóa riêng ổn định tối thiểu 32 ký tự. Bỏ trống sẽ dùng khóa dẫn xuất riêng từ `JWT_ACCESS_SECRET`; đổi khóa sẽ làm QR đã phát hành không còn xác minh được.
+
+Backend gọi `captureWallet` tại `https://payment.momo.vn/v2/gateway/api/create`, ký và xác minh HMAC-SHA256, lưu order/request/amount trước khi gọi cổng, dùng lại cùng requestId khi timeout. Chỉ IPN đã xác minh mới ghi nhận thanh toán. Tham số trên URL khách quay về không được dùng để đánh dấu `paid`. IPN kiểm tra partner/order/request/amount và chữ ký, chống ghi biên nhận/email lặp và trả HTTP 204 khi đã xử lý.
+
+Nếu MoMo xác nhận tiền sau khi booking hết hạn/hủy hoặc đã thanh toán bằng cách khác, hệ thống **không lấy lại ghế hoặc phát hành vé**. PaymentAttempt chuyển `refund_required`, lưu mã giao dịch để chủ nhà xe/quản lý xem tại `/company/payment-issues` hoặc `/staff/payment-issues`, đối soát và hoàn tiền trên merchant MoMo. Ứng dụng không tự thực hiện chuyển/hoàn tiền thật. Hạn giữ ghế của ứng dụng không đồng nghĩa cổng MoMo đã vô hiệu liên kết thanh toán; khoản trả muộn được xử lý theo luồng đối soát trên.
+
+Tài liệu MoMo chính thức: [Thanh toán ví một lần](https://developers.momo.vn/v3/docs/payment/api/wallet/onetime/), [Thông báo IPN](https://developers.momo.vn/v3/docs/payment/api/result-handling/notification/), [Tài khoản và môi trường](https://developers.momo.vn/v3/docs/payment/onboarding/integration-process/).
+
+Kiểm thử tích hợp mới (fixture riêng, không thu tiền/gửi thư thật):
+
+```powershell
+cd backend
+$env:RUN_DB_TESTS='1'
+node --test tests/ticketing.integration.test.js
+Remove-Item Env:RUN_DB_TESTS
+```
+
+Test dùng SQL Server thật và giả lập cổng MoMo/SMTP: hết hạn/giải phóng ghế, bán tại quầy, đổi chuyến và chênh lệch, vô hiệu QR cũ, chống quét sai chuyến/quét trùng, chữ ký IPN, replay và thanh toán muộn, email lỗi/thử lại. Cần xác minh merchant production, IPN công khai và SMTP thật trước khi mở cho khách thanh toán thực tế.
+
+Hướng dẫn dành cho người chưa có merchant/tên miền/SMTP: [HUONG_DAN_MOMO_EMAIL.md](HUONG_DAN_MOMO_EMAIL.md). Kiểm tra cấu hình không in khóa và không thu tiền bằng `npm run integrations:check` trong backend.

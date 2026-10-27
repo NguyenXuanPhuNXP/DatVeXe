@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { adminService } from '../../services/adminApi';
 
 const DEFAULT_NEWS = [
@@ -31,7 +31,9 @@ const AdminNews = () => {
   };
 
   useEffect(() => {
-    fetchNews();
+    let active = true;
+    Promise.resolve().then(() => { if (active) fetchNews(); });
+    return () => { active = false; };
   }, []);
 
   const handleOpenModal = (item = null) => {

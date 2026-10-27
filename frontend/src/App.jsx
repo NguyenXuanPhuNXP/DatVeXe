@@ -1,7 +1,9 @@
+import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { NotificationProvider } from './context/NotificationContext';
-import { AdminRoute, GuestRoute, ProtectedRoute } from './components/auth/RouteGuards';
+import { AdminRoute, GuestRoute } from './components/auth/RouteGuards';
+import MomoReturnPage from './pages/TicketPaymentPanel';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import HomePage from './pages/HomePage';
@@ -15,20 +17,25 @@ import BookingLookupPage from './pages/BookingLookupPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import AdminLayout from './components/admin/AdminLayout';
-import AdminDashboard from './pages/admin/AdminDashboard';
-import AdminTrips from './pages/admin/AdminTrips';
-import AdminRoutes from './pages/admin/AdminRoutes';
-import AdminCompanies from './pages/admin/AdminCompanies';
-import AdminBookings from './pages/admin/AdminBookings';
-import AdminPromotions from './pages/admin/AdminPromotions';
-import AdminNews from './pages/admin/AdminNews';
-import AdminUsers from './pages/admin/AdminUsers';
-import AdminReports from './pages/admin/AdminReports';
-import AdminAnomalies from './pages/admin/AdminAnomalies';
+const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
+const AdminTrips = lazy(() => import('./pages/admin/AdminTrips'));
+const AdminRoutes = lazy(() => import('./pages/admin/AdminRoutes'));
+const AdminCompanies = lazy(() => import('./pages/admin/AdminCompanies'));
+const AdminBookings = lazy(() => import('./pages/admin/AdminBookings'));
+const AdminPromotions = lazy(() => import('./pages/admin/AdminPromotions'));
+const AdminNews = lazy(() => import('./pages/admin/AdminNews'));
+const AdminUsers = lazy(() => import('./pages/admin/AdminUsers'));
+const AdminReports = lazy(() => import('./pages/admin/AdminReports'));
+const AdminAnomalies = lazy(() => import('./pages/admin/AdminAnomalies'));
 import './styles/global.css';
 import './styles/admin.css';
 import './styles/auth.css';
 
+const OperatorPortal = lazy(() => import('./pages/operator/OperatorPortal'));
+const CompanyAccessPage = lazy(() => import('./pages/operator/OperatorPortal').then(m => ({ default: m.CompanyAccessPage })));
+const PaymentBookingsPage = lazy(() => import('./pages/operator/OperatorPortal').then(m => ({ default: m.BookingsPage })));
+
+const MomoIssuesPage = lazy(() => import('./pages/operator/CounterPages').then(m => ({default:m.PaymentIssuesPage})));
 function MainLayout() {
   return (
     <>
@@ -42,6 +49,7 @@ function MainLayout() {
           <Route path="/booking/passenger" element={<PassengerInfoPage />} />
           <Route path="/booking/payment" element={<PaymentPage />} />
           <Route path="/booking/success" element={<BookingSuccessPage />} />
+          <Route path="/payment/momo-return" element={<MomoReturnPage />} />
           <Route path="/lookup" element={<BookingLookupPage />} />
           <Route path="/my-bookings" element={<BookingLookupPage />} />
           <Route
@@ -70,6 +78,7 @@ function MainLayout() {
 
 function AppContent() {
   const location = useLocation();
+  if (location.pathname.startsWith('/company') || location.pathname.startsWith('/staff')) return <OperatorPortal />;
   const isAdmin = location.pathname.startsWith('/admin');
 
   if (isAdmin) {
@@ -78,6 +87,9 @@ function AppContent() {
         <AdminLayout>
           <Routes>
             <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/momo-issues" element={<MomoIssuesPage admin />} />
+            <Route path="/admin/company-access" element={<CompanyAccessPage />} />
+            <Route path="/admin/payments" element={<PaymentBookingsPage admin />} />
             <Route path="/admin/reports" element={<AdminReports />} />
             <Route path="/admin/trips" element={<AdminTrips />} />
             <Route path="/admin/routes" element={<AdminRoutes />} />
@@ -102,7 +114,7 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <NotificationProvider>
-          <AppContent />
+          <Suspense fallback={<div className="auth-guard-loading">Đang tải trang…</div>}><AppContent /></Suspense>
         </NotificationProvider>
       </AuthProvider>
     </BrowserRouter>

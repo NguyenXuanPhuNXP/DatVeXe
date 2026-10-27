@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { adminService } from '../../services/adminApi';
 const AdminBookings = () => {
   const [bookings, setBookings] = useState([]);
@@ -31,7 +31,9 @@ const AdminBookings = () => {
   }, [filterStatus, searchTerm, filterDate]);
 
   useEffect(() => {
-    fetchBookings();
+    let active = true;
+    Promise.resolve().then(() => { if (active) fetchBookings(); });
+    return () => { active = false; };
   }, [fetchBookings]);
 
   const handleUpdateStatus = async (id, newStatus, newPaymentStatus) => {
@@ -424,7 +426,7 @@ const AdminBookings = () => {
                           borderRadius: '10px',
                         }}
                       >
-                        {b.paymentStatus === 'paid' ? 'Đã thanh toán' : 'Chưa trả'}
+                        {b.paymentStatus === 'paid' ? 'Đã thanh toán' : b.paymentStatus === 'refunded' ? 'Đã ghi nhận hoàn tiền' : 'Chưa trả'}
                       </span>
                       <br />
                       <small style={{ color: '#9CA3AF', fontSize: '11px' }}>{b.paymentMethod}</small>

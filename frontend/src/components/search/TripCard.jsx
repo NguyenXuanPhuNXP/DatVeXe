@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 
 const TripCard = ({ trip, tripDate }) => {

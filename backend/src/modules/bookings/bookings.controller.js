@@ -62,7 +62,7 @@ async function createBooking(req, res, next) {
 async function lookupBooking(req, res, next) {
   try {
     const { bookingCode, phone } = bookingLookupSchema.parse(req.query);
-    const booking = await service.lookupBookingService(bookingCode, phone);
+    const booking = await service.lookupBookingService(bookingCode, phone, req.auth?.userId);
     if (!booking) {
       throw new HttpError(404, "BOOKING_NOT_FOUND", "Không tìm thấy thông tin vé phù hợp");
     }
@@ -128,10 +128,7 @@ async function statusCheck(req, res, next) {
 
 async function getMyBookings(req, res, next) {
   try {
-    const userId = req.auth?.userId || req.user?.id || req.query?.userId;
-    const phone = req.query?.phone;
-    const email = req.auth?.email || req.query?.email;
-    const bookings = await service.getMyBookingsService({ userId, phone, email });
+    const bookings = await service.getMyBookingsService({ userId: req.auth?.userId });
     res.json(bookings);
   } catch (error) {
     next(error);

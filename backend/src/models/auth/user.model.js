@@ -1,6 +1,7 @@
 const { prisma } = require("../../lib/prisma");
 
 const userAuthorizationInclude = {
+  companyMembership: { include: { company: { select: { id: true, name: true } } } },
   roles: {
     include: {
       role: { include: { permissions: { include: { permission: true } } } },
