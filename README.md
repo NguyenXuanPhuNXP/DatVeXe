@@ -65,7 +65,8 @@ IF DB_ID(N'DatVeXe') IS NULL
 cd backend
 copy .env.example .env
 npm install
-npx prisma db push
+npx prisma migrate deploy
+npx prisma generate
 npm run db:seed
 ```
 

@@ -6,7 +6,11 @@ const { HttpError } = require("../../utils/http-error");
 const { z } = require("zod");
 const { getBookingService } = require("../bookings/bookings.service");
 const { finalizePayment } = require("../bookings/payments.service");
-const { isExpired, releaseExpired } = require("./expiry.service");
+const {
+  isExpired,
+  releaseExpired,
+  expiresAtForBooking,
+} = require("./expiry.service");
 function configured() {
   return Boolean(
     env.MOMO_PARTNER_CODE &&
@@ -164,7 +168,7 @@ async function createMomoPayment(id, identity, { fetcher = fetch } = {}) {
     { isolationLevel: "Serializable" },
   );
   if (attempt.payUrl)
-    return { payUrl: attempt.payUrl, expiresAt: booking.expiresAt };
+    return { payUrl: attempt.payUrl, expiresAt: expiresAtForBooking(booking) };
   const request = {
     partnerCode: env.MOMO_PARTNER_CODE,
     requestType: "captureWallet",
@@ -239,7 +243,7 @@ async function createMomoPayment(id, identity, { fetcher = fetch } = {}) {
     where: { id: attempt.id, status: "pending" },
     data: { payUrl: result.payUrl },
   });
-  return { payUrl: result.payUrl, expiresAt: booking.expiresAt };
+  return { payUrl: result.payUrl, expiresAt: expiresAtForBooking(booking) };
 }
 const ipnSchema = z
   .object({

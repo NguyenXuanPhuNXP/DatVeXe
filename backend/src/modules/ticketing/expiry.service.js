@@ -4,22 +4,19 @@ function expiredWhere(now = new Date()) {
   return {
     paymentStatus: "unpaid",
     status: { in: ["pending", "confirmed"] },
-    OR: [
-      { expiresAt: { lte: now } },
-      {
-        expiresAt: null,
-        createdAt: { lte: new Date(now.getTime() - HOLD_MS) },
-      },
-    ],
+    createdAt: { lte: new Date(now.getTime() - HOLD_MS) },
   };
 }
+function expiresAtForBooking(booking) {
+  if (!booking?.createdAt || booking.paymentStatus !== "unpaid") return null;
+  return new Date(new Date(booking.createdAt).getTime() + HOLD_MS);
+}
+function withBookingExpiry(booking) {
+  return booking ? { ...booking, expiresAt: expiresAtForBooking(booking) } : booking;
+}
 function isExpired(booking, now = new Date()) {
-  return (
-    booking.paymentStatus === "unpaid" &&
-    new Date(
-      booking.expiresAt || new Date(booking.createdAt).getTime() + HOLD_MS,
-    ) <= now
-  );
+  const expiresAt = expiresAtForBooking(booking);
+  return expiresAt !== null && expiresAt <= now;
 }
 async function releaseExpired(tx, bookingId, now = new Date()) {
   const changed = await tx.booking.updateMany({
@@ -37,9 +34,9 @@ async function releaseExpired(tx, bookingId, now = new Date()) {
   });
   return true;
 }
-async function expireUnpaidBookings(scope = {}) {
+async function expireUnpaidBookings(scope = {}, db = prisma) {
   const now = new Date();
-  const candidates = await prisma.booking.findMany({
+  const candidates = await db.booking.findMany({
     where: { ...expiredWhere(now), ...scope },
     select: { id: true },
     take: 100,
@@ -48,10 +45,14 @@ async function expireUnpaidBookings(scope = {}) {
   let expired = 0;
   for (const b of candidates) {
     try {
-      if (await prisma.$transaction((tx) => releaseExpired(tx, b.id, now)))
+      if (await db.$transaction((tx) => releaseExpired(tx, b.id, now)))
         expired++;
     } catch (e) {
       if (e.code !== "P2034") throw e;
+      console.warn("Booking expiry conflicted with a concurrent update:", {
+        bookingId: b.id,
+        code: e.code,
+      });
     }
   }
   return expired;
@@ -59,6 +60,8 @@ async function expireUnpaidBookings(scope = {}) {
 module.exports = {
   HOLD_MS,
   expiredWhere,
+  expiresAtForBooking,
+  withBookingExpiry,
   isExpired,
   releaseExpired,
   expireUnpaidBookings,

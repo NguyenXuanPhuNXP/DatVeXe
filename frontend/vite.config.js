@@ -1,10 +1,14 @@
+
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
   server: {
+    allowedHosts: ['shopper-please-grade-letter.trycloudflare.com'],
+    proxy: {
+      '/api': 'http://localhost:3000',
+    },
     host: '0.0.0.0',
     port: 5173,
     strictPort: true,

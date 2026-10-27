@@ -4,6 +4,8 @@ const { z } = require("zod");
 const {
   isExpired,
   expireUnpaidBookings,
+  HOLD_MS,
+  withBookingExpiry,
 } = require("../ticketing/expiry.service");
 const { queueTicketEmail } = require("../ticketing/email.service");
 const paymentSchema = z
@@ -33,22 +35,15 @@ async function finalizePayment(tx, booking, data, receivedById) {
   const changed = await tx.booking.updateMany({
     where: {
       id: booking.id,
-      status: booking.status,
+      status: { in: ["pending", "confirmed"] },
       paymentStatus: "unpaid",
       qrVersion: booking.qrVersion,
-      OR: [
-        { expiresAt: { gt: now } },
-        {
-          expiresAt: null,
-          createdAt: { gt: new Date(now.getTime() - 300000) },
-        },
-      ],
+      createdAt: { gt: new Date(now.getTime() - HOLD_MS) },
     },
     data: {
       paymentStatus: "paid",
       paymentMethod: data.method,
       status: "confirmed",
-      expiresAt: null,
     },
   });
   if (changed.count !== 1)
@@ -87,14 +82,16 @@ async function receivePayment(id, input, receivedById, companyId) {
     });
     if (!b) throw new HttpError(404, "BOOKING_NOT_FOUND", "Không tìm thấy vé");
     await finalizePayment(tx, b, data, receivedById);
-    return tx.booking.findUnique({
-      where: { id },
-      include: {
-        receipt: true,
-        tickets: true,
-        trip: { include: { route: true } },
-      },
-    });
+    return withBookingExpiry(
+      await tx.booking.findUnique({
+        where: { id },
+        include: {
+          receipt: true,
+          tickets: true,
+          trip: { include: { route: true } },
+        },
+      }),
+    );
   });
 }
 module.exports = { receivePayment, finalizePayment, paymentSchema };

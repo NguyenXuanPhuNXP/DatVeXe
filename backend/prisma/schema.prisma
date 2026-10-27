@@ -186,7 +186,6 @@ model Booking {
   tickets         Ticket[]
   anomalyReview  BookingAnomalyReview?
   receipt PaymentReceipt?
-  expiresAt DateTime?
   qrVersion Int @default(1)
   paymentAttempts PaymentAttempt[]
   emailJobs TicketEmailJob[]
