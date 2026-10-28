@@ -1,0 +1,26 @@
+[
+  {
+    "id": "booking-guide",
+    "title": "Hướng dẫn đặt vé trên website",
+    "url": "/search",
+    "content": "Tìm chuyến theo điểm đi, điểm đến và ngày đi. Chọn chuyến, đăng nhập tài khoản, chọn ghế còn trống, nhập thông tin hành khách rồi thực hiện thanh toán theo hướng dẫn trên màn hình. Chỉ khi tạo booking thành công, hệ thống mới giữ ghế; việc bấm chọn ghế trên sơ đồ chưa đảm bảo giữ được ghế. Giá và tình trạng ghế cần xem trực tiếp trên trang tìm chuyến."
+  },
+  {
+    "id": "seat-hold",
+    "title": "Thời hạn giữ ghế và ghế không còn trống",
+    "url": "/my-bookings",
+    "content": "Booking chưa thanh toán được giữ ghế trong 5 phút tính từ thời điểm tạo booking. Hết hạn mà chưa thanh toán, booking và vé bị hủy, ghế được giải phóng. Ghế đang được giữ hoặc đã đặt không thể đặt thêm. Nếu nhận thông báo ghế không còn trống, hãy tải lại sơ đồ và chọn ghế khác. Không tiếp tục thanh toán cho booking đã hết hạn."
+  },
+  {
+    "id": "lookup",
+    "title": "Tra cứu và theo dõi vé",
+    "url": "/lookup",
+    "content": "Trang Tra cứu vé cho phép tra cứu bằng mã booking và số điện thoại đã dùng khi đặt vé. Người đã đăng nhập có thể mở Vé của tôi tại /my-bookings. Không gửi mật khẩu, mã OTP, thông tin thẻ hoặc thông tin vé riêng tư vào chatbot. Chatbot không truy cập booking cá nhân, không xác nhận giao dịch, không đặt hay hủy vé thay khách."
+  },
+  {
+    "id": "policies",
+    "title": "Quy định riêng và hỗ trợ từ nhân viên",
+    "url": "/my-bookings",
+    "content": "Chưa có tài liệu quy định riêng của từng nhà xe về hạn mức hành lý, giấy tờ, trẻ em, vật nuôi, phí đổi vé, phí hủy vé, tỷ lệ hoàn tiền hay thời gian hoàn tiền. Cần nhân viên nhà xe xác nhận các nội dung này. Không suy ra chính sách hoàn tiền từ trạng thái refunded của phần mềm. Nếu đã bị trừ tiền nhưng vé chưa xác nhận, hãy kiểm tra trạng thái ở Vé của tôi; không thanh toán lặp khi chưa được kiểm tra. Khi khách hỏi vấn đề liên quan dịch vụ nhà xe mà tài liệu chưa đủ dữ liệu, AI hiển thị nút Chuyển câu hỏi cho nhân viên. Khách bấm nút, chọn nhà xe rồi bấm gửi; câu hỏi được điền sẵn. Chỉ thông báo đã chuyển sau khi lưu yêu cầu thành công. Tab Hội thoại hỗ trợ chỉ dùng để xem và trả lời hội thoại đã có. Câu hỏi ngoài chủ đề không chuyển cho nhân viên. Nhân viên sẽ trả lời khi tiếp nhận, không đảm bảo có người trực ngay. Khách có thể xem lại và kết thúc hội thoại. Tin nhắn trao đổi với nhân viên không gửi sang AI. AI không tự chuyển nội dung cuộc trò chuyện cho nhân viên."
+  }
+]

@@ -8,6 +8,11 @@ export function isAdminUser(user) {
   );
 }
 
+export function isCustomerUser(user) {
+  return Boolean(user && !user.companyMembership && user.roles?.length &&
+    user.roles.every(role => String(role).toUpperCase() === 'USER'));
+}
+
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) {
@@ -19,7 +24,7 @@ export function useAuth() {
 export function userHome(user) {
   if (isAdminUser(user)) return "/admin";
   const m = user?.companyMembership;
-  if (m?.isActive)
+  if (m?.isActive && ['owner', 'manager', 'staff'].includes(m.role))
     return m.role === "owner" ? "/company/bookings" : "/staff/bookings";
-  return "/";
+  return !user || isCustomerUser(user) ? "/" : "/access-denied";
 }
