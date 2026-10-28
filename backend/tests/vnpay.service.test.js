@@ -198,6 +198,18 @@ test(
         await prisma.paymentReceipt.count({ where: { bookingId: b.id } }),
         1,
       );
+      const deliveryUrl=`http://127.0.0.1:${server.address().port}/api/ticketing/bookings/${b.id}/delivery`;
+      assert.equal((await fetch(deliveryUrl+'?phone=wrong')).status,403);
+      const delivered=await(await fetch(deliveryUrl+'?phone='+contact.passengerPhone)).json();
+      assert.equal(delivered.job.status,'pending');
+      assert.equal(delivered.email,'v***@example.test');
+      const {retryEmail}=require('../src/modules/ticketing/email-management.service');
+      await assert.rejects(()=>retryEmail(b.id,'foreign-company'),e=>e.status===404||e.statusCode===404);
+      assert.equal((await retryEmail(b.id)).status,'pending');
+      await prisma.ticketEmailJob.updateMany({where:{bookingId:b.id},data:{status:'sending',lockedUntil:new Date(Date.now()+60000)}});
+      assert.equal((await retryEmail(b.id)).status,'sending');
+      await prisma.ticketEmailJob.updateMany({where:{bookingId:b.id},data:{status:'sent',sentAt:new Date(),lockedUntil:null}});
+      await assert.rejects(()=>retryEmail(b.id),e=>e.status===429||e.statusCode===429);
       const failed = await reserve("B1");
       const f = await v.createVnpayPayment(failed.id, {
         phone: contact.passengerPhone,
@@ -226,7 +238,7 @@ test(
       });
       await prisma.booking.update({
         where: { id: late.id },
-        data: { expiresAt: new Date(Date.now() - 1) },
+        data: { createdAt: new Date(Date.now() - 300001), expiresAt: new Date(Date.now() - 1) },
       });
       await ipn(notification(l.payUrl), "00");
       assert.equal(

@@ -238,3 +238,10 @@ Hướng dẫn dành cho người chưa có merchant/tên miền/SMTP: [HUONG_DA
 - PaymentAttempt có `provider` để cách ly VNPAY và giao dịch lịch sử MoMo. URL tạo thanh toán MoMo đã đóng; callback MoMo cũ được giữ cho đối soát lịch sử.
 - Trang đối soát dùng tên chung **Đối soát thanh toán**, admin tại `/admin/payment-issues`, nhà xe/quản lý tại khu vực riêng. Khoản trả muộn không lấy lại ghế đã giải phóng, được gắn cờ cần hoàn tiền thủ công.
 - Test SQL Server dùng fixture riêng; bộ kiểm thử chạy nối tiếp vì dùng chung database phát triển. `npm test` kiểm tra mock/unit, `$env:RUN_DB_TESTS='1'; npm test` bật cả tích hợp. Không tạo giao dịch ở cổng thật.
+
+
+### Vận hành VNPAY và email
+
+Admin có trang `/admin/integrations`; nhà xe/nhân viên có `/company/email-jobs` và `/staff/email-jobs`. Trang quản trị cho kiểm tra kết nối, gửi thư thử tới chính email tài khoản quản trị, xem giao dịch và hàng đợi. Gửi lại email luôn kiểm tra trạng thái paid, phiên bản QR, nhà xe và thời gian chờ; không cho truyền email nhận tùy ý. Khách có API `/api/ticketing/bookings/:id/delivery` được bảo vệ bằng tài khoản sở hữu hoặc số điện thoại đúng để xem trạng thái gửi vé.
+
+Chạy `npm run integrations:check` trong backend để kiểm tra các kết nối mà không gửi thư/thu tiền. Cổng 587 dùng `SMTP_SECURE=false` + STARTTLS; cổng 465 dùng `true`. Hướng dẫn đầy đủ: [HUONG_DAN_VNPAY_EMAIL.md](HUONG_DAN_VNPAY_EMAIL.md). Khi chạy integration tests với database phát triển, tạm dừng server/worker dùng cùng DB để worker thật không xử lý fixture email của tests.

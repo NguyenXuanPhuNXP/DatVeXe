@@ -6,7 +6,11 @@ const { HttpError } = require("../../utils/http-error");
 const { retryTransaction } = require("../../utils/transaction-retry");
 const { getBookingService } = require("../bookings/bookings.service");
 const { finalizePayment } = require("../bookings/payments.service");
-const { isExpired, releaseExpired } = require("./expiry.service");
+const {
+  isExpired,
+  releaseExpired,
+  expiresAtForBooking,
+} = require("./expiry.service");
 const sandboxUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
 function configured() {
   return Boolean(
@@ -132,9 +136,7 @@ async function createVnpayPayment(id, identity, ip = "127.0.0.1") {
         if (old?.payUrl) return old;
         const ref = "RW" + randomUUID().replaceAll("-", "");
         const now = new Date();
-        const expires =
-          current.expiresAt ||
-          new Date(new Date(current.createdAt).getTime() + 300000);
+        const expires = expiresAtForBooking(current);
         const addr = ip === "::1" ? "127.0.0.1" : ip.replace(/^::ffff:/, "");
         const params = {
           vnp_Version: "2.1.0",

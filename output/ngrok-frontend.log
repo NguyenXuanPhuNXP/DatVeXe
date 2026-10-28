@@ -67,3 +67,21 @@
 11:20:09 PM [vite] (client) hmr update /src/pages/PaymentPage.jsx
 11:21:03 PM [vite] (client) hmr update /src/App.jsx
 11:21:03 PM [vite] (client) hmr update /src/components/layout/Header.jsx
+12:12:14 AM [vite] vite.config.js changed, restarting server...
+12:12:14 AM [vite] server restarted.
+12:19:16 AM [vite] (client) hmr update /src/pages/SeatSelectionPage.jsx
+12:19:16 AM [vite] (client) hmr update /src/pages/PassengerInfoPage.jsx
+12:19:16 AM [vite] (client) hmr update /src/pages/PaymentPage.jsx
+12:19:16 AM [vite] (client) hmr update /src/components/search/TripCard.jsx
+12:19:16 AM [vite] (client) hmr update /src/components/home/SearchForm.jsx
+12:19:16 AM [vite] (client) hmr update /src/pages/BookingLookupPage.jsx
+12:19:16 AM [vite] (client) hmr update /src/pages/SearchPage.jsx
+12:19:16 AM [vite] (client) hmr update /src/pages/MyBookingsPage.jsx
+12:19:16 AM [vite] (client) hmr update /src/components/search/SearchHeader.jsx
+12:20:38 AM [vite] vite.config.js changed, restarting server...
+12:20:38 AM [vite] server restarted.
+12:29:36 AM [vite] (client) hmr update /src/App.jsx
+12:29:36 AM [vite] (client) hmr update /src/components/admin/AdminLayout.jsx
+12:29:36 AM [vite] (client) hmr update /src/pages/TicketPaymentPanel.jsx
+12:33:20 AM [vite] (client) hmr update /src/pages/TicketPaymentPanel.jsx
+12:35:53 AM [vite] (client) hmr update /src/pages/TicketPaymentPanel.jsx

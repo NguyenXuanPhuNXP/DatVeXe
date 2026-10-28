@@ -1,3 +1,4 @@
+import { calendarDate, vietnamToday } from '../../utils/trip-date';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 
 const TripCard = ({ trip, tripDate }) => {
@@ -13,8 +14,8 @@ const TripCard = ({ trip, tripDate }) => {
     const dateParam =
       tripDate ||
       searchParams.get('date') ||
-      trip.availableDate ||
-      new Date().toISOString().split('T')[0];
+      calendarDate(trip.availableDate) ||
+      vietnamToday();
 
     const bookingParams = new URLSearchParams({
       tripId: trip.id,

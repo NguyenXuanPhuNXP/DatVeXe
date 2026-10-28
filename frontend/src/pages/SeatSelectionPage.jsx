@@ -1,3 +1,4 @@
+import { formatTripDate, vietnamToday } from '../utils/trip-date';
 import { useState, useEffect } from 'react';
 import BookingSteps from '../components/booking/BookingSteps';
 import SearchHeader from '../components/search/SearchHeader';
@@ -29,6 +30,7 @@ const SeatSelectionPage = () => {
     location.state?.tripDate ||
     (() => {
       try {
+        if (searchParams.get('tripId') || location.state?.trip?.id || location.state?.tripId) return null;
         const stored = sessionStorage.getItem('currentBooking') || sessionStorage.getItem('rightwayBooking');
         const parsed = stored ? JSON.parse(stored) : null;
         return parsed?.tripDate || parsed?.departureDate;
@@ -36,7 +38,7 @@ const SeatSelectionPage = () => {
         return null;
       }
     })() ||
-    new Date().toISOString().split('T')[0];
+    vietnamToday();
 
   const [trip, setTrip] = useState(location.state?.trip || null);
   const [bookedSeats, setBookedSeats] = useState([]);
@@ -251,7 +253,7 @@ const SeatSelectionPage = () => {
             <div className="summary-row">
               <span className="summary-label">Ngày đi</span>
               <span className="summary-value">
-                {new Date(resolvedTripDate).toLocaleDateString('vi-VN', {
+                {formatTripDate(resolvedTripDate, {
                   weekday: 'short',
                   day: '2-digit',
                   month: '2-digit',

@@ -1,3 +1,4 @@
+import { formatTripDate } from '../utils/trip-date';
 import { useState, useEffect, useMemo } from 'react';
 import BookingSteps from '../components/booking/BookingSteps';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -193,7 +194,7 @@ const PaymentPage = () => {
             <div className="summary-row">
               <span className="summary-label">Ngày đi</span>
               <span className="summary-value">
-                {tripDate ? new Date(tripDate).toLocaleDateString('vi-VN', {
+                {tripDate ? formatTripDate(tripDate, {
                   day: '2-digit',
                   month: '2-digit',
                   year: 'numeric',

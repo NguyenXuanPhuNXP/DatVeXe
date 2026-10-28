@@ -3,12 +3,18 @@ import { Link } from "react-router-dom";
 import api, { bookingService } from "../services/api";
 import { useAuth } from "../context/auth-context";
 
-export function TicketPaymentPanel({ booking, onRefresh, showContinuePayment = false }) {
+export function TicketPaymentPanel({
+  booking,
+  onRefresh,
+  showContinuePayment = false,
+}) {
   const { user } = useAuth();
   const [now, setNow] = useState(Date.now);
   const [assets, setAssets] = useState(null);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [delivery, setDelivery] = useState(null);
+  const [deliveryRefresh, setDeliveryRefresh] = useState(0);
   const paid =
     booking.paymentStatus === "paid" && booking.status !== "cancelled";
   const deadline = new Date(
@@ -49,6 +55,36 @@ export function TicketPaymentPanel({ booking, onRefresh, showContinuePayment = f
       active = false;
     };
   }, [paid, booking.id, booking.qrVersion, booking.passengerPhone]);
+  useEffect(() => {
+    if (!paid) return;
+    let active = true;
+    let timer;
+    let checks = 0;
+    const refreshDelivery = async () => {
+      try {
+        const r = await api.get(`/ticketing/bookings/${booking.id}/delivery`, {
+          params: { phone: booking.passengerPhone },
+        });
+        if (!active) return;
+        setDelivery({ ...r.data, bookingId: booking.id });
+        if (r.data.job?.status !== "sent" && r.data.configured && ++checks < 12)
+          timer = setTimeout(refreshDelivery, 5000);
+      } catch {
+        /* QR remains usable if email status cannot be loaded. */
+      }
+    };
+    void refreshDelivery();
+    return () => {
+      active = false;
+      clearTimeout(timer);
+    };
+  }, [
+    paid,
+    booking.id,
+    booking.qrVersion,
+    booking.passengerPhone,
+    deliveryRefresh,
+  ]);
   async function vnpay() {
     setBusy(true);
     setError("");
@@ -79,6 +115,7 @@ export function TicketPaymentPanel({ booking, onRefresh, showContinuePayment = f
         phone: booking.passengerPhone,
       });
       setError("Đã yêu cầu gửi lại vé về email trên đơn.");
+      setDeliveryRefresh((v) => v + 1);
     } catch (e) {
       setError(e.response?.data?.message || "Chưa gửi lại được email");
     } finally {
@@ -104,13 +141,29 @@ export function TicketPaymentPanel({ booking, onRefresh, showContinuePayment = f
             QR riêng cho từng ghế. Xuất trình QR khi lên xe; QR cũ sẽ mất hiệu
             lực sau khi đổi vé.
           </p>
-          <p>
-            {booking.emailJobs?.[0]?.status === "sent"
-              ? "Vé đã gửi về email của bạn."
-              : "Vé đang chờ gửi email. Bạn có thể tải QR dưới đây để sử dụng ngay."}
+          <p role="status">
+            {delivery?.bookingId === booking.id &&
+            delivery.version === booking.qrVersion
+              ? delivery.job?.status === "sent"
+                ? `SMTP đã nhận email vé gửi tới ${delivery.email}. Kiểm tra Hộp thư đến/Spam.`
+                : !delivery.configured
+                  ? "Dịch vụ email tạm chưa sẵn sàng. Bạn có thể tải QR để dùng ngay."
+                  : delivery.job?.lastError
+                    ? "Email chưa gửi được; hệ thống sẽ tự thử lại. Bạn vẫn có thể tải QR."
+                    : delivery.job?.status === "sending"
+                      ? "Đang gửi email vé…"
+                      : "Vé đang chờ gửi email. Bạn có thể tải QR ngay."
+              : "Đang kiểm tra trạng thái email…"}
           </p>
           <button type="button" onClick={resend} disabled={busy}>
             Gửi lại vé qua email
+          </button>
+          <button
+            type="button"
+            onClick={() => setDeliveryRefresh((v) => v + 1)}
+            disabled={busy}
+          >
+            Kiểm tra email
           </button>
           <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
             {(assets?.bookingId === booking.id &&
@@ -152,7 +205,9 @@ export function TicketPaymentPanel({ booking, onRefresh, showContinuePayment = f
             Ghế đã được giải phóng. Nếu VNPAY ghi nhận tiền sau thời hạn, nhà xe
             sẽ đối soát khoản tiền cần hoàn.
           </p>
-          {booking.paymentAttempts?.length > 0 && (
+          {booking.paymentAttempts?.some(
+            (a) => a.status === "refund_required",
+          ) && (
             <p role="alert">
               VNPAY đã ghi nhận khoản tiền cần đối soát và hoàn lại. Vui lòng
               liên hệ nhà xe, cung cấp mã đặt vé.
@@ -169,10 +224,24 @@ export function TicketPaymentPanel({ booking, onRefresh, showContinuePayment = f
             Thanh toán trong 5 phút từ lúc tạo đơn. Hết hạn, đơn tự hủy và ghế
             được mở lại cho khách khác.
           </p>
-          {showContinuePayment && user?.id === booking.userId && seconds > 0 && booking.paymentStatus === 'unpaid' && booking.status === 'pending' && (
-            <Link className="btn-primary" style={{ display: 'inline-block', margin: '8px 12px 8px 0' }} to={`/booking/payment?bookingId=${encodeURIComponent(booking.id)}`}>
-              Tiếp tục thanh toán
-            </Link>
+          {showContinuePayment &&
+            user?.id === booking.userId &&
+            seconds > 0 &&
+            booking.paymentStatus === "unpaid" &&
+            booking.status === "pending" && (
+              <Link
+                className="btn-primary"
+                style={{ display: "inline-block", margin: "8px 12px 8px 0" }}
+                to={`/booking/payment?bookingId=${encodeURIComponent(booking.id)}`}
+              >
+                Tiếp tục thanh toán
+              </Link>
+            )}
+          {booking.paymentAttempts?.[0]?.status === "failed" && (
+            <p role="alert">
+              Lần thanh toán trước chưa thành công. Bạn có thể thử lại trong
+              thời gian giữ ghế còn lại.
+            </p>
           )}
           <button
             type="button"

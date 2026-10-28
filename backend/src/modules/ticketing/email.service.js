@@ -1,6 +1,7 @@
 const nodemailer = require("nodemailer");
 const { prisma } = require("../../lib/prisma");
 const { env } = require("../../config/env");
+const {smtpOptions,smtpStatus}=require("./integrations.service");
 const { ticketAssets, ticketInclude } = require("./qr.service");
 const QUEUE_SCHEMA_RETRY_MS = 60000;
 const QUEUE_SCHEMA_WARNING_INTERVAL_MS = 5 * 60 * 1000;
@@ -71,19 +72,9 @@ async function sendTicketEmail(booking, transport) {
   });
 }
 async function processTicketEmails({ transport, bookingIds, db = prisma } = {}) {
-  if (!transport && (!env.SMTP_HOST || !env.MAIL_FROM))
+  if (!transport && !smtpStatus().configured)
     return { configured: false, sent: 0 };
-  transport ||= nodemailer.createTransport({
-    host: env.SMTP_HOST,
-    port: env.SMTP_PORT,
-    secure: env.SMTP_SECURE,
-    requireTLS: !env.SMTP_SECURE,
-    ...(env.SMTP_USER
-      ? { auth: { user: env.SMTP_USER, pass: env.SMTP_PASS } }
-      : {}),
-    connectionTimeout: 15000,
-    socketTimeout: 30000,
-  });
+  transport ||= nodemailer.createTransport(smtpOptions());
   const now = new Date();
   if (Date.now() < nextQueueSchemaProbeAt)
     return { configured: true, sent: 0, queueAvailable: false };

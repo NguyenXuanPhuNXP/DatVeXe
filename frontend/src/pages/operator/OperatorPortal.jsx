@@ -1,3 +1,4 @@
+import IntegrationsPage from '../IntegrationsPage';
 import PasswordInput from '../../components/auth/PasswordInput';
 import {
   CounterSalePage,
@@ -837,6 +838,7 @@ export default function OperatorPortal() {
         ]
       : []),
     ["bookings", "Quản lý vé"],
+    ["email-jobs", "Email vé"],
     ["counter", "Bán vé tại quầy"],
     ["exchange", "Đổi ghế / chuyến"],
     ["qr-info", "Quét QR xem vé"],
@@ -873,6 +875,7 @@ export default function OperatorPortal() {
       <main>
         <Routes>
           <Route path={`${base}/bookings`} element={<BookingsPage />} />
+          <Route path={`${base}/email-jobs`} element={<IntegrationsPage />} />
           <Route path={`${base}/counter`} element={<CounterSalePage />} />
           <Route path={`${base}/exchange`} element={<ExchangePage />} />
           <Route path={`${base}/qr-info`} element={<QrInfoPage />} />

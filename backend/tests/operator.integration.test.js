@@ -261,6 +261,12 @@ test(
         manager,
       );
       assert.equal(paid.paymentStatus, "paid");
+      assert.equal((await req('GET','/operator/email-jobs',null,staff)).some(j=>j.bookingId===booking.id),true);
+      assert.equal((await req('GET','/operator/email-jobs',null,foreign)).length,0);
+      await req('POST',`/operator/bookings/${booking.id}/resend-email`,{},foreign,404);
+      await req('POST',`/operator/bookings/${booking.id}/resend-email`,{},staff,202);
+      await req('GET','/admin/integrations',null,staff,403);
+
       assert.equal(paid.receipt.receivedById, manager.id);
       await req(
         "POST",

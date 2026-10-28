@@ -1,3 +1,4 @@
+import { formatTripDate } from '../utils/trip-date';
 import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { bookingService } from '../services/api';
@@ -627,7 +628,7 @@ const BookingLookupPage = () => {
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span style={{ color: '#6B7280' }}>Ngày đi:</span>
                     <span style={{ fontWeight: 600 }}>
-                      {new Date(booking.tripDate).toLocaleDateString('vi-VN', {
+                      {formatTripDate(booking.tripDate, {
                         weekday: 'long',
                         day: '2-digit',
                         month: '2-digit',
