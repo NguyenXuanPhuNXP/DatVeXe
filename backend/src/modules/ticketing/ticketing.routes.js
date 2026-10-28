@@ -6,7 +6,8 @@ const { ticketAssets } = require("./qr.service");
 const { prisma } = require("../../lib/prisma");
 const { HttpError } = require("../../utils/http-error");
 const { handleMomoIpn } = require("./momo.service");
-const { queueTicketEmail } = require("./email.service");
+const { retryEmail } = require("./email-management.service");
+const {smtpStatus}=require("./integrations.service");
 const { rateLimit } = require("express-rate-limit");
 const router = Router();
 const wrap = (fn) => async (req, res, next) => {
@@ -88,6 +89,11 @@ router.get(
     res.json({ bookingCode: b.bookingCode, tickets: await ticketAssets(b) });
   }),
 );
+router.get('/bookings/:id/delivery',optionalAuthenticate,wrap(async(req,res)=>{
+  const b=await getBookingService(req.params.id,{userId:req.auth?.userId,phone:req.query.phone});
+  const job=await prisma.ticketEmailJob.findUnique({where:{bookingId_version:{bookingId:b.id,version:b.qrVersion}},select:{status:true,attempts:true,sentAt:true,nextAttemptAt:true,lastError:true}});
+  res.json({configured:smtpStatus().configured,version:b.qrVersion,email:b.passengerEmail.replace(/(^[^@]).*(@.*$)/,'$1***$2'),job});
+}));
 router.post(
   "/bookings/:id/resend-email",
   optionalAuthenticate,
@@ -106,21 +112,8 @@ router.post(
         "TICKET_NOT_ISSUED",
         "Vé chưa thanh toán hoặc đã hủy",
       );
-    // No caller-supplied destination: email always goes to the booking contact.
-    const job = await queueTicketEmail(prisma, b.id, b.qrVersion);
-    if (job.sentAt && Date.now() - new Date(job.sentAt).getTime() < 60000)
-      throw new HttpError(
-        429,
-        "EMAIL_COOLDOWN",
-        "Vui lòng đợi 1 phút trước khi gửi lại",
-      );
-    await prisma.ticketEmailJob.updateMany({
-      where: { id: job.id, status: { not: "sending" } },
-      data: { status: "pending", nextAttemptAt: new Date() },
-    });
-    res
-      .status(202)
-      .json({ message: "Đã xếp lịch gửi email tới địa chỉ trên vé" });
+    // Always sends to the booking's contact; never a caller-supplied email.
+    res.status(202).json(await retryEmail(b.id));
   }),
 );
 module.exports = { ticketingRouter: router };

@@ -131,6 +131,8 @@ function bookingWhere(companyId, query) {
   return where;
 }
 router.use(authenticate, operationalAccess);
+router.get('/email-jobs',wrap(async(req,res)=>res.json(await require('../ticketing/email-management.service').emailJobs(req.member.companyId))));
+router.post('/bookings/:id/resend-email',require('express-rate-limit').rateLimit({windowMs:60000,limit:5,keyGenerator:req=>req.auth.userId,standardHeaders:'draft-7',legacyHeaders:false}),wrap(async(req,res)=>res.status(202).json(await require('../ticketing/email-management.service').retryEmail(req.params.id,req.member.companyId))));
 const {
   sellCounter,
   quoteExchange,

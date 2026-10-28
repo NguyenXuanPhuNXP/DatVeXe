@@ -1,8 +1,9 @@
+import { vietnamToday } from '../../utils/trip-date';
 import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 const SearchForm = () => {
-  const [today] = useState(() => new Date(Date.now() + 7 * 3600000).toISOString().slice(0,10));
+  const [today] = useState(() => vietnamToday());
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const storedSearch = (() => {

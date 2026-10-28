@@ -23,6 +23,8 @@ const allowedOrigins = new Set([
 ]);
 
 app.disable("x-powered-by");
+// Only the local Vite/ngrok or same-host reverse proxy may supply client IPs.
+app.set("trust proxy", "loopback");
 app.use(helmet());
 app.use(cors({
   origin: (origin, callback) => {

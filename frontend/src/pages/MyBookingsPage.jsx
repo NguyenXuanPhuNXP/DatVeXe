@@ -1,3 +1,4 @@
+import { formatTripDate } from '../utils/trip-date';
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { bookingService } from '../services/api';
@@ -41,7 +42,7 @@ export default function MyBookingsPage() {
         return <article key={b.id} style={{ padding: 20, border: '1px solid #d1d5db', borderRadius: 12, background: '#fff' }}>
           <h2 style={{ fontSize: 19 }}>{b.trip?.route?.origin} → {b.trip?.route?.destination}</h2>
           <p><strong>{b.bookingCode}</strong> · {b.trip?.company?.name}</p>
-          <p>Ngày đi: {new Date(b.tripDate).toLocaleDateString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' })} · Giờ: {b.trip?.departureTime} · Ghế: {b.seatCode}</p>
+          <p>Ngày đi: {formatTripDate(b.tripDate, { timeZone: 'Asia/Ho_Chi_Minh' })} · Giờ: {b.trip?.departureTime} · Ghế: {b.seatCode}</p>
           <p>{Number(b.totalPrice).toLocaleString('vi-VN')}đ · {expired ? 'Hết hạn giữ ghế' : statuses[b.status] || b.status} · {payments[b.paymentStatus] || b.paymentStatus}</p>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
             <Link className="btn btn-secondary" to={`/lookup?code=${encodeURIComponent(b.bookingCode)}`}>Xem chi tiết vé</Link>

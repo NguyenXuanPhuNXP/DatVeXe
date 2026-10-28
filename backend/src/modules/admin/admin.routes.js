@@ -18,6 +18,7 @@ const { receiveExcelFile } = require("./trip-import.middleware");
 const adminRouter = Router();
 
 adminRouter.use(authenticate, requireRole("admin"));
+adminRouter.use("/integrations", require("./integrations.routes").integrationsRouter);
 adminRouter.get(['/payment-issues','/momo-issues'], async(_req,res,next)=>{
   try{res.json(await prisma.paymentAttempt.findMany({where:{status:'refund_required'},include:{booking:{select:{bookingCode:true,passengerName:true,passengerPhone:true}}},orderBy:{createdAt:'desc'}}));}catch(e){next(e);}
 });

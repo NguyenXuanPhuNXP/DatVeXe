@@ -20,6 +20,7 @@ const AdminLayout = ({ children }) => {
   const getPageTitle = () => {
     const path = location.pathname;
     if (path === '/admin') return 'Bảng điều khiển';
+    if (path.includes('integrations')) return 'VNPAY và email';
     if (path.includes('trips')) return 'Quản lý Chuyến xe';
     if (path.includes('routes')) return 'Quản lý Tuyến đường';
     if (path.includes('companies')) return 'Quản lý Nhà xe';
@@ -42,6 +43,7 @@ const AdminLayout = ({ children }) => {
         </div>
         
         <nav className="admin-menu">
+          <NavLink to="/admin/integrations" className="admin-menu-item">VNPAY và email</NavLink>
           <NavLink to="/admin/payment-issues" className="admin-menu-item">Đối soát thanh toán</NavLink>
           <NavLink to="/admin/company-access" className="admin-menu-item">Phân quyền nhà xe</NavLink>
           <NavLink to="/admin/payments" className="admin-menu-item">Ghi nhận thu tiền</NavLink>

@@ -18,6 +18,7 @@ import MyBookingsPage from './pages/MyBookingsPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import AdminLayout from './components/admin/AdminLayout';
+const IntegrationsPage = lazy(() => import('./pages/IntegrationsPage'));
 const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
 const AdminTrips = lazy(() => import('./pages/admin/AdminTrips'));
 const AdminRoutes = lazy(() => import('./pages/admin/AdminRoutes'));
@@ -88,6 +89,7 @@ function AppContent() {
         <AdminLayout>
           <Routes>
             <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/integrations" element={<IntegrationsPage admin />} />
             <Route path="/admin/payment-issues" element={<PaymentIssuesPage admin />} />
             <Route path="/admin/company-access" element={<CompanyAccessPage />} />
             <Route path="/admin/payments" element={<PaymentBookingsPage admin />} />

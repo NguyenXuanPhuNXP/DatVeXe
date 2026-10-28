@@ -1,3 +1,39 @@
 9:56:26 PM [vite] (client) [console.error] Booking creation error: AxiosError: Request failed with status code 409
     at settle (https://handed-employer-radio.ngrok-free.dev/node_modules/.vite/deps/axios.js?v=a001860c:2078:14)
     at XMLHttpRequest.onloadend (https://handed-employer-radio.ngrok-free.dev/node_modules/.vite/deps/axios.js?v=a001860c:2539:4)
+12:14:05 AM [vite] (client) [console.error] Booking creation error: AxiosError: Request failed with status code 409
+    at settle (https://handed-employer-radio.ngrok-free.dev/node_modules/.vite/deps/axios.js?v=cd37a173:2078:14)
+    at XMLHttpRequest.onloadend (https://handed-employer-radio.ngrok-free.dev/node_modules/.vite/deps/axios.js?v=cd37a173:2539:4)
+12:14:32 AM [vite] (client) [console.error] Booking creation error: AxiosError: Request failed with status code 409
+    at settle (https://handed-employer-radio.ngrok-free.dev/node_modules/.vite/deps/axios.js?v=cd37a173:2078:14)
+    at XMLHttpRequest.onloadend (https://handed-employer-radio.ngrok-free.dev/node_modules/.vite/deps/axios.js?v=cd37a173:2539:4)
+12:21:22 AM [vite] (client) [console.error] Booking creation error: AxiosError: Request failed with status code 409
+    at settle (https://handed-employer-radio.ngrok-free.dev/node_modules/.vite/deps/axios.js?v=cd37a173:2078:14)
+    at XMLHttpRequest.onloadend (https://handed-employer-radio.ngrok-free.dev/node_modules/.vite/deps/axios.js?v=cd37a173:2539:4)
+12:21:44 AM [vite] (client) [console.error] Booking creation error: AxiosError: Request failed with status code 503
+    at settle (https://handed-employer-radio.ngrok-free.dev/node_modules/.vite/deps/axios.js?v=cd37a173:2078:14)
+    at XMLHttpRequest.onloadend (https://handed-employer-radio.ngrok-free.dev/node_modules/.vite/deps/axios.js?v=cd37a173:2539:4)
+12:31:51 AM [vite] http proxy error: /api/bookings/status-check?codes=RW05EBA565E4658F83,RWF827CDB916159C4B,RWB27C99BAEB0580AB
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1339:18)
+    at afterConnectMultiple (node:net:1942:7)
+12:42:15 AM [vite] http proxy error: /api/bookings/status-check?codes=RW05EBA565E4658F83,RWF827CDB916159C4B,RWB27C99BAEB0580AB
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1339:18)
+    at afterConnectMultiple (node:net:1942:7)
+12:43:15 AM [vite] http proxy error: /api/bookings/status-check?codes=RW05EBA565E4658F83,RWF827CDB916159C4B,RWB27C99BAEB0580AB
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1339:18)
+    at afterConnectMultiple (node:net:1942:7)
+12:43:44 AM [vite] http proxy error: /api/auth/refresh
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1339:18)
+    at afterConnectMultiple (node:net:1942:7)
+12:43:44 AM [vite] http proxy error: /api/auth/refresh
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1339:18)
+    at afterConnectMultiple (node:net:1942:7)
+12:44:15 AM [vite] http proxy error: /api/bookings/status-check?codes=RW05EBA565E4658F83,RWF827CDB916159C4B,RWB27C99BAEB0580AB
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1339:18)
+    at afterConnectMultiple (node:net:1942:7)

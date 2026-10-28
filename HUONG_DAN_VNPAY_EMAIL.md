@@ -135,3 +135,31 @@ Chỉ chuyển khi VNPAY đã duyệt/cấp tài khoản production và website 
 - Dùng bản build frontend với reverse proxy `/api` tới Express. Vite proxy chỉ dành cho phát triển.
 
 Không sao chép khóa demo trên mạng để nhận tiền: tiền hoặc IPN có thể thuộc tài khoản khác. Với dự án hiện tại, bạn chỉ cần bắt đầu bằng tài khoản sandbox của chính mình.
+
+
+## Theo dõi và kiểm tra trong ứng dụng
+
+- Admin: `/admin/integrations` (**VNPAY và email**). Xem cấu hình đã đủ chưa (không hiện khóa), kiểm tra SMTP + IPN/Return công khai, xem các giao dịch và 50 email vé gần nhất. Nút gửi thư thử chỉ gửi nội dung cố định tới email tài khoản quản trị đang đăng nhập, không nhận địa chỉ/nội dung tùy ý.
+- Nhà xe: `/company/email-jobs`; nhân viên/quản lý: `/staff/email-jobs`. Chỉ thấy email thuộc nhà xe của mình, được gửi lại vé đã thanh toán còn hiệu lực. Đơn đang gửi không bị đặt lại, gửi lại sau khi thành công cần chờ ít nhất 1 phút. Hàng đợi tự thử lại khi SMTP lỗi.
+- Khách: trang vé/tra cứu có trạng thái email, nút kiểm tra và gửi lại; vẫn tải QR được khi email gặp lỗi. Thanh toán thất bại được thông báo để thử lại trong hạn giữ ghế gốc. Trang trả về không tự đánh dấu vé đã trả tiền.
+- `npm run integrations:check` kiểm tra SMTP, database/các bảng email-thanh toán, đường IPN và Return. Lệnh không gửi thư hoặc thanh toán. IPN trả 97 cho yêu cầu không chữ ký chỉ chứng minh API truy cập được; cần một giao dịch sandbox hoàn tất để xác nhận VNPAY thực sự gọi IPN.
+
+### Kết quả kiểm tra ngày 28/10/2026
+
+Đã sửa SMTP cổng 587 sang STARTTLS (`SMTP_SECURE=false`), xác thực Gmail thành công. Đã khôi phục Windows authentication vào cùng database đang cấu hình do tài khoản SQL trước đó không đăng nhập được. Đã cập nhật CORS, Return và IPN sang tunnel ngrok HTTPS đang chạy; backend tin header proxy chỉ từ địa chỉ loopback.
+
+Đã kiểm tra mở tới màn hình chọn phương thức thanh toán của VNPAY sandbox bằng yêu cầu được ký với cấu hình hiện tại, chưa chọn ngân hàng/nhập thẻ/thực hiện thanh toán. Yêu cầu HTTP cần giữ cookie giữa các redirect như trình duyệt; bỏ cookie có thể làm cổng trả trang lỗi chung và không chứng minh khóa sai.
+
+IPN hiện tại cần khai báo với VNPAY:
+
+```text
+https://handed-employer-radio.ngrok-free.dev/api/ticketing/vnpay/ipn
+```
+
+Return URL hiện tại:
+
+```text
+https://handed-employer-radio.ngrok-free.dev/payment/vnpay-return
+```
+
+Đường IPN không chữ ký đã trả đúng `RspCode=97` và trang Return truy cập được. Chưa xác minh giao dịch sandbox hoàn tất/IPN thực từ VNPAY, chưa kiểm tra thư xuất hiện trong hộp thư người nhận. SMTP xác thực hoặc nhận thư không bảo đảm thư đã vào Inbox; cần kiểm tra cả Spam.

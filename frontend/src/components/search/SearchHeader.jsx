@@ -1,7 +1,8 @@
+import { vietnamToday } from '../../utils/trip-date';
 import { useState } from 'react';
 
 const SearchHeader = ({ searchParams, onSearchSubmit }) => {
-  const [today] = useState(() => new Date(Date.now() + 7 * 3600000).toISOString().slice(0,10));
+  const [today] = useState(() => vietnamToday());
   const [isEditing, setIsEditing] = useState(false);
   const currentOrigin = searchParams.get('origin') || '';
   const currentDestination = searchParams.get('destination') || '';

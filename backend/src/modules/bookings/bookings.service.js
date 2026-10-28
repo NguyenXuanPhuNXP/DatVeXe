@@ -12,7 +12,7 @@ const {
 const { finalizePayment } = require('./payments.service');
 const bookingInclude = {
   emailJobs: { select: { status:true, sentAt:true, version:true }, orderBy:{createdAt:'desc'}, take:1 },
-  paymentAttempts: { where:{status:'refund_required'}, select:{status:true,message:true}, take:1 },
+  paymentAttempts: { select:{provider:true,status:true,message:true,resultCode:true,createdAt:true}, orderBy:{createdAt:'desc'}, take:3 },
   tickets: { orderBy: { seatCode: "asc" } },
   trip: {
     include: {

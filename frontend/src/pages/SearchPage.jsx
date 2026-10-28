@@ -1,3 +1,4 @@
+import { vietnamToday } from '../utils/trip-date';
 import { useEffect, useState, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import SearchHeader from '../components/search/SearchHeader';
@@ -208,7 +209,7 @@ const SearchPage = () => {
                 </button>
                 <button type="button" className="btn-primary" style={{marginLeft:12}} onClick={() => {
                   const params = new URLSearchParams(searchParams);
-                  params.set('date', new Date(Date.now() + 7 * 3600000 + 86400000).toISOString().slice(0,10));
+                  params.set('date', vietnamToday(new Date(Date.now() + 86400000)));
                   setSearchParams(params);
                 }}>Tìm chuyến ngày mai</button>
               </div>
