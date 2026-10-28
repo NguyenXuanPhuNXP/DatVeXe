@@ -1,4 +1,5 @@
 import IntegrationsPage from '../IntegrationsPage';
+import HumanSupport from '../../components/HumanSupport';
 import PasswordInput from '../../components/auth/PasswordInput';
 import {
   CounterSalePage,
@@ -16,7 +17,7 @@ import {
   Routes,
   useLocation,
 } from "react-router-dom";
-import { useAuth } from "../../context/auth-context";
+import { useAuth, userHome, isAdminUser } from "../../context/auth-context";
 import api from "../../services/api";
 import { AuthLoading } from "../../components/auth/RouteGuards";
 import "../../styles/operator.css";
@@ -825,7 +826,7 @@ export default function OperatorPortal() {
   if (loading) return <AuthLoading />;
   if (!user) return <Navigate to="/login" state={{ from: location }} replace />;
   const member = user.companyMembership;
-  if (!member?.isActive) return <Navigate to="/" replace />;
+  if (isAdminUser(user) || !member?.isActive) return <Navigate to={userHome(user)} replace />;
   const owner = member.role === "owner";
   const base = owner ? "/company" : "/staff";
   if (!location.pathname.startsWith(base))
@@ -838,6 +839,7 @@ export default function OperatorPortal() {
         ]
       : []),
     ["bookings", "Quản lý vé"],
+    ["support", "Trả lời khách hàng"],
     ["email-jobs", "Email vé"],
     ["counter", "Bán vé tại quầy"],
     ["exchange", "Đổi ghế / chuyến"],
@@ -855,7 +857,7 @@ export default function OperatorPortal() {
   return (
     <div className="op-layout">
       <aside>
-        <Link className="op-brand" to="/">
+        <Link className="op-brand" to={`${base}/bookings`}>
           Rightway
         </Link>
         <h2>{member.company?.name}</h2>
@@ -869,12 +871,12 @@ export default function OperatorPortal() {
             </NavLink>
           ))}
         </nav>
-        <Link to="/">Trang khách hàng</Link>
         <button onClick={logout}>Đăng xuất</button>
       </aside>
       <main>
         <Routes>
           <Route path={`${base}/bookings`} element={<BookingsPage />} />
+          <Route path={`${base}/support`} element={<section className="op-page"><h1>Trả lời khách hàng</h1><HumanSupport staff /></section>} />
           <Route path={`${base}/email-jobs`} element={<IntegrationsPage />} />
           <Route path={`${base}/counter`} element={<CounterSalePage />} />
           <Route path={`${base}/exchange`} element={<ExchangePage />} />

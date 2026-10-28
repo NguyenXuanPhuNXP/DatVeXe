@@ -25,6 +25,7 @@ test(
         data: {
           email: `${tag}_${role}_${users.length}@example.test`,
           fullName: `QA ${role}`,
+          roles: { create: { role: { connectOrCreate: { where: { name: 'USER' }, create: { name: 'USER' } } } } },
           passwordHash: await bcrypt.hash("QaTest@123", 4),
           ...(companyId
             ? { companyMembership: { create: { companyId, role } } }
@@ -176,17 +177,7 @@ test(
         null,
         null,
       );
-      assert.equal(
-        (
-          await req(
-            "GET",
-            `/bookings/my-bookings?userId=${customer.id}`,
-            null,
-            foreign,
-          )
-        ).length,
-        0,
-      );
+      await req("GET", `/bookings/my-bookings?userId=${customer.id}`, null, foreign, 403);
       assert.equal(
         (await req("GET", "/operator/bookings", null, foreign)).length,
         0,

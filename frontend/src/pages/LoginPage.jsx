@@ -1,7 +1,7 @@
 import PasswordInput from '../components/auth/PasswordInput';
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { isAdminUser, userHome, useAuth } from '../context/auth-context';
+import { isAdminUser, isCustomerUser, userHome, useAuth } from '../context/auth-context';
 import '../styles/auth.css';
 
 function getErrorMessage(error) {
@@ -26,6 +26,7 @@ const LoginPage = () => {
     try {
       // Diem noi giao dien Login voi API authentication.
       const user = await login({ email: email.trim(), password });
+      if (!isCustomerUser(user)) { navigate(userHome(user), { replace: true }); return; }
       const from = location.state?.from?.pathname;
       const admin = isAdminUser(user);
       if (from && !(from.startsWith('/admin') && !admin)) {

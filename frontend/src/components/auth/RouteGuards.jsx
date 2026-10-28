@@ -1,5 +1,5 @@
 import { Navigate, useLocation } from 'react-router-dom';
-import { isAdminUser, userHome, useAuth } from '../../context/auth-context';
+import { isAdminUser, isCustomerUser, userHome, useAuth } from '../../context/auth-context';
 import '../../styles/auth.css';
 
 export function AuthLoading() {
@@ -19,6 +19,7 @@ export function ProtectedRoute({ children }) {
   if (!user) {
     return <Navigate to="/login" replace state={{ from: location }} />;
   }
+  if (!isCustomerUser(user)) return <Navigate to={userHome(user)} replace />;
   return children;
 }
 
@@ -42,7 +43,7 @@ export function AdminRoute({ children }) {
   }
 
   if (!isAdminUser(user)) {
-    return <Navigate to="/" replace />;
+    return <Navigate to={userHome(user)} replace />;
   }
 
   return children;

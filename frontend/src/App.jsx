@@ -6,6 +6,9 @@ import { AdminRoute, GuestRoute, ProtectedRoute } from './components/auth/RouteG
 import VnpayReturnPage from './pages/TicketPaymentPanel';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
+import SupportChat from './components/SupportChat';
+import { isCustomerUser, userHome, useAuth } from './context/auth-context';
+import { AuthLoading } from './components/auth/RouteGuards';
 import HomePage from './pages/HomePage';
 import SearchPage from './pages/SearchPage';
 import TripDetailPage from './pages/TripDetailPage';
@@ -39,6 +42,7 @@ const PaymentBookingsPage = lazy(() => import('./pages/operator/OperatorPortal')
 
 const PaymentIssuesPage = lazy(() => import('./pages/operator/CounterPages').then(m => ({default:m.PaymentIssuesPage})));
 function MainLayout() {
+  const { user } = useAuth();
   return (
     <>
       <Header />
@@ -74,12 +78,21 @@ function MainLayout() {
         </Routes>
       </main>
       <Footer />
+      {isCustomerUser(user) && <SupportChat key={user.id} />}
     </>
   );
 }
 
 function AppContent() {
   const location = useLocation();
+  const { user, loading, logout } = useAuth();
+  if (loading) return <AuthLoading />;
+  if (location.pathname === '/access-denied' && user && !isCustomerUser(user)) {
+    if (userHome(user) !== '/access-denied') return <Navigate to={userHome(user)} replace />;
+    return <section className="auth-guard-loading"><p>Tài khoản nội bộ chưa được cấp quyền làm việc đang hoạt động. Vui lòng liên hệ quản trị viên.</p><button type="button" onClick={logout}>Đăng xuất</button></section>;
+  }
+  const internalPath = /^\/(admin|company|staff)(\/|$)/.test(location.pathname);
+  if (user && !isCustomerUser(user) && !internalPath) return <Navigate to={userHome(user)} replace />;
   if (location.pathname.startsWith('/company') || location.pathname.startsWith('/staff')) return <OperatorPortal />;
   const isAdmin = location.pathname.startsWith('/admin');
 

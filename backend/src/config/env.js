@@ -2,6 +2,12 @@ require("dotenv/config");
 const { z } = require("zod");
 
 const envSchema = z.object({
+  CHAT_PROVIDER: z.enum(['openai', 'gemini']).default('openai'),
+  GEMINI_API_KEY: z.string().default(''),
+  GEMINI_MODEL: z.string().regex(/^[a-zA-Z0-9._-]+$/).default('gemini-3.5-flash-lite'),
+  OPENAI_API_KEY: z.string().default(''),
+  OPENAI_MODEL: z.string().default('gpt-4o-mini'),
+  CHAT_SUPPORT_EMAIL: z.union([z.literal(''), z.string().email()]).default(''),
   VNPAY_ENV: z.enum(['sandbox','production']).default('sandbox'),
   VNPAY_TMN_CODE: z.string().default(''),
   VNPAY_HASH_SECRET: z.string().default(''),

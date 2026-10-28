@@ -51,6 +51,7 @@ app.use("/api/bookings", bookingsRouter);
 app.use("/api/routes", routesRouter);
 app.use("/api/promotions", promotionsRouter);
 app.use("/api/news", newsRouter);
+app.use("/api/support", require("./modules/support/support.routes").supportRouter);
 app.use(notFoundHandler);
 app.use(errorHandler);
 
