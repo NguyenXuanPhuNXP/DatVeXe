@@ -81,9 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
         borderRadius: BorderRadius.circular(20),
         child: Stack(
           children: [
-            SizedBox(
-              height: 270,
-              width: double.infinity,
+            Positioned.fill(
               child: ApiConfig.heroImage.isEmpty
                   ? const ColoredBox(color: navy)
                   : Image.network(
@@ -94,11 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             Positioned.fill(
               child: Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Color(0xF21E3A5F), Color(0x991E3A5F)],
-                  ),
-                ),
+                decoration: const BoxDecoration(color: Color(0xD91E3A5F)),
               ),
             ),
             const Padding(
@@ -118,7 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Text(
                     'Hành trình đẹp hơn\ncùng Rightway',
                     style: TextStyle(
-                      fontSize: 30,
+                      fontSize: 26,
                       fontWeight: FontWeight.w800,
                       color: Colors.white,
                       height: 1.15,

@@ -1,43 +1,57 @@
-# Rightway — Flutter Android
+# Rightway — Ứng dụng Flutter Android
 
-Frontend đặt vé xe sử dụng API của `C:\QLDA\DatVeXe\backend`, UX/UI từ frontend React Rightway và cấu trúc Flutter từ `C:\LTDD\NguyenXuanPhu_KTGK_LTDD\FrontEnd`.
+Ứng dụng dùng chung API Express với web Rightway. Tài liệu cài backend, database và web nằm ở [README chính](../README.md); dữ liệu và tài khoản demo nằm ở [SEED_DEMO.md](../SEED_DEMO.md).
 
-## Cấu hình duy nhất: .env
+## Chức năng hiện có
 
-Chỉnh file `C:\QLDA\DatVeXe\Flutter\.env`:
+| Khu vực | Chức năng |
+| --- | --- |
+| Đăng nhập | Đăng ký, đăng nhập, khôi phục mật khẩu bằng mã email; mở app phải đăng nhập trước. |
+| Khách hàng | Trang chủ, tìm/lọc/sắp xếp chuyến, chi tiết chuyến, chọn nhiều ghế, nhập hành khách, đặt/tra cứu/hủy vé, vé của tôi, QR và email vé. |
+| Hỗ trợ | Chat trực tiếp với nhân viên qua WebSocket; trợ lý AI theo tài liệu hướng dẫn của backend. |
+| Staff | Vé/khách hàng của nhà xe, xác nhận thu tiền, bán/đổi vé, email vé, trả lời chat, xem lịch chuyến và ghế đã đặt, xác nhận lên xe. |
+| Manager/owner | Công cụ quản lý theo permission: nhân viên, xe/chuyến, đối soát và doanh thu. |
+| Admin | Tổng quan, quản lý dữ liệu, tài khoản/phân quyền, vé nghi vấn, báo cáo và kiểm tra tích hợp. |
+
+Quyền thực tế lấy từ backend. Một tài khoản không tự chọn nhà xe để xem dữ liệu ngoài phạm vi được cấp.
+
+Mobile đã bỏ mục **Quét QR xem vé**, vẫn giữ **QR trên vé** và **Xác nhận lên xe**. Trang Tài khoản giữ thông tin cá nhân và bảo mật, chỉ bỏ phần kết nối máy chủ. Các thẻ dùng chung chiều rộng/khoảng cách; hộp thoại dài có thể cuộn.
+
+## Cấu hình kết nối
+
+Tạo/chỉnh `Flutter/.env`. Ví dụ cho Android Emulator kết nối backend local:
 
 ```dotenv
 API_BASE_URL=http://10.0.2.2:3000/api
-APP_NAME=Rightway • Đặt vé xe
+APP_NAME=Rightway
 CONNECT_TIMEOUT_SECONDS=15
 REQUEST_TIMEOUT_SECONDS=20
 BOOKING_ADVANCE_DAYS=365
+HERO_IMAGE_URL=
 ```
 
-| Biến | Ý nghĩa |
+| Môi trường | `API_BASE_URL` |
 | --- | --- |
-| API_BASE_URL | URL backend, bao gồm `/api` |
-| APP_NAME | Tên ứng dụng trong Flutter MaterialApp |
-| CONNECT_TIMEOUT_SECONDS | Thời gian tối đa để mở kết nối, số giây nguyên dương |
-| REQUEST_TIMEOUT_SECONDS | Thời gian tối đa cho mỗi giai đoạn gửi/nhận HTTP, số giây nguyên dương |
-| BOOKING_ADVANCE_DAYS | Số ngày cho phép chọn trước trong lịch tìm chuyến |
+| VPS đang dùng của dự án | `http://180.93.113.176:8081/api` |
+| Android Emulator → backend trên máy tính | `http://10.0.2.2:3000/api` |
+| Điện thoại cùng LAN | `http://<IP-LAN-máy-chạy-backend>:3000/api` |
+| Điện thoại qua USB, sau `adb reverse tcp:3000 tcp:3000` | `http://127.0.0.1:3000/api` |
 
-Android Emulator dùng `10.0.2.2` để truy cập máy Windows. Điện thoại thật dùng IP LAN của máy chạy backend, ví dụ đặt `API_BASE_URL=http://192.168.1.10:3000/api` trong `.env`. Nếu dùng USB, chạy `adb reverse tcp:3000 tcp:3000` và đặt URL thành `http://127.0.0.1:3000/api`.
+URL phải kết thúc bằng `/api`. Địa chỉ `10.0.2.2` chỉ dành cho Emulator. Nếu dùng ngrok, tunnel phải đang hoạt động và trỏ tới đúng backend; nếu đi qua Vite, proxy `/api` cần hỗ trợ WebSocket.
 
-Ứng dụng nạp `.env` trước khi khởi chạy và kiểm tra URL, giá trị bắt buộc, số nguyên dương. Sau khi sửa, dừng và chạy lại ứng dụng; APK đã cài cần được build/cài lại để nhận cấu hình mới. Không dùng `--dart-define` cho các biến này nữa. `.env` được đóng gói thành Flutter asset và chỉ chứa cấu hình phía client. Khóa VNPAY, thông tin database và bí mật backend nằm ở backend.
+`.env` là asset đóng gói trong APK: sau khi sửa phải dừng/chạy lại app hoặc build/cài APK mới. Đóng/mở APK cũ không cập nhật URL. Không đặt API key AI, SMTP, mật khẩu database hoặc khóa thanh toán trong Flutter; các bí mật chỉ nằm ở `backend/.env`.
 
-Các đường dẫn tương đối như `/trips/search` được ghép vào API_BASE_URL. Liên kết thanh toán VNPAY được backend cấp theo từng booking.
+## Chạy và build
 
-## Chạy và kiểm tra
-
-1. Khởi động SQL Server và backend theo README của `DatVeXe`.
-2. Trong `C:\QLDA\DatVeXe\backend`, chạy `npm run dev`.
-3. Chỉnh `.env`, sau đó trong `C:\QLDA\DatVeXe\Flutter` chạy:
+Yêu cầu Flutter đáp ứng Dart SDK trong [pubspec.yaml](pubspec.yaml), Android SDK và JDK tương thích. Chạy backend trước theo [hướng dẫn chính](../README.md), sau đó từ thư mục gốc:
 
 ```powershell
+cd Flutter
 flutter pub get
 flutter run
 ```
+
+Kiểm tra và tạo APK debug:
 
 ```powershell
 flutter analyze
@@ -45,61 +59,72 @@ flutter test
 flutter build apk --debug
 ```
 
-APK: `build\app\outputs\flutter-apk\app-debug.apk`.
+APK: `Flutter/build/app/outputs/flutter-apk/app-debug.apk` tính từ thư mục gốc dự án.
 
-## Cấu trúc
-
-- `.env`: các URL và cấu hình hệ thống phía client.
-- `lib/main.dart`: nạp `.env`, kiểm tra cấu hình và khởi chạy MaterialApp.
-- `lib/config/config_api.dart`: đọc, chuẩn hóa và kiểm tra cấu hình.
-- `lib/config/app_theme.dart`: theme, màu thương hiệu.
-- lib/services/customer_service.dart: endpoint tập trung khớp với frontend web.
-- lib/utils/booking_rules.dart: thời hạn và điều kiện thanh toán/QR.
-- lib/services/api_service.dart: HTTP, bearer token, refresh cookie, timeout, lỗi, đăng xuất.
-- `lib/screens/`: dashboard, home, search, seat selection, passenger info, login, account, my bookings, booking lookup, booking detail, news.
-- `lib/widgets/`: thẻ, tiêu đề, thông báo, điều hướng và tải dữ liệu dùng chung.
-- `lib/utils/formatters.dart`: định dạng ngày, tiền Việt, trạng thái.
-- `test/`: kiểm thử HTTP, refresh phiên, ghế trùng, cấu hình và giao diện.
-
-## Chức năng
-
-Tìm chuyến, sắp xếp theo giờ/giá/đánh giá, chọn nhiều ghế theo ngày, đăng nhập/đăng ký, đặt vé, vé của tôi, tra cứu bằng mã và điện thoại, cập nhật/hủy vé, tin tức/ưu đãi và thanh toán VNPAY sandbox.
-
-Dữ liệu lấy trực tiếp từ backend. Đặt vé yêu cầu đăng nhập. Tiền mặt/chuyển khoản cần nhà xe xác nhận. VNPAY mở trình duyệt Android; khi quay về bấm cập nhật trạng thái. Backend cần cấu hình VNPAY theo hướng dẫn trong DatVeXe. Không tự đánh dấu đã trả tiền. Phiên chỉ lưu trong bộ nhớ, đóng ứng dụng cần đăng nhập lại.
-
-Hiện hỗ trợ Android; chưa cấu hình iOS/Web. Đã bổ sung khu vực nhân viên/quản lý trên Flutter; đã có trang admin và quản lý xe/chuyến/doanh thu riêng cho chủ nhà xe theo quyền API. HTTP được cho phép để kết nối backend local; khi phát hành dùng HTTPS và cấu hình signing riêng. Chưa xác minh đặt vé/thanh toán xuyên suốt với SQL Server thật vì backend chưa chạy trong các lần kiểm tra trước.
-
-## Đồng bộ với web
-
-Chi tiết đối chiếu, thay đổi và cách chạy kiểm thử với router Express thật: [docs/API_SYNC.md](docs/API_SYNC.md).
-
-Flutter hiện hỗ trợ bộ lọc backend, xem chi tiết chuyến, theo dõi thời hạn giữ ghế, VNPAY theo capabilities, QR cho từng vé đã thanh toán và kiểm tra/gửi lại email vé. Khi quay lại từ trình duyệt thanh toán, ứng dụng tự đọc lại trạng thái; máy chủ vẫn quyết định kết quả.
-
-Kiểm thử trực tiếp router web (không ghi DB):
-
-```powershell
-flutter test --dart-define=BACKEND_ROOT=C:/QLDA/DatVeXe/backend
-```
-
-## Điện thoại qua ngrok
-
-Cấu hình hiện tại: `API_BASE_URL=https://handed-employer-radio.ngrok-free.dev/api` trong `.env`. Tunnel hiện trỏ tới Vite 5173; `vite.config.js` proxy `/api` sang backend 3000. Cần cả backend, frontend Vite và ngrok đang chạy. Nếu chuyển tunnel trực tiếp sang backend 3000, URL Flutter vẫn phải kết thúc bằng `/api`.
-
-`10.0.2.2` chỉ dùng cho Android Emulator, không dùng trên điện thoại thật. Bật ngrok không tự thay đổi URL trong Flutter. `.env` là asset đóng gói trong APK: sửa xong phải chạy lại bằng `flutter run` hoặc build và cài APK mới; đóng/mở APK cũ không cập nhật cấu hình. Trong tab Tài khoản, xem **Kết nối máy chủ** để xác nhận URL thực tế của bản đang cài. Khi domain ngrok đổi cần cập nhật `.env` và build/cài lại.
-
-Kiểm tra đọc API thật theo `.env`, không tạo đơn:
+Kiểm tra đọc API thật theo `.env`, không tạo đơn hay thanh toán:
 
 ```powershell
 flutter test tool/check_api_test.dart
 ```
 
-## Nhân viên và quản lý
+Chạy test Flutter với router Express của dự án; thay đường dẫn nếu đặt repository ở nơi khác:
 
-Tài khoản staff/manager có quyền nhà xe sẽ có tab **Làm việc** sau đăng nhập: quản lý vé/khách hàng, thu tiền, bán và đổi vé tại quầy, QR, email vé. Quản lý có thêm trang nhân viên và đối soát thanh toán. Camera chỉ xin quyền khi mở quét QR; có thể dán dữ liệu QR khi không dùng camera.
+```powershell
+flutter test --dart-define=BACKEND_ROOT=F:/DuAn/DatVeXe/backend
+```
 
-Xem [hướng dẫn trang và phân quyền](docs/OPERATOR_GUIDE.md). Cần cài APK mới để có các trang này.
+`BACKEND_ROOT` chỉ phục vụ test, không thay `API_BASE_URL`. Test router Express được bỏ qua nếu không cung cấp biến này.
 
-## Đồng bộ Develops
+## Luồng tài khoản và đặt vé
 
-Xem [báo cáo đồng bộ](docs/DEVELOPS_SYNC.md) để biết phạm vi, phiên bản nguồn và kiểm thử mới nhất.
+1. Mở app → đăng nhập hoặc đăng ký → vào khu vực theo quyền tài khoản.
+2. Chọn tuyến, ngày và số hành khách; xem chuyến và chọn ghế trống.
+3. Nhập thông tin liên hệ, chọn phương thức thanh toán và tạo đơn.
+4. Ghế được giữ **5 phút**. Chọn phương thức hoặc duyệt đơn không đồng nghĩa đã trả tiền.
+5. QR từng ghế chỉ được cấp khi booking đã `paid` và chưa hủy. Tiền mặt/chuyển khoản cần nhân viên xác nhận khoản thu; thanh toán cổng cần IPN hợp lệ.
 
+Tìm vé chỉ trả chuyến đang mở bán và chưa khởi hành theo giờ Việt Nam. Admin có thể vẫn thấy lịch đã qua giờ chạy. Trên màn kết quả có **Đổi ngày đi** và, khi hôm nay hết chuyến, **Xem chuyến ngày mai**.
+
+Cổng thanh toán hiện tại vẫn là **VNPAY**. Thử nghiệm tích hợp SePay đã được hoàn tác. VNPAY mở trình duyệt Android; khi quay lại app, màn vé đọc lại trạng thái từ backend. Không tin trang chuyển hướng thành công để tự đánh dấu đã thanh toán. Hủy vé đã trả tiền chỉ ghi nhận trạng thái hoàn tiền; tiền hoàn thực tế do nhà xe xử lý bên ngoài hệ thống.
+
+Phiên đăng nhập hiện được giữ trong bộ nhớ. Khi ứng dụng bị đóng hoàn toàn, người dùng cần đăng nhập lại.
+
+## Khôi phục mật khẩu
+
+Chọn **Quên mật khẩu?** ở màn đăng nhập hoặc **Đặt lại mật khẩu qua email** trong Tài khoản. Mã có 8 chữ số, hạn 10 phút, dùng một lần và tối đa 5 lần thử. Hai yêu cầu gửi mã cách nhau ít nhất 60 giây; backend còn có giới hạn theo IP. Đổi thành công sẽ thu hồi các phiên đăng nhập cũ.
+
+Backend cần migration `20261103000000_password_reset` và SMTP hoạt động. Thiếu cấu hình email sẽ trả `EMAIL_UNAVAILABLE`. Phản hồi yêu cầu mã không công khai email có tồn tại hay không.
+
+## Chat và tên khách hàng
+
+- API gửi/lưu tin nhắn vẫn dùng HTTP. Socket `/api/support/socket` báo cập nhật, sau đó app tải dữ liệu mới.
+- Khung xác thực đầu tiên: `{ "token": "<accessToken>", "staff": false }`; dùng `true` cho nhân viên. Các sự kiện là `support.ready` và `support.updated` kèm `conversationId`.
+- Mất mạng sẽ tự kết nối lại và tải bù dữ liệu. Rời màn hình hoặc đăng xuất sẽ đóng kết nối.
+- Màn **Trả lời khách hàng** hiển thị tên khách tạo hội thoại; màn khách hiển thị tên nhà xe.
+- **Giới hạn hiện tại:** mỗi lần tạo yêu cầu hỗ trợ vẫn tạo hội thoại mới. Một khách có thể có nhiều hội thoại đang mở với cùng nhà xe; chúng chưa tự gộp hoặc tái sử dụng. Đây là các bản ghi riêng, không nên xóa lịch sử chỉ vì nhìn giống nhau.
+
+Reverse proxy cần chuyển tiếp `Upgrade`, `Connection` và HTTP/1.1 cho WebSocket. Backend phát sự kiện trong một tiến trình; cần pub/sub chung trước khi chạy nhiều instance API. Không tích hợp Firebase/thông báo đẩy trong bản này.
+
+Trợ lý AI cần cấu hình `CHAT_PROVIDER` cùng API key/model tương ứng trong backend. Gmail/SMTP không thay thế dịch vụ AI.
+
+## Lịch chuyến và ghế dành cho staff
+
+Trong khu vực làm việc, chọn **Chuyến xe của nhà xe** → chọn ngày → **Xem sơ đồ ghế**. Chọn ghế đã đặt để xem mã vé, tên khách, điện thoại và trạng thái thanh toán.
+
+- `GET /api/operator/trip-board?date=YYYY-MM-DD`
+- `GET /api/operator/trip-board/:id/seats?date=YYYY-MM-DD`
+
+Hai API yêu cầu membership đang hoạt động, `operator.access` và `operator.work`; backend lấy nhà xe từ membership. Quyền đọc không cấp quyền sửa chuyến. Nếu một ghế có nhiều đơn, app hiển thị các đơn và cảnh báo cần kiểm tra, không tự xóa/sửa dữ liệu.
+
+## Cấu trúc và giới hạn kiểm tra
+
+- `lib/config/`: cấu hình API và theme.
+- `lib/services/`: HTTP, phiên đăng nhập, API khách/nhà xe/quản lý/hỗ trợ.
+- `lib/screens/`: màn khách, tài khoản, operator và admin.
+- `lib/widgets/`: thẻ, tải dữ liệu, tiêu đề và các bước đặt vé dùng chung.
+- `lib/utils/`: ngày Việt Nam, quy tắc booking, định dạng và kiểm tra quyền.
+- `test/`: test HTTP, phân quyền, chat/socket, chọn ngày và bố cục.
+
+Hiện ưu tiên Android; iOS/Web chưa được cấu hình đầy đủ. APK debug dùng để thử nghiệm; bản phát hành cần signing riêng và HTTPS. Kết quả test widget không thay thế kiểm tra camera, QR, mạng và thanh toán trên điện thoại thật. Chưa xác minh đầy đủ giao dịch VNPAY xuyên suốt.
+
+Các tài liệu đối chiếu trước đây: [API_SYNC.md](docs/API_SYNC.md), [OPERATOR_GUIDE.md](docs/OPERATOR_GUIDE.md), [DEVELOPS_SYNC.md](docs/DEVELOPS_SYNC.md). Với chức năng/cấu hình hiện hành, ưu tiên README này và mã nguồn.

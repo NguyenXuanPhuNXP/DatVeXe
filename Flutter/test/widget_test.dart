@@ -17,9 +17,11 @@ void main() {
   ) async {
     await tester.pumpWidget(const MaterialApp(home: LoginScreen()));
     await tester.tap(find.widgetWithText(FilledButton, 'Đăng nhập'));
-    await tester.pump();
+    await tester.pumpAndSettle();
     expect(find.text('Vui lòng nhập thông tin'), findsOneWidget);
     expect(find.text('Mật khẩu không được trống'), findsOneWidget);
+    await tester.drag(find.byType(ListView), const Offset(0, -300));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Chưa có tài khoản? Đăng ký'));
     await tester.pumpAndSettle();
     expect(find.text('Họ tên'), findsOneWidget);

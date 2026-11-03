@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../services/support_service.dart';
@@ -6,13 +8,48 @@ import '../../widgets/remote.dart';
 import 'operator/operator_widgets.dart';
 
 class SupportScreen extends StatefulWidget {
-  const SupportScreen({super.key, this.staff = false});
+  const SupportScreen({super.key, this.staff = false, this.service});
   final bool staff;
+  final SupportService? service;
   @override
   State<SupportScreen> createState() => _SupportScreenState();
 }
 
-class _SupportScreenState extends State<SupportScreen> {
+class _SupportScreenState extends State<SupportScreen>
+    with WidgetsBindingObserver {
+  SupportService get service => widget.service ?? support;
+  StreamSubscription<String?>? updates;
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    watch();
+  }
+
+  void watch() {
+    updates = service.updates(widget.staff).listen((_) {
+      if (mounted) setState(() => revision++);
+    }, onError: (Object _) {});
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      if (updates == null) watch();
+    } else if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.detached) {
+      updates?.cancel();
+      updates = null;
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    updates?.cancel();
+    super.dispose();
+  }
+
   int revision = 0;
   Future<void> create() async {
     await open(context, _NewConversation());
@@ -49,17 +86,23 @@ class _SupportScreenState extends State<SupportScreen> {
         heading('Hội thoại hỗ trợ'),
         Remote(
           key: ValueKey(revision),
-          load: () => support.conversations(widget.staff),
+          load: () => service.conversations(widget.staff),
           builder: (data) => Column(
             children: [
               if ((data as List).isEmpty)
                 panel(const Text('Chưa có hội thoại.')),
-              ...data.map<Widget>(
-                (c) => panel(
+              ...data.map<Widget>((c) {
+                String? name;
+                if (widget.staff) {
+                  name = c['customer']?['fullName'];
+                } else {
+                  name = c['company']?['name'];
+                }
+                name = name?.trim();
+                final fallback = widget.staff ? 'Khách hàng' : 'Nhà xe';
+                return panel(
                   ListTile(
-                    title: Text(
-                      '${c['company']?['name'] ?? c['customer']?['fullName'] ?? 'Hội thoại'}',
-                    ),
+                    title: Text(name == null || name.isEmpty ? fallback : name),
                     subtitle: Text(
                       '${c['status'] == 'open' ? 'Đang mở' : 'Đã đóng'} • ${(c['messages'] as List?)?.firstOrNull?['content'] ?? ''}',
                     ),
@@ -70,13 +113,14 @@ class _SupportScreenState extends State<SupportScreen> {
                         ConversationScreen(
                           id: '${c['id']}',
                           staff: widget.staff,
+                          service: service,
                         ),
                       );
                       if (mounted) setState(() => revision++);
                     },
                   ),
-                ),
-              ),
+                );
+              }),
             ],
           ),
         ),
@@ -165,14 +209,47 @@ class _NewConversationState extends State<_NewConversation> {
 }
 
 class ConversationScreen extends StatefulWidget {
-  const ConversationScreen({super.key, required this.id, this.staff = false});
+  const ConversationScreen({
+    super.key,
+    required this.id,
+    this.staff = false,
+    this.service,
+  });
   final String id;
   final bool staff;
+  final SupportService? service;
   @override
   State<ConversationScreen> createState() => _ConversationScreenState();
 }
 
-class _ConversationScreenState extends State<ConversationScreen> {
+class _ConversationScreenState extends State<ConversationScreen>
+    with WidgetsBindingObserver {
+  SupportService get service => widget.service ?? support;
+  StreamSubscription<String?>? updates;
+  final scroll = ScrollController();
+  bool loading = false, reload = false;
+  String? connectionNotice;
+  void watch() {
+    updates = service
+        .updates(widget.staff)
+        .listen(
+          (id) {
+            if (id == null || id == widget.id) {
+              if (mounted) setState(() => connectionNotice = null);
+              load();
+            }
+          },
+          onError: (Object _) {
+            if (mounted) {
+              setState(
+                () => connectionNotice =
+                    'Đang kết nối lại… Tin nhắn sẽ cập nhật khi có mạng.',
+              );
+            }
+          },
+        );
+  }
+
   final text = TextEditingController();
   Map<String, dynamic>? data;
   bool busy = false;
@@ -180,26 +257,62 @@ class _ConversationScreenState extends State<ConversationScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     load();
+    watch();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      if (updates == null) watch();
+      load();
+    } else if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.detached) {
+      updates?.cancel();
+      updates = null;
+    }
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    updates?.cancel();
+    scroll.dispose();
     text.dispose();
     super.dispose();
   }
 
   Future<void> load() async {
+    if (loading) {
+      reload = true;
+      return;
+    }
+    loading = true;
+    final nearBottom = !scroll.hasClients || scroll.position.extentAfter < 100;
     try {
-      final d = await support.detail(widget.id, widget.staff);
+      final d = await service.detail(widget.id, widget.staff);
       if (mounted) {
         setState(() {
           data = d;
           error = null;
         });
+        if (nearBottom) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted && scroll.hasClients) {
+              scroll.jumpTo(scroll.position.maxScrollExtent);
+            }
+          });
+        }
       }
     } catch (e) {
       if (mounted) setState(() => error = '$e');
+    } finally {
+      loading = false;
+      if (reload && mounted) {
+        reload = false;
+        load();
+      }
     }
   }
 
@@ -229,7 +342,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                     }
                     setState(() => busy = true);
                     try {
-                      await support.close(widget.id, widget.staff);
+                      await service.close(widget.id, widget.staff);
                       await load();
                     } catch (e) {
                       if (mounted) setState(() => error = '$e');
@@ -242,12 +355,18 @@ class _ConversationScreenState extends State<ConversationScreen> {
     ),
     body: Column(
       children: [
+        if (connectionNotice != null)
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: Text(connectionNotice!),
+          ),
         if (error != null)
           Padding(padding: const EdgeInsets.all(12), child: Text(error!)),
         Expanded(
           child: data == null
               ? const Center(child: CircularProgressIndicator())
               : ListView(
+                  controller: scroll,
                   padding: const EdgeInsets.all(16),
                   children: [
                     for (final m in data!['messages'] as List)
@@ -305,7 +424,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                             if (text.text.trim().isEmpty) return;
                             setState(() => busy = true);
                             try {
-                              await support.reply(
+                              await service.reply(
                                 widget.id,
                                 widget.staff,
                                 text.text.trim(),

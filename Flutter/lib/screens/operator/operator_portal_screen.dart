@@ -12,6 +12,7 @@ import 'operator_bookings_screen.dart';
 import 'operator_counter_screen.dart';
 import 'operator_management_screens.dart';
 import 'operator_qr_screen.dart';
+import 'operator_trips_screen.dart';
 
 class OperatorPortalScreen extends StatefulWidget {
   const OperatorPortalScreen({super.key, this.loadMembership});
@@ -23,10 +24,14 @@ class OperatorPortalScreen extends StatefulWidget {
 class _OperatorPortalScreenState extends State<OperatorPortalScreen> {
   int revision = 0;
   Widget tile(String title, String subtitle, IconData icon, Widget page) =>
-      Card(
-        child: ListTile(
+      panel(
+        ListTile(
+          contentPadding: EdgeInsets.zero,
           leading: Icon(icon),
-          title: Text(title),
+          title: Text(
+            title,
+            style: const TextStyle(fontWeight: FontWeight.w600),
+          ),
           subtitle: Text(subtitle),
           trailing: const Icon(Icons.chevron_right),
           onTap: () => open(context, page),
@@ -85,6 +90,12 @@ class _OperatorPortalScreenState extends State<OperatorPortalScreen> {
                 ),
               if (access.work) ...[
                 tile(
+                  'Chuyến xe của nhà xe',
+                  'Lịch chuyến, sơ đồ ghế và thông tin đặt chỗ',
+                  Icons.event_seat_outlined,
+                  const OperatorTripsScreen(),
+                ),
+                tile(
                   'Quản lý vé',
                   'Tìm, duyệt, hủy, hoàn thành và ghi nhận thu tiền',
                   Icons.confirmation_number_outlined,
@@ -113,12 +124,6 @@ class _OperatorPortalScreenState extends State<OperatorPortalScreen> {
                   'Trạng thái gửi và yêu cầu gửi lại',
                   Icons.email_outlined,
                   const OperatorEmailScreen(),
-                ),
-                tile(
-                  'Quét QR xem vé',
-                  'Kiểm tra vé thuộc nhà xe',
-                  Icons.qr_code_scanner,
-                  const OperatorQrScreen(),
                 ),
               ],
               if (access.has('operator.support'))

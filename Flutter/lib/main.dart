@@ -20,6 +20,13 @@ class RightwayApp extends StatelessWidget {
     title: ApiConfig.appName,
     debugShowCheckedModeBanner: false,
     theme: appTheme,
+    builder: (context, child) => Align(
+      alignment: Alignment.topCenter,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 720),
+        child: child!,
+      ),
+    ),
     home: const DashboardScreen(),
   );
 }

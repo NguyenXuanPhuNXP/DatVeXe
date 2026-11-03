@@ -182,7 +182,7 @@ class _ResourceScreenState extends State<ResourceScreen> {
                                     if (await opConfirm(
                                           c,
                                           'Xóa ${recordTitle(r)}?',
-                                          'Thao tác xóa có thể bị backend từ chối khi dữ liệu đang được sử dụng.',
+                                          'Không thể xóa dữ liệu đang được sử dụng.',
                                         ) !=
                                         true) {
                                       return;

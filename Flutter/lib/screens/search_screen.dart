@@ -3,6 +3,7 @@ import 'trip_detail_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../config/app_theme.dart';
+import '../config/config_api.dart';
 import '../services/customer_service.dart';
 import '../widgets/trip_filters.dart';
 import '../utils/formatters.dart';
@@ -17,16 +18,32 @@ class SearchScreen extends StatefulWidget {
     required this.destination,
     required this.date,
     this.passengers = 1,
+    this.dataSource,
   });
   final String origin, destination, date;
   final int passengers;
+  final CustomerService? dataSource;
   @override
   State<SearchScreen> createState() => _SearchScreenState();
 }
 
 class _SearchScreenState extends State<SearchScreen> {
+  late String date = widget.date;
+  CustomerService get source => widget.dataSource ?? customer;
   String sort = 'departure_asc';
   Map<String, dynamic> filters = {};
+  Future<void> changeDate() async {
+    final today = vietnamToday();
+    final selected = DateTime.parse(date);
+    final value = await showDatePicker(
+      context: context,
+      initialDate: selected.isBefore(today) ? today : selected,
+      firstDate: today,
+      lastDate: today.add(Duration(days: ApiConfig.bookingAdvanceDays)),
+    );
+    if (value != null && mounted) setState(() => date = dateKey(value));
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: const Text('Chọn chuyến xe')),
@@ -34,7 +51,12 @@ class _SearchScreenState extends State<SearchScreen> {
       padding: const EdgeInsets.all(16),
       children: [
         heading('${widget.origin} → ${widget.destination}'),
-        Text('${tripDateLabel(widget.date)} • ${widget.passengers} hành khách'),
+        Text('${tripDateLabel(date)} • ${widget.passengers} hành khách'),
+        TextButton.icon(
+          onPressed: changeDate,
+          icon: const Icon(Icons.calendar_month_outlined),
+          label: const Text('Đổi ngày đi'),
+        ),
         const SizedBox(height: 12),
         OutlinedButton.icon(
           onPressed: () async {
@@ -72,11 +94,11 @@ class _SearchScreenState extends State<SearchScreen> {
         ),
         const SizedBox(height: 16),
         Remote(
-          key: ValueKey('$sort|${filters.toString()}'),
-          load: () => customer.search({
+          key: ValueKey('$date|$sort|${filters.toString()}'),
+          load: () => source.search({
             'origin': widget.origin,
             'destination': widget.destination,
-            'date': widget.date,
+            'date': date,
             'sort': sort,
             ...filters,
           }),
@@ -84,8 +106,31 @@ class _SearchScreenState extends State<SearchScreen> {
             children: [
               if ((data as List).isEmpty)
                 panel(
-                  const Text(
-                    'Không có chuyến phù hợp. Hãy thử ngày hoặc tuyến khác.',
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        filters.isNotEmpty
+                            ? 'Không có chuyến phù hợp với bộ lọc đã chọn.'
+                            : date == dateKey(vietnamToday())
+                            ? 'Hôm nay không còn chuyến sắp khởi hành trên tuyến này. Các chuyến đã khởi hành không hiển thị khi tìm vé.'
+                            : 'Không có chuyến mở bán cho ngày ${tripDateLabel(date)} trên tuyến này.',
+                      ),
+                      if (filters.isNotEmpty)
+                        TextButton(
+                          onPressed: () => setState(() => filters = {}),
+                          child: const Text('Xóa bộ lọc'),
+                        ),
+                      if (date == dateKey(vietnamToday()))
+                        TextButton(
+                          onPressed: () => setState(
+                            () => date = dateKey(
+                              vietnamToday().add(const Duration(days: 1)),
+                            ),
+                          ),
+                          child: const Text('Xem chuyến ngày mai'),
+                        ),
+                    ],
                   ),
                 ),
               ...data.map<Widget>(
@@ -128,7 +173,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           context,
                           TripDetailScreen(
                             id: '${t['id']}',
-                            date: widget.date,
+                            date: date,
                             passengers: widget.passengers,
                           ),
                         ),
@@ -155,7 +200,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                 : () => chooseCustomerSeats(
                                     context,
                                     Map<String, dynamic>.from(t),
-                                    widget.date,
+                                    date,
                                     widget.passengers,
                                   ),
                             child: const Text('Chọn chỗ'),

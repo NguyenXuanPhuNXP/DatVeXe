@@ -11,4 +11,11 @@ const loginSchema = z.object({
   password: z.string().min(1).max(72).refine((value) => Buffer.byteLength(value, "utf8") <= 72),
 });
 
-module.exports = { registerSchema, loginSchema };
+const forgotPasswordSchema = registerSchema.pick({ email: true });
+const resetPasswordSchema = z.object({
+  email: registerSchema.shape.email,
+  code: z.string().trim().regex(/^\d{8}$/),
+  password: registerSchema.shape.password,
+}).strict();
+
+module.exports = { registerSchema, loginSchema, forgotPasswordSchema, resetPasswordSchema };

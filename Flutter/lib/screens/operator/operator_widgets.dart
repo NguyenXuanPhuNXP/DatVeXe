@@ -25,6 +25,7 @@ Future<bool?> opConfirm(BuildContext context, String title, String message) =>
     showDialog<bool>(
       context: context,
       builder: (c) => AlertDialog(
+        scrollable: true,
         title: Text(title),
         content: Text(message),
         actions: [
@@ -148,6 +149,8 @@ class _OperatorFormState extends State<OperatorForm> {
                       validator: (v) => validate(f, v),
                     )
                   : DropdownButtonFormField<String>(
+                      isExpanded: true,
+                      itemHeight: null,
                       initialValue: controllers[f.keyName]!.text.isEmpty
                           ? null
                           : controllers[f.keyName]!.text,
@@ -156,7 +159,11 @@ class _OperatorFormState extends State<OperatorForm> {
                           .map(
                             (e) => DropdownMenuItem(
                               value: e.key,
-                              child: Text(e.value),
+                              child: Text(
+                                e.value,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                           )
                           .toList(),

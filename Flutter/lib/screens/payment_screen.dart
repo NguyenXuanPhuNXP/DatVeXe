@@ -39,7 +39,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
       if (method == 'vnpay' &&
           (await customer.capabilities())['vnpay'] != true) {
         throw const ApiException(
-          'VNPAY chưa được cấu hình. Vui lòng chọn phương thức khác.',
+          'Thanh toán trực tuyến chưa khả dụng. Vui lòng chọn phương thức khác.',
         );
       }
       final b = await customer.createBooking({

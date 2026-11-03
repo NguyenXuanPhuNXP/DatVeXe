@@ -10,6 +10,14 @@ final appTheme = ThemeData(
     secondary: navy,
   ),
   scaffoldBackgroundColor: const Color(0xFFF9FAFB),
+  visualDensity: VisualDensity.standard,
+  dialogTheme: DialogThemeData(
+    backgroundColor: Colors.white,
+    surfaceTintColor: Colors.transparent,
+    insetPadding: const EdgeInsets.all(16),
+    constraints: const BoxConstraints(minWidth: 480, maxWidth: 480),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+  ),
   cardTheme: CardThemeData(
     color: Colors.white,
     surfaceTintColor: Colors.transparent,
@@ -41,6 +49,9 @@ final appTheme = ThemeData(
     centerTitle: false,
   ),
   inputDecorationTheme: InputDecorationTheme(
+    errorMaxLines: 3,
+    helperMaxLines: 3,
+    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
     filled: true,
     fillColor: Colors.white,
     border: OutlineInputBorder(
@@ -53,5 +64,14 @@ final appTheme = ThemeData(
       minimumSize: const Size(0, 50),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     ),
+  ),
+  outlinedButtonTheme: OutlinedButtonThemeData(
+    style: OutlinedButton.styleFrom(
+      minimumSize: const Size(0, 48),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    ),
+  ),
+  textButtonTheme: TextButtonThemeData(
+    style: TextButton.styleFrom(minimumSize: const Size(0, 48)),
   ),
 );

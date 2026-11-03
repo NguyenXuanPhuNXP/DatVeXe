@@ -148,7 +148,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen>
     if (url == null ||
         !url.hasAuthority ||
         !['https', 'http'].contains(url.scheme)) {
-      throw StateError('API không trả về liên kết thanh toán hợp lệ.');
+      throw StateError('Chưa mở được trang thanh toán. Vui lòng thử lại.');
     }
     try {
       await const MethodChannel('rightway/browser')
@@ -174,6 +174,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen>
     final yes = await showDialog<bool>(
       context: context,
       builder: (c) => AlertDialog(
+        scrollable: true,
         title: const Text('Hủy vé này?'),
         content: const Text(
           'Ghế sẽ được giải phóng. Khoản hoàn tiền cần nhà xe xử lý theo chính sách.',
@@ -213,7 +214,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen>
     }
     final job = delivery!['job'];
     if (job is Map && job['status'] == 'sent') {
-      return 'SMTP đã nhận email gửi tới ${delivery!['email']}. Kiểm tra Hộp thư đến/Spam.';
+      return 'Vé đã được gửi tới ${delivery!['email']}. Kiểm tra Hộp thư đến hoặc Spam.';
     }
     return 'Vé đang chờ gửi email hoặc hệ thống đang thử lại.';
   }
@@ -278,7 +279,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen>
                     : 'Đã hết thời gian giữ ghế',
               ),
               const Text(
-                'Thời hạn do máy chủ quyết định. Hết hạn, hệ thống hủy đơn và giải phóng ghế. Thu tiền mặt/chuyển khoản cần nhà xe xác nhận trước hạn.',
+                'Vui lòng thanh toán trước khi hết hạn giữ ghế. Nếu trả tiền mặt hoặc chuyển khoản, cần nhà xe xác nhận trước hạn.',
               ),
               const SizedBox(height: 12),
               if (capabilities?['vnpay'] == true)
@@ -292,7 +293,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen>
                 Text(
                   capabilities == null
                       ? 'Chưa kiểm tra được cổng thanh toán. Thử tải lại trang vé.'
-                      : 'Backend chưa cấu hình VNPAY. Liên hệ nhà xe để thanh toán.',
+                      : 'Thanh toán trực tuyến chưa khả dụng. Vui lòng liên hệ nhà xe.',
                 ),
             ],
             if (attempts.any((a) => a['status'] == 'refund_required'))
@@ -303,7 +304,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen>
             if (paid) ...[
               heading('Vé điện tử'),
               const Text(
-                'QR do backend cấp riêng cho từng ghế. QR cũ mất hiệu lực sau khi đổi vé.',
+                'Mỗi ghế có một mã QR riêng. Sau khi đổi vé, hãy sử dụng mã QR mới.',
               ),
               if (assetError != null)
                 Text(assetError!, style: const TextStyle(color: red)),

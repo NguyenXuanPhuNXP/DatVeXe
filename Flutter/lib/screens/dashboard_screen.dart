@@ -11,6 +11,7 @@ import 'account_screen.dart';
 import 'support_screen.dart';
 import 'operator/operator_portal_screen.dart';
 import 'management/admin_portal_screen.dart';
+import 'login_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -50,6 +51,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (api.user == null) return const LoginScreen();
     final access = AppAccess(api.user);
     if (access.admin) return const AdminPortalScreen();
     if (access.operator) {
@@ -113,7 +115,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
           children: [
             Icon(Icons.directions_bus_filled, color: red),
             SizedBox(width: 8),
-            Text('Rightway', style: TextStyle(fontWeight: FontWeight.w900)),
+            Expanded(
+              child: Text(
+                'Rightway',
+                style: TextStyle(fontWeight: FontWeight.w900),
+              ),
+            ),
           ],
         ),
       ),

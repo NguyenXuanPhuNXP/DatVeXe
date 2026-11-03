@@ -44,6 +44,13 @@ class OperatorService {
   final CustomerService transport;
   String id(String value) => Uri.encodeComponent(value);
   Future<Map<String, dynamic>> me() => transport.object('/operator/me');
+  Future<List<dynamic>> tripBoard(String date) =>
+      transport.list('/operator/trip-board', query: {'date': date});
+  Future<Map<String, dynamic>> tripSeats(String tripId, String date) =>
+      transport.object(
+        '/operator/trip-board/${id(tripId)}/seats',
+        query: {'date': date},
+      );
   Future<List<dynamic>> bookings({
     Map<String, dynamic>? query,
     bool customers = false,

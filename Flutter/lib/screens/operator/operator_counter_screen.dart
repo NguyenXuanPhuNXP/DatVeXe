@@ -435,7 +435,7 @@ class _OperatorCounterScreenState extends State<OperatorCounterScreen> {
               ),
             ),
             const Text(
-              'QR cũ mất hiệu lực sau khi đổi vé. Email được backend xếp lịch gửi theo cấu hình.',
+              'Mã QR cũ mất hiệu lực sau khi đổi vé. Vé mới sẽ được gửi qua email nếu dịch vụ gửi vé khả dụng.',
             ),
             if (!exchange)
               TextButton(

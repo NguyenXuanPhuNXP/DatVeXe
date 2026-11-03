@@ -15,6 +15,11 @@ const authLimiter = rateLimit({
 authRouter.post("/register", authLimiter, authController.register);
 authRouter.post("/login", authLimiter, authController.login);
 authRouter.post("/refresh", authLimiter, authController.refresh);
+const passwordResetLimiter = rateLimit({ windowMs: 15 * 60 * 1000, limit: 10, standardHeaders: "draft-8", legacyHeaders: false,
+  message: { error: { code: "RATE_LIMITED", message: "Bạn đã thử quá nhiều lần. Vui lòng thử lại sau 15 phút." } },
+});
+authRouter.post("/forgot-password", passwordResetLimiter, authController.forgotPassword);
+authRouter.post("/reset-password", passwordResetLimiter, authController.resetPassword);
 authRouter.post("/logout", authController.logout);
 authRouter.get("/me", authenticate, authController.me);
 

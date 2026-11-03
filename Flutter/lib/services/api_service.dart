@@ -171,7 +171,7 @@ class ApiService {
       return data;
     } on SocketException {
       throw const ApiException(
-        'Không kết nối được máy chủ. Kiểm tra backend và API_BASE_URL trong .env.',
+        'Không thể kết nối. Vui lòng kiểm tra mạng và thử lại.',
       );
     } on TimeoutException {
       throw const ApiException('Máy chủ phản hồi quá lâu. Vui lòng thử lại.');

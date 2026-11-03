@@ -46,6 +46,8 @@ void main() {
   ) async {
     await portal(tester, 'staff');
     expect(find.text('Quản lý vé'), findsOneWidget);
+    expect(find.text('Chuyến xe của nhà xe'), findsOneWidget);
+    expect(find.text('Quét QR xem vé'), findsNothing);
     expect(find.text('Xác nhận lên xe'), findsOneWidget);
     expect(find.text('Quản lý nhân viên'), findsNothing);
     expect(find.text('Đối soát thanh toán'), findsNothing);
