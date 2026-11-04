@@ -17,7 +17,19 @@ if ($LASTEXITCODE -ne 0) { throw 'Tạo Prisma Client thất bại' }
 npm run db:seed
 ```
 
-`migrate deploy` tạo database nếu chưa có và tài khoản kết nối có quyền tạo. Seed mới đã bao gồm booking, ticket, biên nhận và ghế; không cần chạy script cũ `prisma/seed-bookings.js`.
+`migrate deploy` tạo database nếu chưa có và tài khoản kết nối có quyền tạo. `seed.js` gọi `seed-catalog.js` để lấy danh mục nhà xe/tuyến và gọi `seedRbac` từ `seed-rbac.js` để ghi vai trò/quyền. Hai module này không cần chạy riêng. Seed chính đã bao gồm booking, ticket, biên nhận và ghế.
+
+### Bổ sung dữ liệu lịch sử bằng `seed-bookings.js`
+
+Chạy trong thư mục `backend` nếu muốn thêm bộ booking lịch sử:
+
+```powershell
+node -r dotenv/config prisma/seed-bookings.js
+```
+
+Script kiểm tra tổng booking: nếu đã có từ 10 booking thì bỏ qua; nếu ít hơn 10 thì thêm 24 booking, mỗi booking có một ticket. Với DB vừa chạy seed chính (6 booking), kết quả là 30 booking và 30 ticket. Script không được gọi tự động bởi `npm run db:seed`.
+
+Bộ bổ sung dùng 12 hành khách mẫu, ngày tạo ngẫu nhiên trong khoảng 25 ngày gần đây và ngày đi bằng ngày tạo cộng 3 ngày. Booking không gắn tài khoản khách hàng (`userId`), không tạo biên nhận hoặc `SeatStatus`. Vì vậy các đơn `paid` này không đóng góp vào thống kê biên nhận nhà xe; các đơn chưa trả tiền đã quá hạn có thể được worker tự hủy. Đây là dữ liệu lịch sử để xem danh sách/thống kê, không phải bộ thử đầy đủ luồng giữ ghế và thanh toán.
 
 Seed chạy trong một transaction. Chạy lại không tạo thêm fixture có cùng ID, mã booking hoặc email. Mật khẩu tài khoản đã tồn tại được giữ nguyên; ngày booking đã tồn tại cũng không được dời sang ngày mới. Seed không đồng bộ lại mọi trường đã sửa: với chuyến đã tồn tại chỉ cập nhật `isDemo` và `sourceUrl`, với xe chỉ cập nhật ảnh và nguồn ảnh.
 

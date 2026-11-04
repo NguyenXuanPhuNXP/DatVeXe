@@ -62,24 +62,86 @@ docker compose --env-file backend/.env up -d db
 ```
 Tạo `backend/.env` từ [backend/.env.example](backend/.env.example) nếu chưa có, rồi điền `DATABASE_URL` và `MSSQL_SA_PASSWORD` trước khi chạy Docker. Hoặc dùng SQL Server có sẵn với cấu hình trong `backend/.env`.
 
-Tạo Database `DatVeXe` trên SQL Server:
-```sql
-IF DB_ID(N'DatVeXe') IS NULL
-    CREATE DATABASE [DatVeXe];
+`npm ci` cài cả `dependencies` và `devDependencies` theo `package-lock.json`. Nếu có lệnh lỗi, xử lý lỗi trước khi tiếp tục. Không cần cài từng thư viện thủ công hoặc cài global.
+
+| Thư mục | Các thư viện chính |
+| --- | --- |
+| `backend` | Express, Prisma và `@prisma/client`, bcryptjs, JWT, Zod, Nodemailer, ExcelJS, pdfmake, qrcode |
+| `frontend` | React, React Router, Axios, Bootstrap Icons, xlsx, `@zxing/browser`, `@zxing/library`; Vite và ESLint để phát triển/build |
+
+Khi chủ động thêm/cập nhật dependency, dùng `npm install <tên-thư-viện>` trong đúng thư mục, hoặc `npm install -D <tên-thư-viện>` cho công cụ phát triển, rồi lưu cả `package.json` và `package-lock.json`.
+
+Nếu Vite báo không tìm thấy `@zxing/library`, chạy `npm ci` trong `frontend`, sau đó khởi động lại `npm run dev`. Dependency này đã được khai báo sẵn trong dự án.
+
+### 3. Cấu hình môi trường và SQL Server
+
+Từ thư mục gốc, tạo file môi trường nếu chưa có (PowerShell):
+
+```powershell
+if (!(Test-Path backend/.env)) { Copy-Item backend/.env.example backend/.env }
 ```
 
-Đẩy schema và nạp dữ liệu mẫu:
-```bash
+Sửa `backend/.env` theo môi trường của bạn:
+
+- `DATABASE_URL`: kết nối SQL Server. `integratedSecurity=true` trong file mẫu dành cho Windows Authentication; Docker/Ubuntu cần tài khoản và mật khẩu SQL Server.
+- `JWT_ACCESS_SECRET`: đặt khóa riêng tối thiểu 32 ký tự. Có thể tạo bằng `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`.
+- `PORT=3000`, `CORS_ORIGIN=http://localhost:5173` cho môi trường local.
+- `DEMO_SEED_PASSWORD`: tùy chọn, áp dụng cho tài khoản demo **mới**; tối thiểu 12 ký tự, tối đa 72 byte UTF-8.
+
+Nếu dùng Docker, đặt `MSSQL_SA_PASSWORD` trong `backend/.env` thành mật khẩu đủ mạnh và sửa `DATABASE_URL` tương ứng, ví dụ (thay giá trị mẫu ở cả hai dòng):
+
+```dotenv
+MSSQL_SA_PASSWORD="CHANGE_ME_StrongPassword123!"
+DATABASE_URL="sqlserver://localhost:1433;database=DatVeXe;user=sa;password=CHANGE_ME_StrongPassword123!;encrypt=true;trustServerCertificate=true;schema=dbo"
+```
+
+Khởi động Docker SQL Server từ thư mục gốc:
+
+```powershell
+docker compose --env-file backend/.env up -d db
+```
+
+Chờ SQL Server sẵn sàng trước khi migrate. Nếu dùng SQL Server đã cài trên máy, bỏ qua bước Docker. Không chạy hai SQL Server cùng chiếm cổng 1433.
+
+### 4. Tạo schema và seed dữ liệu
+
+Từ thư mục gốc, chạy lần lượt trong `backend`:
+
+```powershell
 cd backend
 if (!(Test-Path .env)) { Copy-Item .env.example .env }
 npm ci
 npx prisma migrate deploy
-npx prisma generate
+npm run db:generate
 npm run db:seed
 ```
 
-### 3. Khởi chạy Backend API
-```bash
+`migrate deploy` áp dụng các migration và có thể tạo DB `DatVeXe` nếu chưa tồn tại, khi tài khoản SQL có quyền tạo database. `db:generate` tạo Prisma Client theo schema hiện tại.
+
+| File seed | Cách chạy / nội dung |
+| --- | --- |
+| `backend/prisma/seed.js` | `npm run db:seed`: điểm chạy chính, tạo tài khoản, nhà xe, xe, tuyến, chuyến, booking/ticket demo, biên nhận, ghế, khuyến mãi và tin tức |
+| `backend/prisma/seed-catalog.js` | Danh mục nhà xe/tuyến/ảnh được `seed.js` sử dụng; không cần chạy riêng |
+| `backend/prisma/seed-rbac.js` | `seed.js` gọi `seedRbac` để ghi 5 vai trò và quyền vào DB; không cần chạy riêng |
+| `backend/prisma/seed-bookings.js` | Script bổ sung 24 booking lịch sử và 24 ticket; chạy riêng nếu cần |
+
+Trên DB mới, seed chính tạo **11 tài khoản, 5 vai trò, 12 quyền, 3 nhà xe, 3 xe, 6 tuyến, 24 chuyến, 6 booking và 6 ticket**. Để thêm bộ booking lịch sử, tiếp tục trong thư mục `backend`:
+
+```powershell
+node -r dotenv/config prisma/seed-bookings.js
+```
+
+Script bổ sung bỏ qua nếu tổng booking đã từ 10 trở lên. Nếu chạy ngay sau seed chính trên DB mới, kết quả là **30 booking và 30 ticket**. Booking lịch sử không có biên nhận hoặc bản ghi giữ ghế; xem giới hạn chi tiết trong [SEED_DEMO.md](SEED_DEMO.md).
+
+Tài khoản admin mặc định là `admin.seed@rightway.test`, mật khẩu `RightwayDemo@2026` **chỉ khi không đặt `DEMO_SEED_PASSWORD`**. VPS có cấu hình mật khẩu riêng trong `backend/.env`; không dùng mật khẩu mặc định của local để suy ra mật khẩu VPS. Chạy seed lại giữ nguyên mật khẩu tài khoản đã tồn tại, kể cả khi bạn đổi biến môi trường.
+
+Seed chính bị chặn khi `NODE_ENV=production`; chỉ khi chủ động nạp dữ liệu demo mới chạy `ALLOW_DEMO_SEED=true npm run db:seed` trên Ubuntu, hoặc đặt `$env:ALLOW_DEMO_SEED='true'` trước lệnh seed trên PowerShell và xóa biến sau khi dùng. Không reset DB để seed bổ sung vì reset sẽ xóa dữ liệu hiện có.
+
+### 5. Khởi chạy Backend API
+
+Mở terminal tại thư mục gốc:
+
+```powershell
 cd backend
 npm run dev
 ```
@@ -99,7 +161,7 @@ Gọi `POST /api/auth/login`, sao chép `accessToken`, rồi bấm **Authorize**
 
 Tài liệu hiện gồm health, auth (cả khôi phục mật khẩu), tìm chuyến, booking chính và hai API lịch chuyến/sơ đồ ghế dành cho staff. Chưa mô tả đầy đủ admin, thanh toán và hỗ trợ. Cấu hình nằm ở `backend/src/config/openapi.js`; cập nhật file này khi API thay đổi.
 
-### 4. Khởi chạy Frontend
+### 6. Khởi chạy Frontend
 Mở một terminal mới:
 ```bash
 cd frontend
@@ -110,6 +172,8 @@ Trang web mở tại: `http://localhost:5173`
 
 - Truy cập trang khách hàng: `http://localhost:5173/`
 - Truy cập trang quản trị Admin: `http://localhost:5173/admin`
+
+Frontend mặc định gọi API tại `http://localhost:3000/api`. Nếu backend chạy ở địa chỉ khác, đặt `VITE_API_URL` trong `frontend/.env` rồi khởi động lại Vite. Kiểm tra build bằng `npm run build` trong `frontend`.
 
 ## Dữ liệu đặt chỗ
 
