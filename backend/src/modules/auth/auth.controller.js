@@ -78,4 +78,19 @@ function me(request, response, next) {
   });
 }
 
-module.exports = { register, login, refresh, logout, me };
+const passwordReset = require("./password-reset.service");
+const { forgotPasswordSchema, resetPasswordSchema } = require("./auth.schemas");
+
+async function forgotPassword(request, response, next) {
+  try {
+    response.json(await passwordReset.forgotPassword(forgotPasswordSchema.parse(request.body)));
+  } catch (error) { next(error); }
+}
+
+async function resetPassword(request, response, next) {
+  try {
+    response.json(await passwordReset.resetPassword(resetPasswordSchema.parse(request.body)));
+  } catch (error) { next(error); }
+}
+
+module.exports = { register, login, refresh, logout, me, forgotPassword, resetPassword };

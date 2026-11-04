@@ -26,6 +26,34 @@ function SupportInbox({ staff, fixedId, onDismiss, initialQuestion = '' }) {
   const sending = useRef(false);
 
   useEffect(() => {
+    let active = true;
+    let socket;
+    let retry;
+    async function connect() {
+      try {
+        // The HTTP interceptor refreshes expired access tokens before connecting.
+        await api.get(base);
+        if (!active) return;
+        const url = new URL(api.defaults.baseURL, window.location.origin);
+        url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
+        url.pathname = `${url.pathname.replace(/\/$/, '')}/support/socket`;
+        socket = new WebSocket(url);
+        socket.onopen = () => socket.send(JSON.stringify({ token: localStorage.getItem('accessToken'), staff }));
+        socket.onmessage = event => {
+          try {
+            const data = JSON.parse(event.data);
+            if (active && ['support.ready', 'support.updated'].includes(data.type)) setRevision(value => value + 1);
+          } catch { /* Ignore messages outside the support protocol. */ }
+        };
+        socket.onerror = () => socket.close();
+        socket.onclose = () => { if (active) retry = setTimeout(connect, 3000); };
+      } catch { if (active) retry = setTimeout(connect, 3000); }
+    }
+    connect();
+    return () => { active = false; clearTimeout(retry); socket?.close(); };
+  }, [base, staff]);
+
+  useEffect(() => {
     if (staff) return;
     let active = true;
     api.get('/support/companies').then(({ data }) => { if (active) setCompanies(data); })

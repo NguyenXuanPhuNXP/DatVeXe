@@ -146,6 +146,17 @@ router.use(async (req, _res, next) => {
 });
 
 router.get("/me", (req, res) => res.json(req.member));
+const tripBoard = require('./trip-board.service');
+const boardDate = z.object({ date: dateSchema }).strict();
+router.get('/trip-board', requireOperatorPermission('operator.work'), wrap(async (req, res) => {
+  const { date } = boardDate.parse(req.query);
+  res.json(await tripBoard.trips(req.member.companyId, date));
+}));
+router.get('/trip-board/:id/seats', requireOperatorPermission('operator.work'), wrap(async (req, res) => {
+  const { date } = boardDate.parse(req.query);
+  const id = z.string().min(1).max(30).parse(req.params.id);
+  res.json(await tripBoard.seats(req.member.companyId, id, date));
+}));
 router.get(
   "/bookings",
   wrap(async (req, res) =>

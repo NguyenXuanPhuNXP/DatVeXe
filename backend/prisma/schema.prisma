@@ -17,11 +17,21 @@ model User {
   updatedAt    DateTime    @updatedAt
   roles        UserRole[]
   sessions     Session[]
+    passwordReset PasswordReset?
   bookings     Booking[]
   anomalyReviews BookingAnomalyReview[]
   companyMembership CompanyMembership?
   supportConversations SupportConversation[]
   supportMessages SupportMessage[]
+}
+
+model PasswordReset {
+  userId String @id @db.NVarChar(30)
+  codeHash String @db.Char(64)
+  expiresAt DateTime
+  attempts Int @default(0)
+  createdAt DateTime @default(now())
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Session {
